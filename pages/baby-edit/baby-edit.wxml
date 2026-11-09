@@ -1,0 +1,130 @@
+<!-- 列表模式 -->
+<view class="page-wrap" wx:if="{{mode === 'list'}}">
+  <view class="section-head">
+    <view class="section-title">我的宝宝</view>
+    <view class="section-more">点一下切换当前宝宝</view>
+  </view>
+
+  <view
+    class="baby-item {{activeId === item.id ? 'baby-item-on' : ''}}"
+    wx:for="{{babies}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+    bindtap="selectBaby"
+  >
+    <view class="baby-item-avatar">{{item.avatar}}</view>
+    <view class="baby-item-main">
+      <view class="baby-item-name">{{item.name}}</view>
+      <view class="baby-item-sub">{{item.ageText}} · {{item.subtitle}}</view>
+    </view>
+    <view class="baby-item-check" wx:if="{{activeId === item.id}}">当前</view>
+    <view class="baby-item-edit" data-id="{{item.id}}" catchtap="goEdit">编辑</view>
+  </view>
+
+  <view class="empty" wx:if="{{babies.length === 0}}">
+    <view class="empty-emoji">🐣</view>
+    <view class="muted">还没有添加宝宝</view>
+  </view>
+
+  <view class="btn btn-primary btn-block add-btn" bindtap="goAdd">添加宝宝</view>
+  <disclaimer />
+</view>
+
+<!-- 表单模式 -->
+<view class="page-wrap" wx:else>
+
+  <view class="card avatar-card">
+    <view class="avatar-preview">{{baby.avatar}}</view>
+    <view class="avatar-hint">选一个代表宝宝的小头像</view>
+    <view class="avatar-row">
+      <view
+        class="avatar-opt {{baby.avatar === a ? 'avatar-on' : ''}}"
+        wx:for="{{avatars}}"
+        wx:for-item="a"
+        wx:key="*this"
+        data-a="{{a}}"
+        bindtap="pickAvatar"
+      >{{a}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="field">
+      <view class="field-label">小名</view>
+      <input
+        class="field-input"
+        placeholder="如 小芽"
+        placeholder-class="placeholder"
+        value="{{baby.name}}"
+        maxlength="12"
+        bindinput="onName"
+      />
+    </view>
+
+    <view class="field">
+      <view class="field-label">性别</view>
+      <view class="gender-wrap">
+        <view
+          class="gender-opt {{baby.gender === g.key ? 'gender-on' : ''}}"
+          wx:for="{{genders}}"
+          wx:for-item="g"
+          wx:key="key"
+          data-k="{{g.key}}"
+          bindtap="pickGender"
+        >{{g.label}}</view>
+      </view>
+    </view>
+
+    <picker mode="date" value="{{baby.birthday}}" start="{{minDate}}" end="{{today}}" bindchange="onBirthday">
+      <view class="field">
+        <view class="field-label">出生日期</view>
+        <view class="field-value {{baby.birthday ? '' : 'placeholder'}}">{{baby.birthday || '请选择'}}</view>
+        <view class="row-arrow"></view>
+      </view>
+    </picker>
+
+    <view class="age-preview" wx:if="{{agePreview}}">当前月龄：{{agePreview}}</view>
+
+    <view class="field">
+      <view class="field-label">体重 (kg)</view>
+      <input
+        class="field-input"
+        type="digit"
+        placeholder="选填，如 8.5"
+        placeholder-class="placeholder"
+        value="{{baby.weight}}"
+        bindinput="onWeight"
+      />
+    </view>
+
+    <view class="field">
+      <view class="field-label">身高 (cm)</view>
+      <input
+        class="field-input"
+        type="digit"
+        placeholder="选填，如 70"
+        placeholder-class="placeholder"
+        value="{{baby.height}}"
+        bindinput="onHeight"
+      />
+    </view>
+
+    <view class="field field-textarea">
+      <view class="field-label">备注</view>
+      <textarea
+        class="field-textarea-input"
+        placeholder="过敏、忌口、正在吃的补剂等（选填）"
+        placeholder-class="placeholder"
+        value="{{baby.note}}"
+        maxlength="200"
+        auto-height
+        bindinput="onNote"
+      />
+    </view>
+  </view>
+
+  <button class="btn btn-primary btn-block" bindtap="save">保存</button>
+  <view class="btn btn-line btn-block delete-btn" wx:if="{{!isNew}}" bindtap="remove">删除这份档案</view>
+
+  <disclaimer text="宝宝信息只保存在你的手机本地，不会上传。" />
+</view>

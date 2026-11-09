@@ -1,0 +1,173 @@
+<view class="page-wrap">
+
+  <!-- 地点条 -->
+  <view class="city-bar">
+    <view class="city-left" bindtap="goPlace">
+      <text class="city-pin">📍</text>
+      <view class="place-text">
+        <view class="city-name">{{placeLabel || '选择地点'}}</view>
+        <view class="city-sub" wx:if="{{placeFull}}">{{placeFull}}</view>
+      </view>
+      <text class="city-arrow">切换</text>
+    </view>
+    <view class="city-refresh" bindtap="refresh">刷新</view>
+  </view>
+
+  <!-- 未设置地点 -->
+  <view class="card state-card" wx:if="{{state === 'no-place'}}">
+    <view class="state-emoji">🧭</view>
+    <view class="state-title">先设置宝宝在哪</view>
+    <view class="state-desc">选到「北京市 → 区 → 小区」后，天气按小区坐标取数，穿衣建议会跟着更准。</view>
+    <view class="btn btn-primary btn-block" bindtap="goPlace">设置地点</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="card state-card" wx:elif="{{state === 'loading'}}">
+    <view class="state-emoji">⏳</view>
+    <view class="state-title">正在获取天气…</view>
+    <view class="state-desc">首次使用需要部署 weather 云函数，或在开发者工具里勾选「不校验合法域名」</view>
+  </view>
+
+  <!-- 失败 -->
+  <view class="card state-card" wx:elif="{{state === 'error'}}">
+    <view class="state-emoji">🌥</view>
+    <view class="state-title">天气暂时取不到</view>
+    <view class="state-desc">检查网络后重试，或换一个地点试试。</view>
+    <view class="btn btn-line btn-block" bindtap="refresh">重新获取</view>
+  </view>
+
+  <!-- 正常 -->
+  <block wx:else>
+    <view class="card main-card">
+      <view class="main-top">
+        <view class="main-left">
+          <view class="main-temp">{{weather.temp}}°</view>
+          <view class="main-text">{{weather.icon}} {{weather.text}} · 体感 {{weather.feels}}°</view>
+        </view>
+        <view class="main-right">
+          <view class="tiny">今日</view>
+          <view class="main-range">{{weather.min}}° ~ {{weather.max}}°</view>
+        </view>
+      </view>
+
+      <view class="main-place">
+        <text class="main-place-pin">📍</text>{{placeFull}}
+        <text class="main-stale" wx:if="{{stale}}">离线缓存</text>
+      </view>
+
+      <view class="metrics">
+        <view class="metric">
+          <view class="metric-val">{{weather.wind}}</view>
+          <view class="metric-key">风速 km/h</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{weather.humidity}}%</view>
+          <view class="metric-key">湿度</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{weather.uv}}</view>
+          <view class="metric-key">紫外线</view>
+        </view>
+        <view class="metric">
+          <view class="metric-val">{{weather.precipProb}}%</view>
+          <view class="metric-key">降水概率</view>
+        </view>
+      </view>
+
+      <view class="main-updated" wx:if="{{updatedText}}">更新于 {{updatedText}}</view>
+    </view>
+
+    <!-- 穿衣 -->
+    <view class="card">
+      <view class="card-head">
+        <view class="card-title">今天穿什么</view>
+        <view class="level-tag">{{care.level}}</view>
+      </view>
+      <view class="stage-line">{{care.stageLabel}} · {{care.stageTip}}</view>
+      <view class="advice-main">{{care.headline}}</view>
+      <view class="advice-basis">{{care.basis}}</view>
+
+      <view class="divider"></view>
+
+      <view class="layer" wx:for="{{care.items}}" wx:key="part">
+        <view class="layer-part">{{item.part}}</view>
+        <view class="layer-body">
+          <view class="layer-text">{{item.text}}</view>
+          <view class="layer-tip">{{item.tip}}</view>
+        </view>
+      </view>
+
+      <view class="band-tip">{{care.bandTip}}</view>
+    </view>
+
+    <!-- 睡眠 -->
+    <view class="card">
+      <view class="card-head">
+        <view class="card-title">夜里怎么盖</view>
+        <view class="sleep-tog">{{care.sleep.tog}}</view>
+      </view>
+
+      <view class="room-bar">
+        <view class="room-left">
+          <text class="room-key">室温</text>
+          <text class="room-val">{{care.sleep.indoor}}℃</text>
+          <text class="room-tag" wx:if="{{roomEdited}}">手动</text>
+        </view>
+        <view class="room-right">
+          <view class="room-btn" data-d="-1" bindtap="adjustRoom">−</view>
+          <view class="room-btn" data-d="1" bindtap="adjustRoom">＋</view>
+        </view>
+      </view>
+
+      <view class="room-hint" wx:if="{{!roomEdited}}">按室外 {{roomEstimate}}℃ 估的，家里有温度计以实测为准</view>
+      <view class="room-hint" wx:else>
+        <text>已按你填的室温重算整张表</text>
+        <text class="room-reset" bindtap="resetRoom">恢复估算</text>
+      </view>
+
+      <view class="advice-main">{{care.sleep.text}}</view>
+      <view class="advice-basis">{{care.sleep.style}}</view>
+      <view class="sleep-style-note">{{care.sleep.styleNote}}</view>
+
+      <view class="divider"></view>
+
+      <view class="sleep-head">按室温对照，找到你家那一档</view>
+
+      <view
+        class="sleep-row {{row.active ? 'sleep-row-on' : ''}}"
+        wx:for="{{care.sleep.rows}}"
+        wx:for-item="row"
+        wx:key="label"
+      >
+        <view class="sleep-row-top">
+          <text class="sleep-range">{{row.label}}</text>
+          <text class="sleep-tog-sm">{{row.tog}}</text>
+          <text class="sleep-now" wx:if="{{row.active}}">当前</text>
+        </view>
+        <view class="sleep-text">{{row.text}}</view>
+        <view class="sleep-note" wx:if="{{row.note}}">{{row.note}}</view>
+      </view>
+
+      <view class="band-tip">{{care.sleep.tip}}</view>
+    </view>
+
+    <!-- 注意事项 -->
+    <view class="card" wx:if="{{alerts.length > 0}}">
+      <view class="card-title">还要留意</view>
+      <view class="alert-item" wx:for="{{alerts}}" wx:for-item="a" wx:key="k">
+        <view class="alert-dot"></view>
+        <view class="alert-text">{{a.t}}</view>
+      </view>
+    </view>
+
+    <view class="card judge-card">
+      <view class="judge-title">怎么判断穿得对不对</view>
+      <view class="judge-text">{{care.judgeTip}}</view>
+    </view>
+
+    <button class="btn btn-primary btn-block share-btn" bindtap="goShare">生成今日卡片 · 发给家人</button>
+
+    <disclaimer />
+  </block>
+
+</view>

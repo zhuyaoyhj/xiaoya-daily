@@ -1,0 +1,414 @@
+/* pages/index/index.wxss */
+
+/* ---------- 顶部 ---------- */
+.hero {
+  position: relative;
+  margin: 24rpx 0 36rpx;
+  padding: 36rpx 32rpx 34rpx;
+  border-radius: 44rpx;
+  background: linear-gradient(150deg, #FFF3E7 0%, #FFE3D2 62%, #FFD8C3 100%);
+  overflow: hidden;
+  box-shadow: 0 16rpx 40rpx rgba(226, 168, 132, 0.22);
+}
+
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.hero-blob-a {
+  width: 340rpx;
+  height: 340rpx;
+  background: rgba(255, 255, 255, 0.55);
+  top: -160rpx;
+  right: -100rpx;
+}
+
+.hero-blob-b {
+  width: 220rpx;
+  height: 220rpx;
+  background: rgba(255, 255, 255, 0.38);
+  bottom: -130rpx;
+  left: -70rpx;
+}
+
+.hero-top {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.hero-hi {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #4A3627;
+  letter-spacing: 0.5rpx;
+}
+
+.hero-date {
+  font-size: 24rpx;
+  color: #A5836C;
+  margin-top: 8rpx;
+}
+
+.hero-pill {
+  position: relative;
+  height: 56rpx;
+  padding: 0 24rpx;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.7);
+  color: #C4694A;
+  font-size: 24rpx;
+  line-height: 56rpx;
+}
+
+/* ---------- 宝宝卡 ---------- */
+.baby-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 32rpx;
+  padding: 26rpx 24rpx;
+}
+
+.baby-avatar {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: #FFF6EE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56rpx;
+  margin-right: 22rpx;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 3rpx rgba(255, 255, 255, 0.9);
+}
+
+.baby-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.baby-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #40301F;
+  display: flex;
+  align-items: center;
+}
+
+.baby-gender {
+  font-size: 20rpx;
+  font-weight: 500;
+  color: #C4694A;
+  background: #FFE6D9;
+  border-radius: 20rpx;
+  padding: 2rpx 12rpx;
+  margin-left: 14rpx;
+}
+
+.baby-age {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #E0795A;
+  margin-top: 6rpx;
+}
+
+.baby-meta {
+  font-size: 22rpx;
+  color: #A5836C;
+  margin-top: 4rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.baby-edit {
+  font-size: 24rpx;
+  color: #A5836C;
+  padding: 10rpx 4rpx 10rpx 20rpx;
+  flex-shrink: 0;
+}
+
+/* ---------- 空状态（无宝宝） ---------- */
+.baby-empty {
+  position: relative;
+  text-align: center;
+  padding: 16rpx 0 8rpx;
+}
+
+.baby-empty-emoji {
+  font-size: 76rpx;
+  line-height: 1.2;
+}
+
+.baby-empty-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #4A3627;
+  margin-top: 8rpx;
+}
+
+.baby-empty-desc {
+  font-size: 24rpx;
+  color: #A5836C;
+  margin: 10rpx 40rpx 24rpx;
+  line-height: 1.6;
+}
+
+.baby-empty-btn {
+  display: inline-block;
+  height: 76rpx;
+  line-height: 76rpx;
+  padding: 0 56rpx;
+  border-radius: 38rpx;
+  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 600;
+  box-shadow: 0 10rpx 24rpx rgba(240, 135, 107, 0.3);
+}
+
+/* ---------- 四宫格 ---------- */
+.tip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.tip-card {
+  width: 48.4%;
+  background: #FFFFFF;
+  border-radius: 30rpx;
+  padding: 26rpx 24rpx;
+  margin-bottom: 22rpx;
+  box-shadow: 0 10rpx 26rpx rgba(213, 176, 147, 0.13);
+}
+
+.tip-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 52rpx;
+  padding: 0 18rpx;
+  border-radius: 26rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.tip-emoji {
+  margin-right: 8rpx;
+  font-size: 26rpx;
+}
+
+.tip-heading {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.tip-summary {
+  font-size: 22rpx;
+  color: #9E8E80;
+  line-height: 1.55;
+  margin-top: 10rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* ---------- 天气卡 ---------- */
+.weather-card {
+  padding: 30rpx 32rpx;
+}
+
+.weather-top {
+  display: flex;
+  align-items: center;
+}
+
+.weather-temp-box {
+  display: flex;
+  align-items: center;
+  margin-right: 20rpx;
+}
+
+.weather-icon {
+  font-size: 46rpx;
+  margin-right: 10rpx;
+}
+
+.weather-temp {
+  font-size: 62rpx;
+  font-weight: 700;
+  color: #3A2E26;
+  line-height: 1;
+}
+
+.weather-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.weather-city {
+  font-size: 27rpx;
+  font-weight: 600;
+  color: #4A3627;
+}
+
+.weather-level {
+  font-size: 22rpx;
+  color: #E0795A;
+  background: #FFF1E6;
+  border-radius: 22rpx;
+  padding: 6rpx 18rpx;
+  flex-shrink: 0;
+}
+
+.weather-advice {
+  font-size: 29rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  line-height: 1.55;
+}
+
+.weather-alert {
+  font-size: 23rpx;
+  color: #B4743F;
+  background: #FFF6E6;
+  border-radius: 16rpx;
+  padding: 14rpx 18rpx;
+  margin-top: 16rpx;
+  line-height: 1.55;
+}
+
+.weather-more {
+  font-size: 23rpx;
+  color: #B2886F;
+  margin-top: 18rpx;
+  text-align: right;
+}
+
+.weather-empty {
+  text-align: left;
+}
+
+.weather-empty-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  margin-bottom: 8rpx;
+}
+
+.weather-empty-btn {
+  margin-top: 20rpx;
+}
+
+/* ---------- 推送卡 ---------- */
+.push-card {
+  background: linear-gradient(140deg, #FFFFFF 0%, #FFF6EE 100%);
+}
+
+.push-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.push-desc {
+  font-size: 24rpx;
+  color: #8C7B6E;
+  line-height: 1.65;
+  margin-top: 10rpx;
+}
+
+.push-targets {
+  margin-top: 18rpx;
+}
+
+.push-btn {
+  margin-top: 24rpx;
+}
+
+/* ---------- 疫苗卡 ---------- */
+.vax-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(140deg, #FFFFFF 0%, #FFF6EE 100%);
+}
+
+.vax-tone-urgent {
+  background: linear-gradient(140deg, #FFFFFF 0%, #FFEDE6 100%);
+}
+
+.vax-tone-watch {
+  background: linear-gradient(140deg, #FFFFFF 0%, #F4F0FC 100%);
+}
+
+.vax-tone-soon {
+  background: linear-gradient(140deg, #FFFFFF 0%, #F0F6EF 100%);
+}
+
+.vax-tone-done {
+  background: linear-gradient(140deg, #FFFFFF 0%, #F7F4EF 100%);
+}
+
+.vax-card-emoji {
+  width: 76rpx;
+  height: 76rpx;
+  border-radius: 24rpx;
+  background: #FFF3E9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38rpx;
+  margin-right: 22rpx;
+  flex-shrink: 0;
+}
+
+.vax-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.vax-card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  line-height: 1.4;
+}
+
+.vax-card-desc {
+  font-size: 23rpx;
+  color: #8C7B6E;
+  line-height: 1.6;
+  margin-top: 6rpx;
+}
+
+.vax-card-arrow {
+  font-size: 36rpx;
+  color: #D8C7B8;
+  margin-left: 12rpx;
+}
+
+/* ---------- 无宝宝时的说明卡 ---------- */
+.flat-tip {
+  margin-top: 24rpx;
+}
+
+.flat-tip-item {
+  font-size: 26rpx;
+  color: #6B5A4D;
+  line-height: 1.8;
+  margin-top: 12rpx;
+}

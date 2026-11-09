@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "记录接种",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

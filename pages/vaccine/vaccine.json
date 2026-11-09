@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "疫苗护理",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

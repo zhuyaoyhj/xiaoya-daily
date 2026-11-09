@@ -1,0 +1,63 @@
+<view class="page-wrap" wx:if="{{hasBaby}}">
+
+  <view class="section-head">
+    <view class="section-title">今日卡片</view>
+    <view class="section-more">长按图片可直接转发</view>
+  </view>
+
+  <view class="preview">
+    <image
+      wx:if="{{cardPath}}"
+      class="preview-img"
+      src="{{cardPath}}"
+      mode="widthFix"
+      show-menu-by-longpress
+    />
+    <view class="preview-skeleton" wx:else>
+      <view class="skeleton-emoji">🖼</view>
+      <view class="muted">{{drawing ? '正在生成卡片…' : '卡片还没生成，点下面按钮重试'}}</view>
+    </view>
+  </view>
+
+  <view class="note" wx:if="{{weatherNote}}">{{weatherNote}}</view>
+
+  <!-- 推送对象 -->
+  <view class="card">
+    <view class="card-title">发给谁</view>
+    <view class="target-wrap">
+      <view
+        class="chip {{item.checked ? 'chip-active' : ''}}"
+        wx:for="{{targets}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="toggleTarget"
+      >{{item.relation}} {{item.name}}</view>
+      <view class="chip chip-plain" wx:if="{{targets.length === 0}}" bindtap="goFamily">去添加带娃人</view>
+    </view>
+    <view class="target-line" wx:if="{{targetLine}}">卡片上会显示：{{targetLine}}</view>
+  </view>
+
+  <!-- 文字版 -->
+  <view class="card">
+    <view class="card-title">文字版（可直接粘贴到家庭群）</view>
+    <text class="share-text">{{shareText}}</text>
+    <view class="btn btn-ghost btn-sm text-copy" bindtap="copyText">复制文字</view>
+  </view>
+
+  <button class="btn btn-primary btn-block" open-type="share">转发给微信好友</button>
+  <view class="btn btn-line btn-block action-btn" bindtap="saveImage">保存图片到相册</view>
+
+  <disclaimer />
+</view>
+
+<view class="page-wrap" wx:else>
+  <view class="card state-card">
+    <view class="empty-emoji">🍼</view>
+    <view class="h3">还没有宝宝档案</view>
+    <view class="muted state-desc">添加出生日期后，才能生成按月龄的照护卡片。</view>
+    <view class="btn btn-primary btn-block" bindtap="goAddBaby">添加宝宝信息</view>
+  </view>
+  <disclaimer />
+</view>
+
+<canvas type="2d" id="card" class="hidden-canvas"></canvas>

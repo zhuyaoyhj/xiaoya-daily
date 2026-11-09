@@ -1,0 +1,149 @@
+<view class="page-wrap">
+
+  <!-- 顶部问候 + 宝宝档案 -->
+  <view class="hero">
+    <view class="hero-blob hero-blob-a"></view>
+    <view class="hero-blob hero-blob-b"></view>
+
+    <view class="hero-top">
+      <view>
+        <view class="hero-hi">{{greeting}}</view>
+        <view class="hero-date">{{dateText}}</view>
+      </view>
+      <view class="hero-pill" wx:if="{{babies.length > 1}}" bindtap="goBabies">切换宝宝</view>
+    </view>
+
+    <view class="baby-row" wx:if="{{baby}}">
+      <view class="baby-avatar">{{baby.avatar}}</view>
+      <view class="baby-main">
+        <view class="baby-name">
+          {{baby.name}}
+          <text class="baby-gender">{{baby.genderText}}</text>
+        </view>
+        <view class="baby-age">{{baby.ageText}}</view>
+        <view class="baby-meta">{{baby.metaText}}</view>
+      </view>
+      <view class="baby-edit" catchtap="goEditBaby">编辑</view>
+    </view>
+
+    <view class="baby-empty" wx:else bindtap="goAddBaby">
+      <view class="baby-empty-emoji">🍼</view>
+      <view class="baby-empty-title">先添加宝宝</view>
+      <view class="baby-empty-desc">填好出生日期，就能按月龄拿到吃、动、学、睡建议</view>
+      <view class="baby-empty-btn">添加宝宝信息</view>
+    </view>
+  </view>
+
+  <block wx:if="{{baby}}">
+    <!-- 今日重点 -->
+    <view class="section-head">
+      <view class="section-title">今日重点</view>
+      <view class="section-more" bindtap="goGuide">{{ageLabel}} ›</view>
+    </view>
+
+    <view class="tip-grid">
+      <view
+        class="tip-card"
+        wx:for="{{tips}}"
+        wx:key="key"
+        data-tab="{{item.key}}"
+        bindtap="goGuide"
+      >
+        <view class="tip-badge" style="background:{{item.soft}};color:{{item.color}}">
+          <text class="tip-emoji">{{item.emoji}}</text>
+          <text>{{item.title}}</text>
+        </view>
+        <view class="tip-heading">{{item.heading}}</view>
+        <view class="tip-summary">{{item.summary}}</view>
+      </view>
+    </view>
+
+    <!-- 天气与穿衣 -->
+    <view class="section-head">
+      <view class="section-title">今天穿什么</view>
+      <view class="section-more" bindtap="goWeather">天气详情 ›</view>
+    </view>
+
+    <view class="card weather-card" wx:if="{{weatherState === 'ok'}}" bindtap="goWeather">
+      <view class="weather-top">
+        <view class="weather-temp-box">
+          <text class="weather-icon">{{weather.icon}}</text>
+          <text class="weather-temp">{{weather.temp}}°</text>
+        </view>
+        <view class="weather-meta">
+          <view class="weather-city">{{weather.label}}</view>
+          <view class="tiny">{{weather.text}} · {{weather.min}}° ~ {{weather.max}}°</view>
+        </view>
+        <view class="weather-level">{{care.level}}</view>
+      </view>
+
+      <view class="divider-dashed"></view>
+
+      <view class="weather-advice">{{care.headline}}</view>
+      <view class="weather-alert" wx:if="{{care.alerts.length > 0}}">{{care.alerts[0]}}</view>
+      <view class="weather-more">{{weather.full}} · 查看完整建议</view>
+    </view>
+
+    <view
+      class="card weather-card weather-empty"
+      wx:elif="{{weatherState === 'no-place'}}"
+      bindtap="goPlace"
+    >
+      <view class="weather-empty-title">还没设置地点</view>
+      <view class="muted">选到「北京市 → 区 → 小区」，穿衣建议会更准</view>
+      <view class="btn btn-ghost btn-sm weather-empty-btn">去设置地点</view>
+    </view>
+
+    <view class="card weather-card weather-empty" wx:elif="{{weatherState === 'loading'}}">
+      <view class="weather-empty-title">正在获取天气…</view>
+      <view class="muted">首次使用需要部署 weather 云函数，稍等一下就会出来</view>
+    </view>
+
+    <view class="card weather-card weather-empty" wx:else bindtap="retryWeather">
+      <view class="weather-empty-title">天气暂时取不到</view>
+      <view class="muted">检查网络后再试一次</view>
+      <view class="btn btn-line btn-sm weather-empty-btn">重新获取</view>
+    </view>
+
+    <!-- 疫苗护理 -->
+    <view class="section-head">
+      <view class="section-title">疫苗护理</view>
+      <view class="section-more" bindtap="goVaccine">记录与提醒 ›</view>
+    </view>
+
+    <view class="card vax-card vax-tone-{{vax.tone}}" bindtap="goVaccine">
+      <view class="vax-card-emoji">{{vax.emoji}}</view>
+      <view class="vax-card-body">
+        <view class="vax-card-title">{{vax.title}}</view>
+        <view class="vax-card-desc">{{vax.desc}}</view>
+      </view>
+      <view class="vax-card-arrow">›</view>
+    </view>
+
+    <!-- 推送给带娃人 -->
+    <view class="card push-card">
+      <view class="push-title">推送给一起带娃的人</view>
+      <view class="push-desc">生成一张今日卡片，转发到家庭群或指定的人。吃、动、学、睡和穿衣，一屏讲清楚。</view>
+      <view class="push-targets" wx:if="{{targetNames}}">
+        <text class="chip">已选：{{targetNames}}</text>
+      </view>
+      <view class="push-targets" wx:else>
+        <text class="chip chip-plain" bindtap="goFamily">还没选推送对象，点这里添加</text>
+      </view>
+      <button class="btn btn-primary btn-block push-btn" bindtap="goShare">生成今日卡片</button>
+    </view>
+
+    <disclaimer />
+  </block>
+
+  <block wx:else>
+    <view class="card flat-tip">
+      <view class="h3">这个小程序能做什么</view>
+      <view class="flat-tip-item">1 · 按月龄给出「吃、动、学、睡」的具体建议</view>
+      <view class="flat-tip-item">2 · 接入实时天气，算出今天该穿几层、睡袋用多少 TOG</view>
+      <view class="flat-tip-item">3 · 一键生成卡片，转发给家人或一起带娃的阿姨</view>
+    </view>
+    <disclaimer />
+  </block>
+
+</view>

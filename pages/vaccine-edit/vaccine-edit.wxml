@@ -1,0 +1,193 @@
+<view class="page-wrap edit-wrap">
+
+  <view class="top-tip">{{babyName}} · {{isEdit ? '修改这条接种记录' : '记下刚打的这一针'}}</view>
+
+  <!-- 分类 -->
+  <view class="cat-row">
+    <view class="cat-chip {{category === 'free' ? 'cat-chip-on' : ''}}" data-cat="free" bindtap="switchCategory">
+      一类疫苗 · 免费
+    </view>
+    <view class="cat-chip {{category === 'paid' ? 'cat-chip-on' : ''}}" data-cat="paid" bindtap="switchCategory">
+      二类疫苗 · 自费
+    </view>
+  </view>
+
+  <!-- 疫苗列表 -->
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">打的是哪种疫苗</view>
+      <view class="pick-name" wx:if="{{category === 'paid'}}">找不到？可以自己加</view>
+    </view>
+    <view class="vax-grid">
+      <view
+        class="vax-item {{selectedId === item.id ? 'vax-item-on' : ''}}"
+        wx:for="{{list}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="pickVaccine"
+      >
+        <view class="vax-item-name">{{item.short}}</view>
+        <view class="vax-item-dose">{{item.doneText}}</view>
+        <view class="vax-item-flag" wx:if="{{item.custom}}">自定义</view>
+      </view>
+
+      <view class="vax-item vax-item-add" wx:if="{{category === 'paid'}}" bindtap="openSheet">
+        <view class="vax-item-name">＋ 自定义</view>
+        <view class="vax-item-dose">按需添加</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 剂次 -->
+  <view class="card" wx:if="{{selected}}">
+    <view class="card-head">
+      <view class="card-title">第几剂</view>
+      <view class="pick-name">{{selected.name}}</view>
+    </view>
+    <view class="dose-row">
+      <view
+        class="dose-chip {{dose === item.n ? 'dose-chip-on' : ''}}"
+        wx:for="{{doses}}"
+        wx:key="n"
+        data-n="{{item.n}}"
+        bindtap="pickDose"
+      >
+        <text>第 {{item.n}} 剂</text>
+        <text class="dose-label">{{item.label}}</text>
+        <text class="dose-done" wx:if="{{item.done}}">已打过</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 这一针的基本信息 -->
+  <view class="card" wx:if="{{selected}}">
+    <view class="info-row">
+      <view class="info-key">接种途径</view>
+      <view class="info-val">{{selected.route}}</view>
+    </view>
+    <view class="info-row">
+      <view class="info-key">接种部位</view>
+      <view class="info-val">{{selected.site}}</view>
+    </view>
+
+    <block wx:if="{{before.length > 0}}">
+      <view class="divider"></view>
+      <view class="mini-title">接种前要知道</view>
+      <view class="mini-item" wx:for="{{before}}" wx:key="*this">· {{item}}</view>
+    </block>
+
+    <block wx:if="{{commonReactions.length > 0}}">
+      <view class="divider"></view>
+      <view class="mini-title">常见反应</view>
+      <view class="mini-item" wx:for="{{commonReactions}}" wx:key="*this">· {{item}}</view>
+    </block>
+  </view>
+
+  <!-- 时间与地点 -->
+  <view class="card">
+    <view class="card-title">{{isFuture ? '计划哪天打' : '什么时候打的'}}</view>
+
+    <picker mode="date" value="{{date}}" start="2000-01-01" end="{{maxDate}}" bindchange="onDate">
+      <view class="field">
+        <view class="field-label">接种日期</view>
+        <view class="field-value">{{date}}</view>
+        <view class="row-arrow"></view>
+      </view>
+    </picker>
+
+    <view class="time-hint" wx:if="{{isFuture}}">选了未来的日期，保存后会进入「待安排疫苗」列表，到期自动转为接种记录。</view>
+    <view class="time-hint" wx:else>选未来日期可以提前排期，比如约好下周去接种门诊。</view>
+
+    <view class="field">
+      <view class="field-label">接种门诊</view>
+      <input
+        class="field-input"
+        placeholder="选填，如朝阳区某社区卫生服务中心"
+        placeholder-class="placeholder"
+        value="{{place}}"
+        bindinput="onPlace"
+      />
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="card-title">备注</view>
+    <textarea
+      class="note-area"
+      placeholder="选填，比如「打了左腿，哭了一会儿就好」「医生说下一针 1 个月后」"
+      placeholder-class="placeholder"
+      value="{{note}}"
+      maxlength="200"
+      bindinput="onNote"
+    />
+  </view>
+
+  <disclaimer text="疫苗程序与护理要点为通用科普，具体以接种门诊告知和疫苗说明书为准。" />
+
+  <view class="btn btn-line btn-block del-btn" wx:if="{{isEdit}}" bindtap="remove">删除这条记录</view>
+</view>
+
+<!-- 底部固定 -->
+<view class="sticky-bar">
+  <button class="btn btn-primary btn-block {{canSave ? '' : 'btn-disabled'}}" bindtap="save">
+    {{isEdit ? '保存修改' : '完成记录'}}
+  </button>
+</view>
+
+<!-- 自定义疫苗浮层 -->
+<view class="sheet-mask" wx:if="{{sheet}}" bindtap="closeSheet" catchtouchmove="noop">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-bar"></view>
+    <view class="sheet-title">添加自费疫苗</view>
+    <view class="sheet-desc">内置清单里没有的疫苗可以自己加，加完就能记录接种，护理按通用接种后事项走。</view>
+
+    <view class="sheet-field">
+      <view class="sheet-label">疫苗名称</view>
+      <input
+        class="sheet-input"
+        placeholder="如 手足口病疫苗（XX 厂家）"
+        placeholder-class="placeholder"
+        value="{{cName}}"
+        maxlength="24"
+        bindinput="onCName"
+      />
+    </view>
+
+    <view class="sheet-field">
+      <view class="sheet-label">剂次数</view>
+      <view class="sheet-dose-row">
+        <view
+          class="sheet-dose {{cDoses === item ? 'sheet-dose-on' : ''}}"
+          wx:for="{{doseOptions}}"
+          wx:key="*this"
+          data-n="{{item}}"
+          bindtap="pickDoses"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <view class="sheet-field">
+      <view class="sheet-label">备注（选填）</view>
+      <textarea
+        class="sheet-note"
+        placeholder="如 第 2 剂间隔 1 个月，6 月龄-5 岁接种"
+        placeholder-class="placeholder"
+        value="{{cNote}}"
+        maxlength="100"
+        bindinput="onCNote"
+      />
+    </view>
+
+    <view class="btn btn-primary btn-block sheet-btn" bindtap="saveCustom">保存并选用</view>
+
+    <block wx:if="{{customList.length > 0}}">
+      <view class="sheet-sub">已添加的（点删除可去掉）</view>
+      <view class="sheet-item" wx:for="{{customList}}" wx:key="id">
+        <view class="sheet-item-name">{{item.name}}</view>
+        <view class="sheet-item-dose">{{item.doses}} 剂</view>
+        <view class="sheet-item-del" data-id="{{item.id}}" bindtap="removeCustom">删除</view>
+      </view>
+    </block>
+  </view>
+</view>

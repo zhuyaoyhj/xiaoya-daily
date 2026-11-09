@@ -1,0 +1,135 @@
+<view class="page-wrap">
+
+  <!-- 当前地点预览 -->
+  <view class="hero">
+    <view class="hero-hint">宝宝日常所在的位置</view>
+    <view class="hero-text">{{preview}}</view>
+    <view class="hero-meta">
+      <text wx:if="{{hasCoords}}">坐标 {{editing.lat}}, {{editing.lon}} · {{sourceText}}</text>
+      <text wx:else>还没拿到坐标，选一个区就能取天气</text>
+    </view>
+    <view class="hero-tags">
+      <text class="tag" wx:if="{{mountain}}">山区 · 已计入 2℃ 温差</text>
+      <text class="tag tag-plain" wx:if="{{editing.address}}">{{editing.address}}</text>
+    </view>
+  </view>
+
+  <!-- 1. 选到区 -->
+  <view class="card">
+    <view class="card-title">1 · 选到区</view>
+    <view class="card-sub">北京市 16 个市辖区，选中后先用区中心坐标取天气</view>
+    <view class="dist-grid">
+      <view
+        class="dist {{editing.district === d.name ? 'dist-on' : ''}}"
+        wx:for="{{districts}}"
+        wx:for-item="d"
+        wx:key="name"
+        data-name="{{d.name}}"
+        bindtap="pickDistrict"
+      >
+        {{d.name}}
+        <text class="dist-dot" wx:if="{{d.mountain}}"></text>
+      </view>
+    </view>
+    <view class="dist-legend"><text class="dist-dot"></text> 带点的区含山区，山里比城区低 2-3℃</view>
+  </view>
+
+  <!-- 2. 精确到小区 -->
+  <view class="card">
+    <view class="card-title">2 · 精确到小区</view>
+    <view class="card-sub">搜到小区后，天气按小区坐标取数，比区级更贴地</view>
+
+    <view class="search-row">
+      <input
+        class="search-input"
+        placeholder="小区名，如 望京西园"
+        placeholder-class="placeholder"
+        value="{{keyword}}"
+        bindinput="onKeyword"
+        bindconfirm="doSearch"
+        confirm-type="search"
+      />
+      <view class="search-btn" bindtap="doSearch">{{searching ? '搜索中' : '搜索'}}</view>
+    </view>
+
+    <view class="tips tips-warn" wx:if="{{searchState === 'nokey'}}">
+      还没配置地图 Key（腾讯位置服务）。可以先点「用微信地图选」，或直接用手填的名字，功能不受影响。
+    </view>
+    <view class="tips tips-warn" wx:if="{{searchState === 'empty'}}">
+      没搜到这个小区。换个关键词试试，或直接用手填的名字。
+    </view>
+    <view class="tips tips-warn" wx:if="{{searchState === 'error'}}">
+      搜索失败，检查网络后重试，也可以直接手填小区名。
+    </view>
+
+    <view class="results" wx:if="{{results.length > 0}}">
+      <view
+        class="result"
+        wx:for="{{results}}"
+        wx:key="k"
+        data-i="{{index}}"
+        bindtap="pickResult"
+      >
+        <view class="result-name">{{item.name}}</view>
+        <view class="result-addr">{{item.address}}</view>
+      </view>
+    </view>
+
+    <view class="btn-row">
+      <view class="btn btn-ghost btn-sm btn-half" bindtap="handleMapPick">用微信地图选</view>
+      <view class="btn btn-line btn-sm btn-half" bindtap="useCurrentLocation">用当前位置</view>
+    </view>
+
+    <view class="manual-row" wx:if="{{keyword}}">
+      <view class="manual-text">不想搜？直接用这个名字</view>
+      <view class="manual-btn" bindtap="useTypedName">用「{{keyword}}」</view>
+    </view>
+
+    <view class="chosen" wx:if="{{editing.community}}">
+      已记录小区：<text class="chosen-name">{{editing.community}}</text>
+    </view>
+  </view>
+
+  <!-- 3. 常用地点 -->
+  <view class="card">
+    <view class="card-title">3 · 常用地点</view>
+    <view class="card-sub">家、奶奶家、姥姥家各存一个，每天一键切换</view>
+
+    <view
+      class="fav"
+      wx:for="{{places}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="usePlace"
+    >
+      <view class="fav-main">
+        <view class="fav-label">
+          {{item.label}}
+          <text class="fav-on" wx:if="{{item.active}}">当前</text>
+        </view>
+        <view class="fav-full">{{item.full}}</view>
+      </view>
+      <view class="fav-del" data-id="{{item.id}}" catchtap="removeFav">删除</view>
+    </view>
+
+    <view class="fav-empty" wx:if="{{places.length === 0}}">
+      还没有常用地点。把上面的地点存下来，之后就不用每次重选。
+    </view>
+
+    <view class="fav-add">
+      <input
+        class="fav-input"
+        placeholder="起个名字，如 家"
+        placeholder-class="placeholder"
+        value="{{labelInput}}"
+        maxlength="10"
+        bindinput="onLabelInput"
+      />
+      <view class="fav-add-btn" bindtap="addFavorite">存为常用</view>
+    </view>
+  </view>
+
+  <button class="btn btn-primary btn-block save-btn" bindtap="save">用这个地点</button>
+
+  <disclaimer text="地点只保存在本机，用于取天气与穿衣建议，不会上传。" />
+</view>

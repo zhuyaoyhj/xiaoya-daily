@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "小芽日常",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

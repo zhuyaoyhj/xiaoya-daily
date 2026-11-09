@@ -1,0 +1,274 @@
+/* app.wxss —— 全局设计系统
+   配色：奶油底 + 蜜桃主色 + 鼠尾草绿辅助，走柔和亲和的母婴调性
+   注意：WXSS 中禁止引用本地图片，所有氛围感一律用渐变实现 */
+
+page {
+  background-color: #FFF8F0;
+  color: #3A2E26;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+view,
+text,
+scroll-view,
+button,
+input {
+  box-sizing: border-box;
+}
+
+/* 去掉 button 默认边框与背景 */
+button {
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  line-height: inherit;
+  font-size: inherit;
+  border-radius: 0;
+}
+
+button::after {
+  border: none;
+}
+
+.page-wrap {
+  min-height: 100vh;
+  padding: 0 28rpx calc(48rpx + env(safe-area-inset-bottom));
+}
+
+/* ---------- 卡片 ---------- */
+.card {
+  background: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 10rpx 32rpx rgba(213, 176, 147, 0.13);
+}
+
+.card-flat {
+  box-shadow: none;
+  border: 2rpx solid #F4E7DA;
+}
+
+/* ---------- 文字 ---------- */
+.h1 {
+  font-size: 44rpx;
+  font-weight: 700;
+  letter-spacing: -0.5rpx;
+}
+
+.h2 {
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.h3 {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.body {
+  font-size: 28rpx;
+  color: #3A2E26;
+}
+
+.muted {
+  font-size: 24rpx;
+  color: #8C7B6E;
+}
+
+.tiny {
+  font-size: 22rpx;
+  color: #AA9A8C;
+}
+
+.brand-text {
+  color: #F0876B;
+}
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 92rpx;
+  padding: 0 40rpx;
+  border-radius: 46rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+.btn:active {
+  transform: scale(0.975);
+  opacity: 0.9;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
+  color: #FFFFFF;
+  box-shadow: 0 12rpx 28rpx rgba(240, 135, 107, 0.32);
+}
+
+.btn-ghost {
+  background: #FFF1E6;
+  color: #D9724F;
+}
+
+.btn-line {
+  background: #FFFFFF;
+  color: #3A2E26;
+  border: 2rpx solid #EFE2D4;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-sm {
+  height: 66rpx;
+  padding: 0 28rpx;
+  border-radius: 33rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.btn[disabled] {
+  opacity: 0.5;
+}
+
+/* ---------- 小标签 ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 56rpx;
+  padding: 0 24rpx;
+  border-radius: 28rpx;
+  background: #FFF1E6;
+  color: #C9694A;
+  font-size: 24rpx;
+  margin: 0 16rpx 16rpx 0;
+}
+
+.chip-plain {
+  background: #F7F2EC;
+  color: #8C7B6E;
+}
+
+.chip-active {
+  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
+  color: #FFFFFF;
+}
+
+/* ---------- 分区标题 ---------- */
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 8rpx 4rpx 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.section-more {
+  font-size: 24rpx;
+  color: #B2886F;
+}
+
+/* ---------- 卡片标题 ---------- */
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+/* ---------- 分隔线 ---------- */
+.divider {
+  height: 2rpx;
+  background: #F5EBE1;
+  margin: 24rpx 0;
+}
+
+.divider-dashed {
+  height: 0;
+  border-top: 2rpx dashed #EFE2D4;
+  margin: 24rpx 0;
+}
+
+/* ---------- 表单 ---------- */
+.field {
+  display: flex;
+  align-items: center;
+  min-height: 104rpx;
+  border-bottom: 2rpx solid #F5EBE1;
+}
+
+.field:last-child {
+  border-bottom: none;
+}
+
+.field-label {
+  width: 180rpx;
+  font-size: 28rpx;
+  color: #6B5A4D;
+  flex-shrink: 0;
+}
+
+.field-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: #3A2E26;
+  text-align: right;
+}
+
+.field-value {
+  flex: 1;
+  font-size: 30rpx;
+  color: #3A2E26;
+  text-align: right;
+}
+
+.placeholder {
+  color: #C4B5A8;
+}
+
+/* ---------- 列表行 ---------- */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 96rpx;
+}
+
+.row-arrow::after {
+  content: "";
+  width: 16rpx;
+  height: 16rpx;
+  border-top: 3rpx solid #D8C7B8;
+  border-right: 3rpx solid #D8C7B8;
+  transform: rotate(45deg);
+  margin-left: 12rpx;
+}
+
+/* ---------- 空状态 ---------- */
+.empty {
+  text-align: center;
+  padding: 80rpx 40rpx;
+}
+
+.empty-emoji {
+  font-size: 88rpx;
+  line-height: 1;
+  margin-bottom: 24rpx;
+}
+
+/* ---------- 安全区占位 ---------- */
+.safe-bottom {
+  height: calc(40rpx + env(safe-area-inset-bottom));
+}

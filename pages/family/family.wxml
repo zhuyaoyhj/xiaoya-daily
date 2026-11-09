@@ -1,0 +1,80 @@
+<view class="page-wrap">
+
+  <view class="section-head">
+    <view class="section-title">一起带娃的人</view>
+    <view class="section-more">勾选的就是推送对象</view>
+  </view>
+
+  <!-- 名单 -->
+  <view class="card list-card" wx:if="{{family.length > 0}}">
+    <view class="member" wx:for="{{family}}" wx:key="id">
+      <view class="member-check {{item.checked ? 'member-check-on' : ''}}" data-id="{{item.id}}" catchtap="toggle">
+        <text wx:if="{{item.checked}}">✓</text>
+      </view>
+      <view class="member-main" data-id="{{item.id}}" bindtap="toggle">
+        <view class="member-name">{{item.name}}</view>
+        <view class="member-rel">{{item.relation}}</view>
+      </view>
+      <view class="member-del" data-id="{{item.id}}" data-name="{{item.name}}" catchtap="removeMember">移除</view>
+    </view>
+  </view>
+
+  <view class="card empty-card" wx:else>
+    <view class="empty-emoji">👨‍👩‍👧</view>
+    <view class="h3">还没有添加带娃人</view>
+    <view class="muted empty-desc">把一起带娃的家人、阿姨加进来，每天的照护卡片就能直接发给他们。</view>
+  </view>
+
+  <!-- 添加 -->
+  <view class="card">
+    <view class="card-title">添加带娃人</view>
+    <view class="add-row">
+      <input
+        class="add-input"
+        placeholder="称呼，如 奶奶 / 张阿姨"
+        placeholder-class="placeholder"
+        value="{{newName}}"
+        maxlength="12"
+        bindinput="onNewName"
+      />
+      <picker mode="selector" range="{{relations}}" value="{{relationIndex}}" bindchange="onRelationChange">
+        <view class="add-relation">{{relations[relationIndex]}}</view>
+      </picker>
+    </view>
+    <view class="btn btn-ghost btn-block add-btn" bindtap="addMember">添加并勾选</view>
+  </view>
+
+  <!-- 推送方式说明 -->
+  <view class="card how-card">
+    <view class="card-title">推送是怎么走的</view>
+    <view class="how-item">
+      <view class="how-step">1</view>
+      <view class="how-text">
+        <view class="how-title">生成每日卡片</view>
+        <view class="how-desc">把宝宝的月龄建议和今天的穿衣推荐合成一张图，转发到家庭群或单独发给某个人。</view>
+      </view>
+    </view>
+    <view class="how-item">
+      <view class="how-step">2</view>
+      <view class="how-text">
+        <view class="how-title">订阅每日提醒</view>
+        <view class="how-desc">开启后每天固定时间收到一条提醒，点开就是当日建议。需要先在公众平台申请订阅消息模板。</view>
+      </view>
+    </view>
+
+    <view class="sub-row">
+      <view class="sub-info">
+        <view class="sub-title">{{subscribeEnabled ? '每日提醒已开启' : '开启每日提醒'}}</view>
+        <view class="sub-desc">{{tmplConfigured ? '点右侧按钮完成授权' : '未配置模板 ID，仅可手动转发'}}</view>
+      </view>
+      <view class="sub-btn {{subscribeEnabled ? 'sub-btn-off' : ''}}" bindtap="toggleSubscribe">
+        {{subscribeEnabled ? '关闭' : '开启'}}
+      </view>
+    </view>
+  </view>
+
+  <view class="btn btn-primary btn-block" bindtap="goShare">生成今日卡片</view>
+  <view class="btn btn-line btn-block copy-btn" bindtap="copyNames">复制推送名单</view>
+
+  <disclaimer text="带娃人名单只保存在本机；订阅消息由微信官方通道下发，内容为照护参考。" />
+</view>

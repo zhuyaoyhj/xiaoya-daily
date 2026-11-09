@@ -1,0 +1,52 @@
+<view class="page-wrap">
+
+  <!-- 月龄切换 -->
+  <view class="month-bar">
+    <view class="month-nav" bindtap="prevMonth">‹</view>
+    <view class="month-center">
+      <view class="month-label">{{label}}</view>
+      <view class="month-tag">{{tag}}</view>
+    </view>
+    <view class="month-nav" bindtap="nextMonth">›</view>
+  </view>
+
+  <view class="month-hint" wx:if="{{!isCurrent}}" bindtap="backToCurrent">
+    这是第 {{month}} 个月的参考，点这里回到{{babyName || '宝宝'}}当前月龄（{{currentMonth}} 个月）
+  </view>
+  <view class="month-hint" wx:else>左右箭头可以看前后月龄，提前准备不慌张</view>
+
+  <!-- 分类 tab -->
+  <scroll-view class="tab-bar" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view
+      class="tab {{tab === item.key ? 'tab-on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="switchTab"
+    >
+      <text class="tab-emoji">{{item.emoji}}</text>{{item.title}}
+    </view>
+  </scroll-view>
+
+  <!-- 内容 -->
+  <view class="sec" wx:for="{{visible}}" wx:key="key">
+    <view class="sec-head">
+      <view class="sec-emoji" style="background:{{item.soft}};color:{{item.color}}">{{item.emoji}}</view>
+      <view class="sec-head-text">
+        <view class="sec-title">{{item.title}}</view>
+        <view class="sec-heading">{{item.heading}}</view>
+      </view>
+    </view>
+
+    <view class="card sec-card">
+      <view class="li" wx:for="{{item.rows}}" wx:for-item="row" wx:key="k">
+        <view class="li-dot" style="background:{{item.color}}"></view>
+        <view class="li-text">{{row.t}}</view>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn btn-primary btn-block share-btn" bindtap="goShare">把这份建议发给家人</button>
+
+  <disclaimer />
+</view>

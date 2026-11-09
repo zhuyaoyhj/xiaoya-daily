@@ -1,0 +1,59 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/weather/weather",
+    "pages/vaccine/vaccine",
+    "pages/vaccine-edit/vaccine-edit",
+    "pages/place/place",
+    "pages/family/family",
+    "pages/guide/guide",
+    "pages/baby-edit/baby-edit",
+    "pages/share/share"
+  ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于按宝宝所在小区的位置获取更准确的天气与穿衣建议"
+    }
+  },
+  "requiredPrivateInfos": [
+    "choosePoi",
+    "chooseLocation",
+    "getLocation"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FFF8F0",
+    "navigationBarTitleText": "小芽日常",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FFF8F0",
+    "backgroundColorTop": "#FFF1E6",
+    "backgroundColorBottom": "#FFF8F0"
+  },
+  "tabBar": {
+    "color": "#A8998C",
+    "selectedColor": "#F0876B",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "今日"
+      },
+      {
+        "pagePath": "pages/weather/weather",
+        "text": "天气穿衣"
+      },
+      {
+        "pagePath": "pages/vaccine/vaccine",
+        "text": "疫苗护理"
+      },
+      {
+        "pagePath": "pages/family/family",
+        "text": "带娃人"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

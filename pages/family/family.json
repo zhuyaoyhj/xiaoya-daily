@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "带娃人",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

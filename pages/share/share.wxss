@@ -1,0 +1,95 @@
+/* pages/share/share.wxss */
+
+.preview {
+  display: flex;
+  justify-content: center;
+  padding: 4rpx 0 24rpx;
+}
+
+.preview-img {
+  width: 100%;
+  border-radius: 28rpx;
+  box-shadow: 0 18rpx 44rpx rgba(213, 176, 147, 0.22);
+}
+
+.preview-skeleton {
+  width: 100%;
+  height: 860rpx;
+  border-radius: 28rpx;
+  background: linear-gradient(150deg, #FFF4E9 0%, #FFE7D8 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.skeleton-emoji {
+  font-size: 76rpx;
+  margin-bottom: 18rpx;
+  opacity: 0.7;
+}
+
+.note {
+  font-size: 22rpx;
+  color: #B4743F;
+  background: #FFF6E8;
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 22rpx;
+  line-height: 1.6;
+}
+
+/* ---------- 推送对象 ---------- */
+.target-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 18rpx;
+}
+
+.target-line {
+  font-size: 22rpx;
+  color: #A8968A;
+  margin-top: 10rpx;
+}
+
+/* ---------- 文字版 ---------- */
+.share-text {
+  display: block;
+  font-size: 24rpx;
+  color: #5C4E42;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  margin-top: 16rpx;
+  word-break: break-all;
+}
+
+.text-copy {
+  margin: 22rpx auto 0;
+  width: 220rpx;
+}
+
+/* ---------- 按钮 ---------- */
+.action-btn {
+  margin-top: 20rpx;
+}
+
+/* ---------- 无宝宝 ---------- */
+.state-card {
+  text-align: center;
+  padding: 56rpx 40rpx;
+  margin-top: 40rpx;
+}
+
+.state-desc {
+  margin: 14rpx 0 32rpx;
+  line-height: 1.7;
+}
+
+/* ---------- 离屏画布 ---------- */
+.hidden-canvas {
+  position: fixed;
+  left: -2000rpx;
+  top: 0;
+  width: 640rpx;
+  height: 1200rpx;
+}

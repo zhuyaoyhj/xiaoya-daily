@@ -1,0 +1,9 @@
+{
+  "name": "pushTip",
+  "version": "1.0.0",
+  "description": "订阅消息记录与下发",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

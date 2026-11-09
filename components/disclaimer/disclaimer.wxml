@@ -1,0 +1,4 @@
+<view class="disclaimer">
+  <view class="disclaimer-icon">i</view>
+  <view class="disclaimer-text">{{text}}</view>
+</view>

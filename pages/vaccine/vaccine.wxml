@@ -1,0 +1,197 @@
+<view class="page-wrap {{hasBaby ? 'page-wrap-sticky' : ''}}">
+
+  <!-- 没有宝宝 -->
+  <view class="card empty" wx:if="{{!hasBaby}}">
+    <view class="empty-emoji">💉</view>
+    <view class="h3">先添加宝宝</view>
+    <view class="muted empty-desc">填好出生日期，就能对照免疫规划表看该打什么针，记录接种后也会自动给护理要点。</view>
+    <view class="btn btn-primary btn-sm empty-btn" bindtap="goBaby">添加宝宝信息</view>
+  </view>
+
+  <block wx:else>
+    <!-- 状态卡 -->
+    <view class="vax-hero tone-{{brief.tone}}">
+      <view class="vax-hero-top">
+        <view class="vax-hero-face">{{baby.avatar}}</view>
+        <view class="vax-hero-id">
+          <view class="vax-hero-name">{{baby.name}}</view>
+          <view class="vax-hero-age">{{baby.ageText}} · 已记录 {{stats.total}} 针</view>
+        </view>
+        <view class="vax-hero-chip" wx:if="{{care}}">{{care.phaseLabel}}</view>
+      </view>
+
+      <view class="vax-hero-title">{{brief.title}}</view>
+      <view class="vax-hero-desc">{{brief.desc}}</view>
+
+      <view class="vax-hero-meta" wx:if="{{care}}">
+        <text class="vax-meta-item">{{care.vaccine.route}} · {{care.vaccine.site}}</text>
+      </view>
+    </view>
+
+    <!-- 观察期内：现在要做什么 -->
+    <view class="card" wx:if="{{care}}">
+      <view class="card-head">
+        <view class="card-title">现在该做什么</view>
+        <view class="vax-time">{{care.sinceText}}</view>
+      </view>
+      <view class="vax-sub">{{care.phaseTip}}</view>
+
+      <view class="task-row" wx:for="{{care.items}}" wx:key="t">
+        <view class="task-when">{{item.when}}</view>
+        <view class="task-body">
+          <view class="task-text">{{item.t}}</view>
+          <view class="task-tag tag-{{item.tagClass}}">{{item.tag}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 可能出现的反应 -->
+    <view class="card" wx:if="{{care && (care.reactionsNow.length > 0 || care.reactionsSoon.length > 0)}}">
+      <view class="card-title">可能出现这些反应</view>
+      <view class="vax-sub">多数是正常免疫反应，不用一有反应就往医院跑</view>
+
+      <block wx:if="{{care.reactionsNow.length > 0}}">
+        <view class="react-row" wx:for="{{care.reactionsNow}}" wx:key="name">
+          <view class="react-dot"></view>
+          <view class="react-body">
+            <view class="react-name">{{item.name}}</view>
+            <view class="react-tip">{{item.tip}}</view>
+          </view>
+          <view class="react-now">此时</view>
+        </view>
+      </block>
+
+      <block wx:if="{{care.reactionsSoon.length > 0}}">
+        <view class="divider" wx:if="{{care.reactionsNow.length > 0}}"></view>
+        <view class="react-soon-head">接下来可能出现</view>
+        <view class="react-row react-row-later" wx:for="{{care.reactionsSoon}}" wx:key="name">
+          <view class="react-soon-when">{{item.fromText}}</view>
+          <view class="react-body">
+            <view class="react-name">{{item.name}}</view>
+            <view class="react-tip">{{item.tip}}</view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 就医警示 -->
+    <view class="card danger-card" wx:if="{{care}}">
+      <view class="card-title danger-title">出现这些情况要去医院</view>
+      <view class="flag-row" wx:for="{{care.redFlags}}" wx:key="*this">
+        <view class="flag-dot"></view>
+        <view class="flag-text">{{item}}</view>
+      </view>
+      <view class="danger-note">{{care.emergency}}</view>
+    </view>
+
+    <!-- 观察期已过 -->
+    <view class="card calm-card" wx:if="{{!care && lastCare}}">
+      <view class="calm-title">上次接种已经过了观察期</view>
+      <view class="calm-desc">{{lastCare.vaccine.name}} {{lastCare.doseText}} · {{lastCare.dateText}}（{{lastCare.sinceText}}），正常照护就行。</view>
+    </view>
+
+    <!-- 待安排疫苗 -->
+    <view class="card wait-card" wx:if="{{planned.length > 0}}">
+      <view class="card-head">
+        <view class="card-title">待安排疫苗</view>
+        <view class="wait-count">{{planned.length}} 针已排期</view>
+      </view>
+      <view class="vax-sub">日期到了会自动转到下面的接种记录，并开始计算护理提醒</view>
+
+      <view class="wait-row" wx:for="{{planned}}" wx:key="id" data-id="{{item.id}}" bindtap="goEdit">
+        <view class="wait-date">
+          <text class="wait-day">{{item.day}}</text>
+          <text class="wait-month">{{item.month}}</text>
+        </view>
+        <view class="wait-body">
+          <view class="wait-name">{{item.name}} · {{item.doseText}}</view>
+          <view class="wait-sub">{{item.whenText}}<text wx:if="{{item.place}}"> · {{item.place}}</text></view>
+        </view>
+        <view class="wait-arrow">›</view>
+      </view>
+    </view>
+
+    <!-- 接种记录 -->
+    <view class="section-head">
+      <view class="section-title">接种记录</view>
+      <view class="section-more" wx:if="{{hiddenCount > 0}}" bindtap="toggleRecords">
+        {{recordsExpanded ? '收起' : '展示全部 ' + recordTotal + ' 次'}}
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{recordTotal > 0}}">
+      <view class="rec-row" wx:for="{{records}}" wx:key="id" data-id="{{item.id}}" bindtap="goEdit">
+        <view class="rec-body">
+          <view class="rec-name">{{item.name}} · {{item.doseText}}</view>
+          <view class="rec-sub">{{item.dateText}}<text wx:if="{{item.place}}"> · {{item.place}}</text></view>
+          <view class="rec-note" wx:if="{{item.note}}">{{item.note}}</view>
+        </view>
+        <view class="rec-right">
+          <view class="rec-cat {{item.catText === '免费' ? '' : 'rec-cat-paid'}}">{{item.catText}}</view>
+          <view class="rec-status {{item.active ? 'rec-status-on' : ''}}">{{item.active ? item.sinceText : '已过观察期'}}</view>
+        </view>
+      </view>
+
+      <view class="rec-foot">
+        <text class="rec-foot-text">共 {{recordTotal}} 次 · 免费 {{stats.free}} · 自费 {{stats.paid}}</text>
+        <text class="rec-toggle" wx:if="{{recordsExpanded && hiddenCount > 0}}" bindtap="toggleRecords">收起</text>
+      </view>
+    </view>
+
+    <view class="card empty" wx:else>
+      <view class="empty-emoji">📋</view>
+      <view class="h3">还没有接种记录</view>
+      <view class="muted empty-desc">打完针随手记一下，之后的注意事项就不用翻手机找了。</view>
+    </view>
+
+    <!-- 免疫规划表 -->
+    <view class="card">
+      <view class="card-head">
+        <view class="card-title">免疫规划表</view>
+        <view class="plan-toggle" bindtap="togglePlan">{{showAllPlan ? '只看近期' : '显示全部'}}</view>
+      </view>
+
+      <view
+        class="plan-list-row {{item.status === 'covered' ? 'plan-list-covered' : ''}}"
+        wx:for="{{planShown}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="tapPlan"
+      >
+        <view class="plan-dot {{item.dot}}"></view>
+        <view class="plan-list-name">{{item.shortName}}</view>
+        <view class="plan-list-dose">{{item.doseText}}</view>
+        <view class="plan-list-month">{{item.label}}</view>
+        <view class="plan-list-status status-{{item.status}}">{{item.statusText}}</view>
+      </view>
+
+      <view class="removed-head" wx:if="{{removed.length > 0}}" bindtap="toggleRemoved">
+        已移除 {{removed.length}} 项 · {{showRemoved ? '收起' : '展开恢复'}}
+      </view>
+
+      <block wx:if="{{showRemoved}}">
+        <view
+          class="removed-row"
+          wx:for="{{removed}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="tapPlan"
+        >
+          <view class="removed-name">{{item.shortName}} · {{item.doseText}} · 建议 {{item.label}}</view>
+          <view class="removed-restore">恢复</view>
+        </view>
+      </block>
+
+      <view class="plan-foot">点任意一行可以标记已接种，或把这一针从提醒里移除（比如打了五联，脊灰和百白破就不必再单独打）。</view>
+      <view class="plan-foot" wx:if="{{!showAllPlan}}">默认只显示已到月龄和快到期的，点右上角看全部。</view>
+    </view>
+
+    <disclaimer text="疫苗程序与护理要点为通用科普，具体以接种门诊告知和疫苗说明书为准；出现紧急情况请及时就医。" />
+  </block>
+
+  <!-- 底部固定按钮 -->
+  <view class="sticky-bar" wx:if="{{hasBaby}}">
+    <button class="btn btn-primary btn-block" bindtap="goAdd">记录一次接种</button>
+  </view>
+
+</view>

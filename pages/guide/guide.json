@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "月龄建议",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

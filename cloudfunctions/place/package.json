@@ -1,0 +1,9 @@
+{
+  "name": "place",
+  "version": "1.0.0",
+  "description": "腾讯位置服务代理：POI 检索 + 逆地理编码",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

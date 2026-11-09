@@ -1,0 +1,27 @@
+.disclaimer {
+  display: flex;
+  align-items: flex-start;
+  padding: 24rpx 8rpx 8rpx;
+}
+
+.disclaimer-icon {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  border: 2rpx solid #C9B7A6;
+  color: #C9B7A6;
+  font-size: 18rpx;
+  line-height: 28rpx;
+  text-align: center;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+  font-style: italic;
+}
+
+.disclaimer-text {
+  flex: 1;
+  font-size: 21rpx;
+  line-height: 1.7;
+  color: #B3A294;
+}

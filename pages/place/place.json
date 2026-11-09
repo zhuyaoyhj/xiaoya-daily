@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "宝宝在哪",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}
