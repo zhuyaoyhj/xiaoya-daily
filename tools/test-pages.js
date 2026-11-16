@@ -290,7 +290,11 @@ ip.refresh();
 ok(!!ip.data.vax, '首页生成了疫苗卡数据');
 ok(!!ip.data.vax.title && !!ip.data.vax.desc, '卡片有标题和描述');
 ok(!!ip.data.vax.emoji, '卡片有图标');
-ok(['care', 'due', 'soon', 'done'].indexOf(ip.data.vax.tone) > -1, 'tone 在约定取值内');
+// tone 的合法取值来自 data/vaccines.js 的阶段表（urgent/care/watch）+ due/soon/done
+ok(
+  ['urgent', 'care', 'watch', 'due', 'soon', 'done'].indexOf(ip.data.vax.tone) > -1,
+  'tone 在约定取值内'
+);
 console.log('    ' + ip.data.vax.title + ' · ' + ip.data.vax.desc);
 
 /* ================= 9. 规划表交互 ================= */
@@ -495,6 +499,573 @@ vp.load();
 eq(vp.data.records.length, 1, '只有一条时正常显示');
 ok(vp.data.records[0].active, '刚打的这条在观察期内');
 ok(!!vp.data.care, '顶部进入护理状态');
+
+/* ================= 12. 辅食主页 ================= */
+console.log('\n[12] 辅食主页');
+mem['xyd_food_records'] = [];
+mem['xyd_food_hidden'] = [];
+mem['xyd_food_swap'] = {};
+mem['xyd_menu_swap'] = {};
+mem['xyd_custom_foods'] = [];
+
+// 造一个正好 7 月龄的宝宝：7 个月前的 1 号出生
+const bdMonth = new Date(now.getFullYear(), now.getMonth() - 7, 1);
+const BIRTH7 = bdMonth.getFullYear() + '-' + pad(bdMonth.getMonth() + 1) + '-01';
+store.saveBabies([{ id: 'b5', name: '小米', birthday: BIRTH7, avatar: '🌾' }]);
+store.updateSettings({ activeBabyId: 'b5' });
+
+let fp = instance(mount('pages/food/food.js'));
+fp.load();
+
+eq(fp.data.hasBaby, true, '有宝宝时进入正常分支');
+eq(fp.data.months, 7, '月龄算出来是 7');
+eq(fp.data.monthText, '6-8 个月', '阶段标签是 6-8 个月');
+eq(fp.data.brief.tone, 'todo', '一针没记时摘要为「还没开始加」');
+eq(fp.data.stage.focus.at, 7, '阶段卡挂上了第 7 个月的重点');
+eq(fp.data.stage.focus.title, '第 7 个月 · 该加肉泥了', '阶段卡标题带本月重点');
+ok(fp.data.stage.focus.key.indexOf('猪肉') > -1, '阶段卡给出本月关键动作');
+eq(fp.data.stage.texture, '稠糊', '性状用逐月的值（不是 6-8 月的粗档）');
+eq(fp.data.stage.meals, '1-2 餐/天', '餐次用逐月的值');
+ok(fp.data.stage.focus.nextNames.indexOf('猪肉') > -1, '阶段卡列出本月重点食材');
+eq(fp.data.due[0].name, '强化铁米粉', '待尝试第一条是强化铁米粉');
+eq(fp.data.todayMenu.length, 2, '初添期一天 2 个餐次');
+ok(!!fp.data.todayMenu[0].recipeId, '今天吃什么排到了食谱');
+eq(fp.data.week.days.length, 7, '一周餐单 7 天');
+eq(fp.data.recordTotal, 0, '没有记录');
+eq(fp.data.stats.total, 67, '食材总数 67');
+eq(fp.data.lib.length, 11, '食材库 11 组');
+
+// 记一条今天的南瓜
+store.upsertFoodRecord({ babyId: 'b5', foodId: 'pumpkin', date: TODAY, reaction: 'none' });
+fp.load();
+eq(fp.data.recordTotal, 1, '记录后已试 1 种');
+eq(fp.data.records[0].name, '南瓜', '记录名映射正确');
+eq(fp.data.watching.length, 1, '今天记的进入观察窗');
+eq(fp.data.watching[0].name, '南瓜', '观察中的是南瓜');
+eq(fp.data.watching[0].dayIndex, 1, '观察第 1 天');
+eq(fp.data.brief.tone, 'watch', '摘要切到「正在排敏」');
+ok(fp.data.brief.title.indexOf('南瓜') > -1, '摘要标题带食材名');
+ok(
+  !fp.data.due.some(function (f) {
+    return f.id === 'pumpkin';
+  }),
+  '已试过的不再出现在待尝试'
+);
+
+// 再记一种，构成冲突
+store.upsertFoodRecord({ babyId: 'b5', foodId: 'carrot', date: TODAY, reaction: 'none' });
+fp.load();
+eq(fp.data.conflict, true, '两种同时在观察时标记冲突');
+eq(fp.data.brief.tone, 'warn', '摘要升级为冲突提醒');
+
+// 折叠与展开
+mem['xyd_food_records'] = [];
+[
+  { f: 'rice_cereal', d: '2026-05-01' },
+  { f: 'pumpkin', d: '2026-06-01' },
+  { f: 'carrot', d: '2026-07-01' },
+  { f: 'apple', d: '2026-08-01' },
+  { f: 'banana', d: '2026-09-01' }
+].forEach(function (x) {
+  store.upsertFoodRecord({ babyId: 'b5', foodId: x.f, date: x.d, reaction: 'none' });
+});
+fp.load();
+eq(fp.data.recordTotal, 5, '5 条已尝试');
+eq(fp.data.records.length, 3, '默认只展示近 3 条');
+eq(fp.data.records[0].name, '香蕉', '按时间倒序，最近的排第一');
+fp.toggleTried();
+eq(fp.data.records.length, 5, '展开后露出全部');
+fp.toggleTried();
+eq(fp.data.records.length, 3, '再点收起');
+
+// 跳过与恢复
+fp.skipFood({ currentTarget: { dataset: { id: 'millet' } } });
+mem['xyd_food_hidden'] = store.getRawFoodHidden();
+eq(store.getFoodHidden('b5').length, 1, '跳过后进入隐藏清单');
+fp.load();
+eq(fp.data.hiddenCount, 1, '页面显示已跳过 1 种');
+ok(
+  !fp.data.due.some(function (f) {
+    return f.id === 'millet';
+  }),
+  '跳过的食材不再出现在待尝试'
+);
+fp.restoreHidden();
+fp.load();
+eq(fp.data.hiddenCount, 0, '恢复后隐藏清单清空');
+
+// 折叠开关
+fp.toggleWeek();
+eq(fp.data.weekOpen, true, '一周餐单可以展开');
+fp.toggleWeek();
+eq(fp.data.weekOpen, false, '再点收起');
+fp.toggleLib();
+eq(fp.data.libOpen, true, '食材库可以展开');
+
+// 换一道
+const mealBefore = fp.data.todayMenu[0].name;
+fp.swapMeal({ currentTarget: { dataset: { slot: 'am' } } });
+eq(lastToast, '已换一道', '换一道有提示');
+ok(!!fp.data.todayMenu[0].recipeId, '换完之后当天那餐仍有食谱');
+ok(fp.data.todayMenu[0].name !== mealBefore, '换一道确实换成了别的食谱');
+eq(store.getMenuSwap('b5')['' + TODAY + '#am'] !== undefined, true, '替换写进了存储');
+
+// 食谱浮层
+fp.openRecipe({ currentTarget: { dataset: { id: fp.data.todayMenu[0].recipeId } } });
+eq(fp.data.sheet, true, '点菜名打开浮层');
+ok(!!fp.data.recipe && fp.data.recipe.steps.length > 0, '浮层里有做法步骤');
+ok(fp.data.recipe.foods.length > 0, '浮层里有食材名');
+fp.closeSheet();
+eq(fp.data.sheet, false, '关闭浮层');
+
+// 导航
+lastNav = '';
+fp.goAdd();
+eq(lastNav, '/pages/food-edit/food-edit', '去记录页');
+lastNav = '';
+fp.goAddFood({ currentTarget: { dataset: { id: 'broccoli' } } });
+eq(lastNav, '/pages/food-edit/food-edit?foodId=broccoli', '带着食材去记录页');
+lastNav = '';
+fp.goEdit({ currentTarget: { dataset: { id: 'x1' } } });
+eq(lastNav, '/pages/food-edit/food-edit?id=x1', '编辑已有记录');
+
+// 16 月龄：没有单独一档，回退到第 15 个月，并给出说明
+const bd15 = new Date(now.getFullYear(), now.getMonth() - 16, 1);
+const BIRTH16 = bd15.getFullYear() + '-' + pad(bd15.getMonth() + 1) + '-01';
+store.saveBabies([{ id: 'b7', name: '小树', birthday: BIRTH16, avatar: '🌳' }]);
+store.updateSettings({ activeBabyId: 'b7' });
+fp.load();
+eq(fp.data.months, 16, '16 月龄算得出来');
+eq(fp.data.stage.focus.at, 15, '16 月龄回退到第 15 个月那一档');
+eq(fp.data.stage.focus.exact, false, '16 月龄不是精确节点，页面会给说明');
+eq(fp.data.stage.texture, '切成小块的家常菜', '性状跟着第 15 个月走');
+eq(fp.data.due.length > 0, true, '16 月龄仍有待尝试清单');
+
+// 没宝宝
+mem['xyd_babies'] = [];
+fp.load();
+eq(fp.data.hasBaby, false, '没有宝宝时进入空状态');
+lastNav = '';
+fp.goBaby();
+eq(lastNav, '/pages/baby-edit/baby-edit', '空状态引导去添加宝宝');
+
+/* ================= 13. 记录一次辅食尝试 ================= */
+console.log('\n[13] 记录一次辅食尝试');
+mem['xyd_food_records'] = [];
+mem['xyd_custom_foods'] = [];
+mem['xyd_food_hidden'] = [];
+store.saveBabies([{ id: 'b6', name: '小豆', birthday: BIRTH7 }]);
+store.updateSettings({ activeBabyId: 'b6' });
+
+let fep = instance(mount('pages/food-edit/food-edit.js'));
+fep.onLoad({});
+
+eq(fep.data.list.length > 0, true, '默认分组里有食材');
+eq(fep.data.canSave, false, '没选食材时不能保存');
+eq(fep.data.date, TODAY, '日期默认今天');
+eq(fep.data.reaction, 'none', '反应默认「没问题」');
+eq(fep.data.reactions.length, 4, '反应选项 4 档');
+
+fep.pick({ currentTarget: { dataset: { id: 'rice_cereal' } } });
+eq(fep.data.canSave, true, '选中后可以保存');
+eq(fep.data.selected.name, '强化铁米粉', '选中项映射正确');
+ok(fep.data.selected.ironRich, '强化铁米粉标了高铁');
+
+// 反应严重时给出就医提示
+fep.pickReaction({ currentTarget: { dataset: { key: 'severe' } } });
+eq(fep.data.reaction, 'severe', '选中严重反应');
+eq(fep.data.reactionDetail.tone, 'danger', '严重反应的色调');
+ok(fep.data.reactionDetail.next.indexOf('120') > -1, '严重反应处置里写拨 120');
+
+fep.pickReaction({ currentTarget: { dataset: { key: 'none' } } });
+fep.onNote({ detail: { value: '吃得很香' } });
+fep.onReactionNote({ detail: { value: '没有异常' } });
+fep.save();
+const savedFood = store.getFoodRecords('b6')[0];
+eq(savedFood.foodId, 'rice_cereal', '存的是选中的食材');
+eq(savedFood.date, TODAY, '存的是页面上的日期');
+eq(savedFood.reaction, 'none', '存的是选中的反应');
+eq(savedFood.note, '吃得很香', '备注存下来了');
+eq(lastToast, '已记录，观察 2 天', '无反应时提示继续观察');
+
+// 编辑已有记录
+fep = instance(mount('pages/food-edit/food-edit.js'));
+fep.onLoad({ id: savedFood.id });
+eq(fep.data.isEdit, true, '带 id 进来是编辑态');
+eq(fep.data.selectedId, 'rice_cereal', '回填了食材');
+eq(fep.data.note, '吃得很香', '回填了备注');
+fep.pickReaction({ currentTarget: { dataset: { key: 'mild' } } });
+fep.save();
+eq(store.getFoodRecords('b6')[0].reaction, 'mild', '编辑后反应被更新');
+eq(store.getFoodRecords('b6').length, 1, '编辑不会新增记录');
+eq(lastToast, '已更新', '编辑的提示文案');
+
+// 删除
+fep.remove();
+eq(store.getFoodRecords('b6').length, 0, '删除后记录已清掉');
+
+// 带着食材进来
+fep = instance(mount('pages/food-edit/food-edit.js'));
+fep.onLoad({ foodId: 'pumpkin' });
+eq(fep.data.group, 'veg', '自动切到该食材所在分组');
+eq(fep.data.selectedId, 'pumpkin', '预选了带进来的食材');
+eq(fep.data.canSave, true, '预选后可直接保存');
+
+// 未选食材保存被拦
+const fep2 = instance(mount('pages/food-edit/food-edit.js'));
+fep2.onLoad({});
+fep2.save();
+eq(lastToast, '先选一种食材', '没选食材时保存被拦');
+
+// 自定义食材
+fep = instance(mount('pages/food-edit/food-edit.js'));
+fep.onLoad({});
+fep.openSheet();
+eq(fep.data.sheet, true, '打开自定义浮层');
+fep.saveCustom();
+eq(lastToast, '先填食材名称', '空名被拦');
+fep.onCName({ detail: { value: '秋葵' } });
+fep.onCNote({ detail: { value: '菜市场有' } });
+fep.pickCGroup({ currentTarget: { dataset: { key: 'veg' } } });
+fep.pickCMonth({ currentTarget: { dataset: { m: 10 } } });
+fep.saveCustom();
+eq(fep.data.sheet, false, '保存后关闭浮层');
+eq(store.getCustomFoods().length, 1, '自定义食材已存');
+eq(fep.data.selectedId, store.getCustomFoods()[0].id, '保存后自动选中新食材');
+ok(fep.data.selected.custom, '选中项带自定义标记');
+
+mem['xyd_custom_foods'] = store.getCustomFoods();
+const customId = store.getCustomFoods()[0].id;
+fep.removeCustom({ currentTarget: { dataset: { id: customId } } });
+eq(store.getCustomFoods().length, 0, '删除自定义食材');
+eq(lastToast, '已删除', '删除有提示');
+
+/* ================= 14. 月龄建议页的辅食入口 ================= */
+console.log('\n[14] 月龄建议页的辅食入口');
+mem['xyd_food_records'] = [];
+mem['xyd_menu_swap'] = {};
+store.saveBabies([{ id: 'b7', name: '小果', birthday: BIRTH7 }]);
+store.updateSettings({ activeBabyId: 'b7' });
+store.upsertFoodRecord({ babyId: 'b7', foodId: 'pumpkin', date: TODAY, reaction: 'none' });
+
+let gp = instance(mount('pages/guide/guide.js'));
+gp.onLoad({ month: 7, tab: 'eat' });
+
+eq(gp.data.tab, 'eat', '停在吃 tab');
+ok(!!gp.data.foodCard, '生成了辅食摘要卡');
+eq(gp.data.foodCard.stageLabel, '6-8 个月', '摘要标注当前阶段');
+eq(gp.data.foodCard.focusTitle, '第 7 个月 · 该加肉泥了', '摘要标出本月这一档的重点');
+ok(gp.data.foodCard.focusKey.indexOf('猪肉') > -1, '摘要带本月关键动作');
+ok(gp.data.foodCard.title.indexOf('南瓜') > -1, '摘要标题跟着排敏状态走');
+ok(gp.data.foodCard.todayText.length > 0, '摘要带今天吃什么');
+eq(gp.data.foodCard.tried, 1, '摘要带已试种数');
+
+lastNav = '';
+gp.goFood();
+eq(lastNav, '/pages/food/food', '点摘要卡进入辅食页');
+
+gp.render(7, 'move');
+eq(gp.data.tab, 'move', '可以切到别的 tab');
+ok(!!gp.data.foodCard, '切走后摘要数据仍在（由 wxml 控制只在吃 tab 显示）');
+
+gp.goFood();
+eq(lastNav, '/pages/food/food', '非吃 tab 也能跳（防御性）');
+
+// 没有宝宝时不出摘要卡
+mem['xyd_babies'] = [];
+gp = instance(mount('pages/guide/guide.js'));
+gp.onLoad({ month: 7, tab: 'eat' });
+eq(gp.data.foodCard, null, '没有宝宝时不显示辅食摘要卡');
+
+/* ================= 15. 记一餐页 ================= */
+console.log('\n[15] 记一餐页');
+
+mem['xyd_meal_logs'] = [];
+mem['xyd_food_records'] = [];
+
+// 没有宝宝
+mem['xyd_babies'] = [];
+lastToast = '';
+let mp = instance(mount('pages/meal-log/meal-log.js'));
+mp.onLoad({});
+eq(lastToast, '请先添加宝宝', '没有宝宝时先提示添加');
+
+store.saveBabies([{ id: 'b8', name: '小芽', birthday: BIRTH7 }]);
+store.updateSettings({ activeBabyId: 'b8' });
+
+// 空表单
+mp = instance(mount('pages/meal-log/meal-log.js'));
+mp.onLoad({});
+eq(mp.data.babyName, '小芽', '带上宝宝名字');
+eq(mp.data.date, TODAY, '默认记今天');
+ok(['am', 'noon', 'pm', 'eve', 'other'].indexOf(mp.data.slot) > -1, '默认餐次按当前钟点猜');
+eq(mp.data.foods.length, 0, '一开始没选食材');
+eq(mp.data.canSave, false, '什么都没选时不能保存');
+eq(mp.data.accept, 'ok', '接受度默认「还行」');
+
+// 从「今天吃什么」带进来
+mp = instance(mount('pages/meal-log/meal-log.js'));
+mp.onLoad({ recipeId: 'r_yolk_cereal', slot: 'am', date: TODAY });
+eq(mp.data.recipeId, 'r_yolk_cereal', '记住带入的食谱 id');
+eq(mp.data.recipeName, '蛋黄米糊', '带上菜名');
+eq(mp.data.foods.length, 2, '把食谱的食材都勾上');
+eq(mp.data.slot, 'am', '带上餐次');
+eq(mp.data.canSave, true, '有食材就能保存');
+
+// 摘掉一个食材
+mp.removeFood({ currentTarget: { dataset: { id: 'egg_yolk' } } });
+eq(mp.data.foods.length, 1, '可以摘掉不吃的食材');
+eq(mp.data.canSave, true, '还剩一种时仍可保存');
+mp.removeFood({ currentTarget: { dataset: { id: 'rice_cereal' } } });
+eq(mp.data.canSave, false, '全摘空后不能保存');
+
+// 浮层加食材
+mp.setData({ group: 'grain' });
+mp.openSheet();
+ok(mp.data.sheet === true, '打开加食材浮层');
+ok(mp.data.lib.length > 0, '浮层列出这一组食材');
+ok(
+  mp.data.lib.some(function (x) {
+    return x.allergen === true || x.meta.indexOf('月起') > -1;
+  }),
+  '浮层每格带过敏原或起始月龄标记'
+);
+
+lastToast = '';
+mp.save();
+eq(lastToast, '先选吃了什么', '一种都没选时保存被拦住');
+
+mp.toggleFood({ currentTarget: { dataset: { id: 'rice_cereal' } } });
+eq(mp.data.foods.length, 1, '浮层点一下加进这一餐');
+ok(
+  mp.data.lib.filter(function (x) {
+    return x.id === 'rice_cereal';
+  })[0].on === true,
+  '浮层里已选的格子标成选中'
+);
+mp.toggleFood({ currentTarget: { dataset: { id: 'rice_cereal' } } });
+eq(mp.data.foods.length, 0, '再点一下从这一餐移除');
+
+// 填完整并保存
+mp.toggleFood({ currentTarget: { dataset: { id: 'pumpkin' } } });
+mp.pickSlot({ currentTarget: { dataset: { key: 'noon' } } });
+mp.pickAmount({ currentTarget: { dataset: { key: 'half' } } });
+mp.pickAccept({ currentTarget: { dataset: { key: 'love' } } });
+mp.pickPoop({ currentTarget: { dataset: { key: 'normal' } } });
+mp.onAmountText({ detail: { value: '小半碗' } });
+mp.onNote({ detail: { value: '拌了点米粉' } });
+mp.onDate({ detail: { value: TODAY } });
+
+lastToast = '';
+mp.save();
+eq(store.getMealLogs('b8').length, 1, '保存后落库一条');
+const savedLog = store.getMealLogs('b8')[0];
+eq(savedLog.slot, 'noon', '存下餐次');
+eq(savedLog.foods, ['pumpkin'], '存下食材');
+eq(savedLog.amount, 'half', '存下分量');
+eq(savedLog.accept, 'love', '存下接受度');
+eq(savedLog.poop, 'normal', '存下便便');
+eq(savedLog.amountText, '小半碗', '存下分量补充说明');
+eq(savedLog.note, '拌了点米粉', '存下备注');
+eq(lastToast, '已记录，1 种待补排敏', '还没记排敏时提示去补');
+
+// 记过排敏之后不再提示
+store.upsertFoodRecord({ babyId: 'b8', foodId: 'pumpkin', date: TODAY, reaction: 'none' });
+mp = instance(mount('pages/meal-log/meal-log.js'));
+mp.onLoad({ recipeId: 'r_pumpkin_puree' });
+lastToast = '';
+mp.save();
+eq(lastToast, '已记录', '记过排敏的食材不再提示补记');
+
+// 改已有的一餐
+const editId = store.getMealLogs('b8')[0].id;
+mp = instance(mount('pages/meal-log/meal-log.js'));
+mp.onLoad({ id: editId });
+eq(mp.data.isEdit, true, '带 id 进来是编辑态');
+eq(mp.data.slot, 'noon', '编辑态载入餐次');
+eq(mp.data.foods.length, 1, '编辑态载入食材');
+eq(mp.data.amount, 'half', '编辑态载入分量');
+
+mp.onNote({ detail: { value: '改成吃完了' } });
+mp.pickAmount({ currentTarget: { dataset: { key: 'all' } } });
+lastToast = '';
+mp.save();
+eq(lastToast, '已更新', '编辑保存提示已更新');
+eq(store.getMealLog(editId).amount, 'all', '编辑写回新分量');
+eq(store.getMealLog(editId).note, '改成吃完了', '编辑写回新备注');
+
+// 删除
+mp = instance(mount('pages/meal-log/meal-log.js'));
+mp.onLoad({ id: editId });
+mp.remove();
+eq(store.getMealLog(editId), null, '删除后这条没了');
+
+/* ================= 16. 辅食页 · 3 天计划与接种提示条 ================= */
+console.log('\n[16] 辅食页 · 3 天计划与接种提示条');
+
+function dateStrOf(d) {
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+function hhmm(d) {
+  return pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+mem['xyd_food_records'] = [];
+mem['xyd_food_hidden'] = [];
+mem['xyd_menu_swap'] = {};
+mem['xyd_custom_foods'] = [];
+mem['xyd_meal_logs'] = [];
+mem['xyd_vaccine_records'] = [];
+
+store.saveBabies([{ id: 'b5', name: '小米', birthday: BIRTH7, avatar: '🌾' }]);
+store.updateSettings({ activeBabyId: 'b5' });
+
+const TMR = dateStrOf(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
+const D2 = dateStrOf(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2));
+
+let pp = instance(mount('pages/food/food.js'));
+pp.load();
+
+eq(pp.data.diet, null, '没有接种记录时不出提示条');
+eq(pp.data.today, TODAY, '页面带上今天的日期');
+eq(pp.data.planNext.length, 2, '接着两天给出 2 张卡');
+eq(pp.data.planNext[0].label, '明天', '第一张是明天');
+eq(pp.data.planNext[0].date, TMR, '明天日期正确');
+eq(pp.data.planNext[1].label, '后天', '第二张是后天');
+eq(pp.data.planNext[1].date, D2, '后天日期正确');
+ok(
+  pp.data.planNext[0].meals.length > 0 && pp.data.planNext[1].meals.length > 0,
+  '两天都排上了餐次'
+);
+ok(
+  pp.data.todayMenu.some(function (m) {
+    return !!m.reasonText;
+  }),
+  '今天吃什么带「为什么排它」的理由'
+);
+
+const wToday = pp.data.week.days.filter(function (d) {
+  return d.date === TODAY;
+})[0];
+eq(
+  wToday.meals.map(function (m) {
+    return m.recipeId;
+  }),
+  pp.data.todayMenu.map(function (m) {
+    return m.recipeId;
+  }),
+  '今天吃什么与周餐单里今天完全一致'
+);
+
+// 当季一行
+const monthNum = Number(TODAY.slice(5, 7));
+const seasonFoods = require(path.join(ROOT, 'utils/food.js')).inSeasonFoods(monthNum, 7);
+if (seasonFoods.length) {
+  ok(pp.data.seasonText.indexOf('当季') > -1, '阶段卡里有一行当季食材');
+} else {
+  eq(pp.data.seasonText, '', '这个月没有当季食材时不显示');
+}
+
+// 接种后 2 小时
+const nowD = new Date();
+const twoHoursAgo = new Date(nowD.getTime() - 2 * 3600 * 1000);
+store.upsertVaccineRecord({
+  babyId: 'b5',
+  vaccineId: 'dtap',
+  dose: 1,
+  date: dateStrOf(twoHoursAgo),
+  time: hhmm(twoHoursAgo),
+  place: '社区门诊'
+});
+pp.load();
+
+ok(!!pp.data.diet, '接种后出现提示条');
+eq(pp.data.diet.level, 'strict', '接种 2 小时内是 strict');
+ok(pp.data.diet.title.length > 0, '提示条带疫苗名与剂次');
+ok(pp.data.diet.foot.indexOf('收紧') > -1, '提示条说明餐单已自动收紧');
+ok(
+  pp.data.todayMenu.every(function (m) {
+    return !m.newText;
+  }),
+  'strict 下今天的餐单不含没试过的过敏原'
+);
+
+// 超过 72 小时不再约束
+const longAgo = new Date(nowD.getTime() - 80 * 3600 * 1000);
+mem['xyd_vaccine_records'] = [];
+store.upsertVaccineRecord({
+  babyId: 'b5',
+  vaccineId: 'dtap',
+  dose: 1,
+  date: dateStrOf(longAgo),
+  time: hhmm(longAgo)
+});
+pp.load();
+eq(pp.data.diet, null, '超过 72 小时后提示条消失');
+
+// 记一餐
+mem['xyd_meal_logs'] = [];
+const todayLog = store.upsertMealLog({
+  babyId: 'b5',
+  date: TODAY,
+  slot: 'am',
+  recipeId: 'r_pumpkin_puree',
+  recipeName: '南瓜泥',
+  foods: ['pumpkin'],
+  amount: 'half',
+  amountText: '小半碗',
+  accept: 'love'
+});
+pp.load();
+
+eq(pp.data.logTotal, 1, '最近吃了什么记到 1 餐');
+eq(pp.data.logs.length, 1, '近 3 条里露出这一餐');
+eq(pp.data.logs[0].title, '南瓜泥', '展示菜名');
+eq(pp.data.logs[0].amountText, '小半碗', '展示分量');
+ok(
+  pp.data.untracked.some(function (f) {
+    return f.id === 'pumpkin';
+  }),
+  '吃过但没记排敏的会被提醒补记'
+);
+ok(
+  pp.data.lib.some(function (g) {
+    return g.items.some(function (i) {
+      return i.id === 'pumpkin' && i.eaten === true;
+    });
+  }),
+  '食材库给吃过的食材打「吃过」标记'
+);
+
+// 记过排敏之后提醒消失
+store.upsertFoodRecord({ babyId: 'b5', foodId: 'pumpkin', date: TODAY, reaction: 'none' });
+pp.load();
+ok(
+  !pp.data.untracked.some(function (f) {
+    return f.id === 'pumpkin';
+  }),
+  '补记排敏后不再提醒'
+);
+
+// 导航
+lastNav = '';
+pp.goLog();
+eq(lastNav, '/pages/meal-log/meal-log', '「记一餐」进入记录页');
+lastNav = '';
+pp.goLogMeal({ currentTarget: { dataset: { date: TODAY, slot: 'am', id: 'r_pumpkin_puree' } } });
+eq(lastNav, '/pages/meal-log/meal-log?date=' + TODAY + '&slot=am&recipeId=r_pumpkin_puree', '「吃了」带着日期餐次食谱进入记录页');
+lastNav = '';
+pp.goLogMeal({ currentTarget: { dataset: { date: TMR, slot: 'noon', id: '' } } });
+eq(lastNav, '/pages/meal-log/meal-log?date=' + TMR + '&slot=noon', '明天的空餐位也能记，且不带空食谱参数');
+lastNav = '';
+pp.goLogEdit({ currentTarget: { dataset: { id: todayLog.id } } });
+eq(lastNav, '/pages/meal-log/meal-log?id=' + todayLog.id, '点最近一餐进入编辑');
+
+// 「换一道」仍然守接种期约束（opts 透传）
+lastToast = '';
+pp.swapMeal({ currentTarget: { dataset: { slot: 'am' } } });
+eq(lastToast, '已换一道', '换一道在接种期下仍可用');
+ok(!!pp.data.todayMenu[0].recipeId, '换完之后那餐仍有食谱');
 
 console.log('\n========================================');
 console.log('通过 ' + pass + ' 项，失败 ' + fail + ' 项');

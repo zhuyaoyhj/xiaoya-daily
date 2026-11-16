@@ -2,6 +2,8 @@
 const guideUtil = require('../../utils/guide.js');
 const dateUtil = require('../../utils/date.js');
 const store = require('../../utils/store.js');
+const foodUtil = require('../../utils/food.js');
+const vaccineUtil = require('../../utils/vaccine.js');
 
 Page({
   data: {
@@ -13,7 +15,8 @@ Page({
     visible: [],
     isCurrent: true,
     currentMonth: 0,
-    babyName: ''
+    babyName: '',
+    foodCard: null
   },
 
   onLoad(options) {
@@ -26,7 +29,62 @@ Page({
       currentMonth: currentMonth,
       babyName: baby ? baby.name : ''
     });
+    this.loadFoodCard();
     this.render(month, (options && options.tab) || 'all');
+  },
+
+  /** 吃 tab 顶部的辅食摘要，按宝宝真实月龄算，不跟页面的月龄切换 */
+  loadFoodCard() {
+    const baby = store.getActiveBaby();
+    if (!baby) {
+      this.setData({ foodCard: null });
+      return;
+    }
+
+    const today = dateUtil.todayStr();
+    const age = dateUtil.calcAge(baby.birthday);
+    const months = age.valid ? age.months : 0;
+    const records = store.getFoodRecords(baby.id);
+    const hidden = store.getFoodHidden(baby.id);
+    const brief = foodUtil.brief(records, months, today, hidden);
+    const stats = foodUtil.stats(records, months, today);
+    const focus = months >= 6 ? foodUtil.focusFor(months) : null;
+
+    let todayText = '';
+    if (months >= 6) {
+      const swaps = store.getMenuSwap(baby.id);
+      // 接种期约束与辅食页同口径，否则首页摘要和辅食页会今天两样菜
+      const dietFlag = vaccineUtil.dietFlagFor(store.getVaccineRecords(baby.id), Date.now(), today);
+      const opts = foodUtil.normalizeOpts({ diet: dietFlag.active ? dietFlag.level : 'none' });
+      const day = foodUtil.dayMenuFor(months, baby.id, today, swaps, today, records, opts);
+      const names = [];
+      day.meals.forEach(function (m) {
+        if (m.recipe) names.push(m.recipe.name);
+      });
+      todayText = names.slice(0, 2).join('、');
+    }
+
+    this.setData({
+      foodCard: {
+        tone: brief.tone,
+        title: brief.title,
+        desc: brief.desc,
+        stageLabel: foodUtil.monthLabel(months),
+        focusTitle: focus ? focus.title : '',
+        focusKey: focus ? focus.key : '',
+        tried: stats.tried,
+        todayText: todayText
+      }
+    });
+  },
+
+  goFood() {
+    wx.navigateTo({ url: '/pages/food/food' });
+  },
+
+  onShow() {
+    // 从辅食页返回后，摘要要跟着更新
+    this.loadFoodCard();
   },
 
   render(month, tab) {

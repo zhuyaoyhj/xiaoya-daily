@@ -1,0 +1,212 @@
+<view class="page-wrap">
+
+  <view class="top-tip">{{babyName}} · {{isEdit ? '修改这次尝试' : '记一次新食材尝试'}}</view>
+
+  <!-- 还有别的食材在观察中 -->
+  <view class="watch-tip" wx:if="{{watching}}">
+    <view class="watch-tip-title">{{watching.name}} 还在观察中（第 {{watching.dayIndex}} 天）</view>
+    <view class="watch-tip-desc">现在再加新食材，万一有反应就分不清是哪个引起的。建议等它观察完再加新的。</view>
+  </view>
+
+  <!-- 分类 -->
+  <scroll-view class="gtabs" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view
+      class="gtab {{group === item.key ? 'gtab-on' : ''}}"
+      wx:for="{{groups}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="switchGroup"
+    >
+      {{item.label}}
+    </view>
+  </scroll-view>
+
+  <!-- 食材网格 -->
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">这次吃的是</view>
+      <view class="pick-name">找不到？可以自己加</view>
+    </view>
+
+    <view class="food-grid">
+      <view
+        class="food-item {{item.on ? 'food-item-on' : ''}}"
+        wx:for="{{list}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="pick"
+      >
+        <text class="food-name">{{item.name}}</text>
+        <text class="food-meta {{item.failed ? 'food-meta-bad' : ''}}" wx:if="{{item.flag}}">{{item.flag}}</text>
+        <text class="food-meta" wx:else>{{item.fromMonth}} 月起</text>
+        <text class="food-custom" wx:if="{{item.custom}}">自定义</text>
+      </view>
+
+      <view class="food-item food-item-add" bindtap="openSheet">
+        <text class="food-name">＋ 自定义</text>
+        <text class="food-meta">按需添加</text>
+      </view>
+    </view>
+
+    <view class="empty-hint" wx:if="{{list.length === 0}}">这一组还没有食材，点「＋ 自定义」加一个</view>
+  </view>
+
+  <!-- 选中食材的说明 -->
+  <view class="card" wx:if="{{selected}}">
+    <view class="card-head">
+      <view class="card-title">{{selected.name}}</view>
+      <view class="food-badge-iron" wx:if="{{selected.ironRich}}">高铁</view>
+    </view>
+
+    <view class="kv" wx:if="{{selected.how}}">
+      <text class="kv-key">怎么做</text>
+      <text class="kv-val">{{selected.how}}</text>
+    </view>
+    <view class="kv" wx:if="{{selected.note}}">
+      <text class="kv-key">要注意</text>
+      <text class="kv-val">{{selected.note}}</text>
+    </view>
+    <view class="kv" wx:if="{{selected.allergenTip}}">
+      <text class="kv-key">{{selected.allergenName}}</text>
+      <text class="kv-val">{{selected.allergenTip}}</text>
+    </view>
+    <view class="kv" wx:if="{{selected.custom}}">
+      <text class="kv-key">自定义</text>
+      <text class="kv-val">这是你自己加的食材，App 没有它的专属资料，按通用原则少量试、观察 2-3 天。</text>
+    </view>
+
+    <view class="kv-last" wx:if="{{selected.lastText}}">{{selected.lastText}}，这次算再试一次{{selected.lastFailed ? '（上次出过问题）' : ''}}</view>
+  </view>
+
+  <!-- 反应 -->
+  <view class="card" wx:if="{{selected}}">
+    <view class="card-title">吃完之后有反应吗</view>
+    <view class="rxn-row">
+      <view
+        class="rxn-chip {{item.cls}} {{reaction === item.key ? 'rxn-chip-on' : ''}}"
+        wx:for="{{reactions}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="pickReaction"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <view class="rxn-detail" wx:if="{{reactionDetail}}">
+      <view class="rxn-desc">{{reactionDetail.desc}}</view>
+      <view class="rxn-next">{{reactionDetail.next}}</view>
+    </view>
+
+    <view class="rxn-alert" wx:if="{{reaction === 'severe'}}">
+      如果宝宝现在就有呼吸急促、嘴唇或眼睑肿、精神差，别在这里记录了，先就医或拨 120。
+    </view>
+
+    <textarea
+      class="note-area"
+      wx:if="{{reaction !== 'none'}}"
+      placeholder="具体表现（选填），比如「嘴角红了一小片，半小时就退了」"
+      placeholder-class="placeholder"
+      value="{{reactionNote}}"
+      maxlength="120"
+      bindinput="onReactionNote"
+    />
+  </view>
+
+  <!-- 日期与备注 -->
+  <view class="card">
+    <view class="card-title">什么时候吃的</view>
+
+    <picker mode="date" value="{{date}}" start="2000-01-01" end="{{today}}" bindchange="onDate">
+      <view class="field">
+        <view class="field-label">尝试日期</view>
+        <view class="field-value">{{date}}</view>
+        <view class="row-arrow"></view>
+      </view>
+    </picker>
+    <view class="time-hint">记的是第一次吃这种食材的日子，观察窗从这天开始算。</view>
+
+    <view class="field">
+      <view class="field-label">备注</view>
+      <input
+        class="field-input"
+        placeholder="选填，比如「吃了两勺，很爱吃」"
+        placeholder-class="placeholder"
+        value="{{note}}"
+        maxlength="60"
+        bindinput="onNote"
+      />
+    </view>
+  </view>
+
+  <view class="btn btn-primary btn-block save-btn {{canSave ? '' : 'save-btn-off'}}" bindtap="save">保存</view>
+  <view class="btn btn-line btn-block del-btn" wx:if="{{isEdit}}" bindtap="remove">删除这条记录</view>
+
+  <disclaimer text="辅食建议为通用科普，过敏的判断与处置请以儿科医生意见为准。" />
+
+  <!-- 自定义食材浮层 -->
+  <view class="mask" wx:if="{{sheet}}" bindtap="closeSheet">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">添加自定义食材</view>
+
+      <view class="sheet-label">名称</view>
+      <input
+        class="sheet-input"
+        placeholder="比如「秋葵」「自制肉松」"
+        placeholder-class="placeholder"
+        value="{{cName}}"
+        maxlength="12"
+        bindinput="onCName"
+      />
+
+      <view class="sheet-label">归到哪一组</view>
+      <view class="sheet-chips">
+        <view
+          class="sheet-chip {{cGroup === item.key ? 'sheet-chip-on' : ''}}"
+          wx:for="{{cGroups}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="pickCGroup"
+        >
+          {{item.label}}
+        </view>
+      </view>
+
+      <view class="sheet-label">几个月可以吃</view>
+      <view class="sheet-chips">
+        <view
+          class="sheet-chip {{cMonth === item ? 'sheet-chip-on' : ''}}"
+          wx:for="{{monthOptions}}"
+          wx:key="*this"
+          data-m="{{item}}"
+          bindtap="pickCMonth"
+        >
+          {{item}} 月
+        </view>
+      </view>
+
+      <view class="sheet-label">备注</view>
+      <input
+        class="sheet-input"
+        placeholder="选填"
+        placeholder-class="placeholder"
+        value="{{cNote}}"
+        maxlength="40"
+        bindinput="onCNote"
+      />
+
+      <view class="sheet-actions">
+        <view class="btn btn-line btn-sm" bindtap="closeSheet">取消</view>
+        <view class="btn btn-primary btn-sm" bindtap="saveCustom">添加</view>
+      </view>
+
+      <block wx:if="{{customList.length > 0}}">
+        <view class="sheet-label">已添加的（{{customList.length}}）</view>
+        <view class="custom-row" wx:for="{{customList}}" wx:key="id">
+          <view class="custom-name">{{item.name}}</view>
+          <view class="custom-del" data-id="{{item.id}}" bindtap="removeCustom">删除</view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

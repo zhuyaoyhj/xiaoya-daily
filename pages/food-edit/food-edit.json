@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "记录辅食",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

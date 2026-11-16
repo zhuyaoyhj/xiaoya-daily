@@ -28,6 +28,19 @@
     </view>
   </scroll-view>
 
+  <!-- 辅食专区（只在「吃」tab 出现） -->
+  <view class="food-entry entry-{{foodCard.tone}}" wx:if="{{tab === 'eat' && foodCard}}" bindtap="goFood">
+    <view class="entry-top">
+      <view class="entry-badge">辅食</view>
+      <view class="entry-chip">{{foodCard.stageLabel}}</view>
+    </view>
+    <view class="entry-title">{{foodCard.title}}</view>
+    <view class="entry-month" wx:if="{{foodCard.focusTitle}}">{{foodCard.focusTitle}}</view>
+    <view class="entry-desc">{{foodCard.desc}}</view>
+    <view class="entry-today" wx:if="{{foodCard.todayText}}">今天这顿：{{foodCard.todayText}}</view>
+    <view class="entry-go">打开辅食喂养 · 已试 {{foodCard.tried}} 种 ›</view>
+  </view>
+
   <!-- 内容 -->
   <view class="sec" wx:for="{{visible}}" wx:key="key">
     <view class="sec-head">

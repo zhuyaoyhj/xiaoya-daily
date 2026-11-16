@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "记一餐",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

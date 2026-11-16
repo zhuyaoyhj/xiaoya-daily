@@ -79,6 +79,47 @@ function greeting() {
   return '晚上好';
 }
 
+/**
+ * 两个日期相差的天数（to 缺省为今天），正数表示 to 在 from 之后
+ * 按 Y/M/D 归零后相减，避免夏令时与时分秒影响
+ * 任一日期非法返回 0
+ */
+function diffDays(fromStr, toStr) {
+  const a = parseDate(fromStr);
+  if (!a) return 0;
+  const b = toStr ? parseDate(toStr) : new Date();
+  if (!b) return 0;
+  const a0 = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+  const b0 = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.round((b0.getTime() - a0.getTime()) / 86400000);
+}
+
+/** 往日期上加/减天数，返回 'YYYY-MM-DD' */
+function shiftDate(dateStr, delta) {
+  const d = dateStr ? parseDate(dateStr) : new Date();
+  if (!d) return '';
+  d.setDate(d.getDate() + Number(delta || 0));
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+
+/** 本周周一（weekStart=1 表示周一），返回 'YYYY-MM-DD' */
+function weekStartStr(dateStr) {
+  const d = dateStr ? parseDate(dateStr) : new Date();
+  if (!d) return '';
+  const base = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const day = base.getDay(); // 0=周日
+  const back = day === 0 ? 6 : day - 1; // 回退到周一
+  base.setDate(base.getDate() - back);
+  return base.getFullYear() + '-' + pad(base.getMonth() + 1) + '-' + pad(base.getDate());
+}
+
+/** 日期所在的自然月 1-12；非法输入返回 0。只认数字，不带季节语义 */
+function monthNumber(dateStr) {
+  const d = parseDate(dateStr);
+  if (!d) return 0;
+  return d.getMonth() + 1;
+}
+
 module.exports = {
   pad,
   parseDate,
@@ -87,5 +128,9 @@ module.exports = {
   ageText,
   formatCN,
   weekdayCN,
-  greeting
+  greeting,
+  diffDays,
+  shiftDate,
+  weekStartStr,
+  monthNumber
 };

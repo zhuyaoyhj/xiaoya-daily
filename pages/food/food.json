@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "辅食喂养",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

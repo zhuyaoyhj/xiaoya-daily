@@ -557,6 +557,82 @@ function stats(records, today) {
   };
 }
 
+/* ---------------- 接种后的就餐约束（供辅食计划用） ---------------- */
+
+/**
+ * 接种后 72 小时内的吃饭约束，产出结构化 flag 给辅食引擎消费
+ *
+ * 分期口径来自 PHASES 里那两条「饮食」条目：
+ *   0-24h（observe + day0）→ strict：别加任何没吃过的新食材
+ *   24-72h（day3）        → light ：只排吃过的，避开容易过敏的
+ *
+ * @param {Array}  records 该宝宝的接种记录
+ * @param {Number} now     毫秒时间戳
+ * @param {String} today   'YYYY-MM-DD'，用于剔除未来记录
+ */
+function dietFlagFor(records, now, today) {
+  const t = today || dateUtil.todayStr();
+  const n = typeof now === 'number' ? now : Date.now();
+  const none = {
+    active: false,
+    level: 'none',
+    phaseKey: '',
+    phaseLabel: '',
+    tone: 'done',
+    vaccineShort: '',
+    doseText: '',
+    date: '',
+    hours: 0,
+    untilDate: '',
+    untilText: '',
+    note: ''
+  };
+
+  // 待安排的记录必须剔除：hoursSince 会把未来时间夹成 0，
+  // 不剔除的话「约了下周打针」会被当成「今天刚打完」而锁死餐单
+  const real = (records || []).filter(function (r) {
+    return !isPlanned(r, t);
+  });
+  if (!real.length) return none;
+
+  let hit = null;
+  let minHours = Infinity;
+  real.forEach(function (r) {
+    const h = hoursSince(r, n);
+    if (h < 72 && h < minHours) {
+      minHours = h;
+      hit = r;
+    }
+  });
+  if (!hit) return none;
+
+  const phase = phaseFor(minHours);
+  const v = getVaccine(hit.vaccineId) || { short: '疫苗', name: '疫苗' };
+  const untilDate = dateUtil.shiftDate(hit.date, 3);
+  const leftHours = Math.max(0, 72 - minHours);
+  const leftText =
+    leftHours >= 24 ? '还有 ' + Math.round(leftHours / 24) + ' 天' : '还有 ' + Math.max(1, Math.round(leftHours)) + ' 小时';
+
+  return {
+    active: true,
+    // 钟点还没到的今天记录会被夹成 0 小时 → strict。偏严是正确方向
+    level: minHours < 24 ? 'strict' : 'light',
+    phaseKey: phase.key,
+    phaseLabel: phase.label,
+    tone: phase.tone,
+    vaccineShort: v.short || v.name,
+    doseText: doseText(hit.dose),
+    date: hit.date,
+    hours: minHours,
+    untilDate: untilDate,
+    untilText: leftText,
+    note:
+      minHours < 24
+        ? '刚接种完，这两天别加任何没吃过的新食材'
+        : '接种后 3 天内，餐单只排吃过的、避开容易过敏的新食物'
+  };
+}
+
 module.exports = {
   HOUR,
   DAY,
@@ -584,5 +660,6 @@ module.exports = {
   decorate,
   latest,
   brief,
-  stats
+  stats,
+  dietFlagFor
 };

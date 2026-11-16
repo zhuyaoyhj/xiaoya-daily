@@ -149,3 +149,88 @@
 .share-btn {
   margin: 28rpx 0 8rpx;
 }
+
+/* ---------- 辅食专区入口（吃 tab 顶部） ---------- */
+.food-entry {
+  background: linear-gradient(140deg, #FFF3E9 0%, #FFE7D6 100%);
+  border-radius: 28rpx;
+  padding: 28rpx 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 10rpx 26rpx rgba(213, 176, 147, 0.16);
+}
+
+.entry-pre {
+  background: linear-gradient(140deg, #F4F2FB 0%, #E9E4F4 100%);
+}
+
+.entry-watch {
+  background: linear-gradient(140deg, #FDF4E3 0%, #F8E7C8 100%);
+}
+
+.entry-warn {
+  background: linear-gradient(140deg, #FFEFEA 0%, #FBDCD2 100%);
+}
+
+.entry-ok {
+  background: linear-gradient(140deg, #EFF6EF 0%, #DFEEDF 100%);
+}
+
+.entry-top {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.entry-badge {
+  font-size: 20rpx;
+  color: #FFFFFF;
+  background: #F0876B;
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+}
+
+.entry-chip {
+  font-size: 20rpx;
+  color: #8C7B6E;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 999rpx;
+  padding: 4rpx 14rpx;
+}
+
+.entry-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  line-height: 1.45;
+}
+
+.entry-month {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #C4703C;
+}
+
+.entry-desc {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #7A6A5C;
+  line-height: 1.6;
+}
+
+.entry-today {
+  margin-top: 14rpx;
+  font-size: 23rpx;
+  color: #9A6A4C;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 12rpx;
+  padding: 10rpx 16rpx;
+}
+
+.entry-go {
+  margin-top: 16rpx;
+  font-size: 23rpx;
+  color: #C4643F;
+  font-weight: 500;
+}

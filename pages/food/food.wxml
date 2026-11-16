@@ -1,0 +1,333 @@
+<view class="page-wrap">
+
+  <!-- 没有宝宝 -->
+  <view class="card empty" wx:if="{{!hasBaby}}">
+    <view class="empty-emoji">🥣</view>
+    <view class="h3">先添加宝宝</view>
+    <view class="muted empty-desc">填好出生日期，才能按月龄给出该加什么、怎么加，还有今天吃什么。</view>
+    <view class="btn btn-primary btn-sm empty-btn" bindtap="goBaby">添加宝宝信息</view>
+  </view>
+
+  <block wx:else>
+    <!-- 状态卡 -->
+    <view class="hero hero-{{brief.tone}}">
+      <view class="hero-top">
+        <view class="hero-face">{{baby.avatar}}</view>
+        <view class="hero-id">
+          <view class="hero-name">{{baby.name}}</view>
+          <view class="hero-age">{{baby.ageText}} · 已试 {{stats.tried}} 种食材</view>
+        </view>
+        <view class="hero-chip">{{monthText}}</view>
+      </view>
+
+      <view class="hero-title">{{brief.title}}</view>
+      <view class="hero-desc">{{brief.desc}}</view>
+
+      <view class="hero-meta" wx:if="{{stage}}">
+        <text class="hero-meta-item">{{stage.texture}}</text>
+        <text class="hero-meta-item">{{stage.meals}}</text>
+      </view>
+    </view>
+
+    <!-- 接种期就餐约束 -->
+    <view class="diet-bar diet-{{diet.level}}" wx:if="{{diet}}">
+      <view class="diet-title">{{diet.title}}</view>
+      <view class="diet-desc">{{diet.desc}}</view>
+      <view class="diet-foot">{{diet.foot}}</view>
+    </view>
+
+    <!-- 未到辅食月龄 -->
+    <view class="card ready-card" wx:if="{{ready}}">
+      <view class="card-title">{{ready.title}}</view>
+      <view class="ready-item" wx:for="{{ready.signs}}" wx:key="*this">
+        <view class="ready-dot"></view>
+        <view class="ready-text">{{item}}</view>
+      </view>
+      <view class="ready-note">{{ready.note}}</view>
+    </view>
+
+    <!-- 正在排敏 -->
+    <view class="card watch-card" wx:if="{{watching.length > 0}}">
+      <view class="card-head">
+        <view class="card-title">正在排敏</view>
+        <view class="watch-badge">一次只加一种</view>
+      </view>
+
+      <view class="watch-row" wx:for="{{watching}}" wx:key="id">
+        <view class="watch-emoji">{{item.emoji}}</view>
+        <view class="watch-body">
+          <view class="watch-name">{{item.name}} · 第 {{item.dayIndex}} 天</view>
+          <view class="watch-sub">{{item.leftDays > 0 ? '还要看 ' + item.leftDays + ' 天' : '今天就观察完了'}}，到 {{item.endText}} 可以加下一种</view>
+        </view>
+      </view>
+
+      <view class="conflict" wx:if="{{conflict}}">同时有两种新食材在观察，万一有反应会分不清是哪个引起的。建议下次只加一种。</view>
+    </view>
+
+    <!-- 今天吃什么 -->
+    <view class="section-head">
+      <view class="section-title">今天吃什么</view>
+      <view class="section-more" bindtap="goAdd">记录一次 ›</view>
+    </view>
+    <view class="today-label">{{todayLabel}}</view>
+
+    <view class="card meal-card">
+      <view class="meal-row" wx:for="{{todayMenu}}" wx:key="slotKey">
+        <view class="meal-slot">{{item.label}}</view>
+        <view class="meal-body" data-id="{{item.recipeId}}" bindtap="openRecipe">
+          <view class="meal-name">{{item.emoji}} {{item.name}}</view>
+          <view class="meal-sub" wx:if="{{item.recipeId}}">{{item.texture}} · 约 {{item.minutes}} 分钟</view>
+          <view class="meal-reason" wx:if="{{item.reasonText}}">{{item.reasonText}}</view>
+          <view class="meal-new" wx:if="{{item.newText}}">含还没试过的过敏原：{{item.newText}}</view>
+        </view>
+        <view class="meal-log" data-date="{{today}}" data-slot="{{item.slotKey}}" data-id="{{item.recipeId}}" bindtap="goLogMeal">吃了</view>
+        <view class="meal-swap" data-slot="{{item.slotKey}}" bindtap="swapMeal">换</view>
+      </view>
+      <view class="meal-foot">点菜名看做法，点「吃了」记这一餐，点「换」换一道</view>
+    </view>
+
+    <!-- 接着两天 -->
+    <view class="section-head" wx:if="{{planNext.length > 0}}">
+      <view class="section-title">接着两天</view>
+      <view class="section-more">随月龄与接种期自动调</view>
+    </view>
+
+    <view class="card plan-card" wx:if="{{planNext.length > 0}}">
+      <view class="plan-day" wx:for="{{planNext}}" wx:for-item="day" wx:key="date">
+        <view class="plan-day-head">
+          <text class="plan-day-label">{{day.label}}</text>
+          <text class="plan-day-date">{{day.weekday}} · {{day.dayOfMonth}} 日</text>
+        </view>
+        <view class="plan-meal" wx:for="{{day.meals}}" wx:for-item="meal" wx:key="slotKey">
+          <text class="plan-meal-slot">{{meal.label}}</text>
+          <view class="plan-meal-body" data-id="{{meal.recipeId}}" bindtap="openRecipe">
+            <view class="plan-meal-name">{{meal.emoji}} {{meal.name}}</view>
+            <view class="plan-meal-reason" wx:if="{{meal.reasonText}}">{{meal.reasonText}}</view>
+          </view>
+          <view class="plan-meal-log" data-date="{{day.date}}" data-slot="{{meal.slotKey}}" data-id="{{meal.recipeId}}" bindtap="goLogMeal">吃了</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 一周餐单 -->
+    <view class="section-head">
+      <view class="section-title">一周餐单</view>
+      <view class="section-more" bindtap="toggleWeek">{{weekOpen ? '收起' : '展开 7 天'}}</view>
+    </view>
+
+    <view class="card week-card" wx:if="{{weekOpen}}">
+      <view class="week-note" wx:if="{{week.note}}">{{week.note}}</view>
+      <view class="week-row {{item.isToday ? 'week-row-on' : ''}}" wx:for="{{week.days}}" wx:key="date">
+        <view class="week-day">
+          <text class="week-weekday">{{item.weekday}}</text>
+          <text class="week-date">{{item.dayOfMonth}} 日</text>
+        </view>
+        <view class="week-meals">
+          <view class="week-meal" wx:for="{{item.meals}}" wx:for-item="meal" wx:key="slotKey" data-id="{{meal.recipeId}}" bindtap="openRecipe">
+            <text class="week-meal-slot">{{meal.label}}</text>
+            <text class="week-meal-name">{{meal.name}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 最近吃了什么 -->
+    <view class="section-head">
+      <view class="section-title">最近吃了什么</view>
+      <view class="section-more" wx:if="{{logTotal > 0}}" bindtap="goLog">记一餐 ›</view>
+    </view>
+
+    <view class="card log-card" wx:if="{{logTotal > 0}}">
+      <view class="log-row" wx:for="{{logs}}" wx:key="id" data-id="{{item.id}}" bindtap="goLogEdit">
+        <view class="log-body">
+          <view class="log-title">{{item.title}}</view>
+          <view class="log-sub">{{item.sinceText}} · {{item.slotLabel}}<text wx:if="{{item.amountText}}"> · {{item.amountText}}</text><text wx:if="{{item.amountFree}}">（{{item.amountFree}}）</text> · {{item.acceptText}}</view>
+          <view class="log-note" wx:if="{{item.note}}">{{item.note}}</view>
+        </view>
+        <view class="log-arrow">›</view>
+      </view>
+      <view class="log-foot">共 {{logTotal}} 餐 · 只用于回顾，不参与营养计算</view>
+    </view>
+
+    <view class="card calm-card" wx:else>
+      <view class="calm-title">还没记过吃的情况</view>
+      <view class="calm-desc">每餐点一下「吃了」，过几天就能看出实际吃了什么、爱不爱吃。</view>
+    </view>
+
+    <!-- 吃过但没记排敏 -->
+    <view class="tip-bar" wx:if="{{untracked.length > 0}}">
+      <view class="tip-title">有 {{untracked.length}} 种吃过，但还没记过排敏</view>
+      <view class="tip-desc">流水账只说明这一餐吃过；排敏还要单独记一次，记完才开始算 2 天观察窗。</view>
+      <view class="tip-chips">
+        <view class="tip-chip" wx:for="{{untracked}}" wx:key="id" data-id="{{item.id}}" bindtap="goAddFood">{{item.name}} ›</view>
+      </view>
+    </view>
+
+    <!-- 待尝试 -->
+    <view class="section-head" wx:if="{{!ready}}">
+      <view class="section-title">接下来可以试</view>
+      <view class="section-more" wx:if="{{hiddenCount > 0}}" bindtap="restoreHidden">已跳过 {{hiddenCount}} 种 · 恢复</view>
+    </view>
+
+    <view class="due-month" wx:if="{{stage && stage.focus.title}}">
+      <text class="due-month-title">{{stage.focus.title}}</text>
+      <text class="due-month-sub" wx:if="{{!stage.focus.exact}}">按第 {{stage.focus.at}} 个月的进度</text>
+    </view>
+
+    <view class="card" wx:if="{{due.length > 0}}">
+      <view class="due-row" wx:for="{{due}}" wx:key="id">
+        <view class="due-main" data-id="{{item.id}}" bindtap="goAddFood">
+          <view class="due-body">
+            <view class="due-name">{{item.name}}
+              <text class="due-tag due-tag-iron" wx:if="{{item.ironRich}}">高铁</text>
+              <text class="due-tag due-tag-allergen" wx:if="{{item.allergenName}}">{{item.allergenName}}</text>
+              <text class="due-tag due-tag-custom" wx:if="{{item.custom}}">自定义</text>
+            </view>
+            <view class="due-sub">{{item.fromMonth}} 月龄起可以吃</view>
+          </view>
+          <view class="due-arrow">›</view>
+        </view>
+        <view class="due-skip" data-id="{{item.id}}" bindtap="skipFood">先不试</view>
+      </view>
+    </view>
+
+    <view class="card calm-card" wx:elif="{{!ready}}">
+      <view class="calm-title">这一阶段该加的都试过了</view>
+      <view class="calm-desc">按上面的餐单搭配着吃就行，也可以去食材库里翻翻还没试过的。</view>
+    </view>
+
+    <!-- 这一阶段怎么吃 -->
+    <view class="section-head" wx:if="{{stage}}">
+      <view class="section-title">这一阶段怎么吃</view>
+    </view>
+
+    <view class="card stage-card" wx:if="{{stage}}">
+      <view class="stage-badge">{{stage.label}} · {{stage.tag}}</view>
+
+      <view class="focus-box" wx:if="{{stage.focus.title}}">
+        <view class="focus-title">{{stage.focus.title}}</view>
+        <view class="focus-text">{{stage.focus.text}}</view>
+        <view class="focus-key" wx:if="{{stage.focus.key}}">{{stage.focus.key}}</view>
+        <view class="focus-next" wx:if="{{stage.focus.nextNames}}">本月重点：{{stage.focus.nextNames}}</view>
+        <view class="focus-hint" wx:if="{{!stage.focus.exact}}">当前月龄没有单独一档，按第 {{stage.focus.at}} 个月的进度给</view>
+      </view>
+
+      <view class="season-line" wx:if="{{seasonText}}">{{seasonText}}</view>
+
+      <view class="kv"><text class="kv-key">性状</text><text class="kv-val">{{stage.texture}}</text></view>
+      <view class="kv"><text class="kv-key">餐次</text><text class="kv-val">{{stage.meals}}</text></view>
+      <view class="kv"><text class="kv-key">奶量</text><text class="kv-val">{{stage.milk}}</text></view>
+      <view class="kv"><text class="kv-key">份量</text><text class="kv-val">{{stage.portion}}</text></view>
+      <view class="kv"><text class="kv-key">铁</text><text class="kv-val">{{stage.iron}}</text></view>
+
+      <view class="divider"></view>
+      <view class="mini-title">要点</view>
+      <view class="mini-item" wx:for="{{stage.tips}}" wx:key="*this">· {{item}}</view>
+
+      <view class="divider"></view>
+      <view class="mini-title">这一阶段别给</view>
+      <view class="mini-item avoid-item" wx:for="{{stage.avoid}}" wx:key="*this">· {{item}}</view>
+    </view>
+
+    <!-- 已尝试 -->
+    <view class="section-head">
+      <view class="section-title">已尝试</view>
+      <view class="section-more" wx:if="{{recordTotal > 3}}" bindtap="toggleTried">{{triedExpanded ? '收起' : '全部 ' + recordTotal + ' 种'}}</view>
+    </view>
+
+    <view class="card" wx:if="{{recordTotal > 0}}">
+      <view class="rec-row" wx:for="{{records}}" wx:key="id" data-id="{{item.id}}" bindtap="goEdit">
+        <view class="rec-body">
+          <view class="rec-name">{{item.name}}</view>
+          <view class="rec-sub">{{item.dateText}} · {{item.sinceText}}<text wx:if="{{item.note}}"> · {{item.note}}</text></view>
+          <view class="rec-note" wx:if="{{item.reactionNote}}">{{item.reactionNote}}</view>
+        </view>
+        <view class="rec-right">
+          <view class="rec-tag tag-{{item.reactionTone}}">{{item.reactionShort}}</view>
+          <view class="rec-group">{{item.groupLabel}}</view>
+        </view>
+      </view>
+      <view class="rec-foot">
+        <text class="rec-foot-text">共 {{recordTotal}} 种 · 高铁 {{stats.ironTried}} · 过敏 {{stats.allergyCount}}</text>
+        <text class="rec-toggle" wx:if="{{triedExpanded && recordTotal > 3}}" bindtap="toggleTried">收起</text>
+      </view>
+    </view>
+
+    <view class="card empty" wx:else>
+      <view class="empty-emoji">🍚</view>
+      <view class="h3">还没有记录</view>
+      <view class="muted empty-desc">第一次加辅食时记一条，App 会帮你算接下来两天的观察期。</view>
+      <view class="btn btn-primary btn-sm empty-btn" bindtap="goAdd">记一次</view>
+    </view>
+
+    <!-- 过敏原进度 -->
+    <view class="section-head" wx:if="{{stats.tried > 0}}">
+      <view class="section-title">八大类过敏原</view>
+      <view class="section-more">已试 {{stats.allergenTried}}/{{stats.allergenTotal}}</view>
+    </view>
+
+    <view class="card allergen-card" wx:if="{{stats.tried > 0}}">
+      <view class="allergen-row" wx:for="{{allergens}}" wx:key="key">
+        <view class="allergen-emoji">{{item.emoji}}</view>
+        <view class="allergen-body">
+          <view class="allergen-name {{item.done ? 'allergen-done' : ''}}">{{item.name}}{{item.done ? ' · 已试过' : ''}}</view>
+          <view class="allergen-tip">{{item.tip}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 食材库 -->
+    <view class="section-head">
+      <view class="section-title">食材库</view>
+      <view class="section-more" bindtap="toggleLib">{{libOpen ? '收起' : '全部 ' + stats.total + ' 种'}}</view>
+    </view>
+
+    <view class="card lib-card" wx:if="{{libOpen}}">
+      <block wx:for="{{lib}}" wx:key="key">
+        <view class="lib-group">{{item.label}} · {{item.count}}</view>
+        <view class="lib-list">
+          <view class="lib-item" wx:for="{{item.items}}" wx:for-item="food" wx:key="id" data-id="{{food.id}}" bindtap="goAddFood">
+            <text class="lib-name">{{food.name}}</text>
+            <text class="lib-eaten" wx:if="{{food.eaten}}">· 吃过</text>
+            <text class="lib-flag {{food.flagCls}}">{{food.flagText}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="act-row">
+      <view class="btn btn-primary act-btn" bindtap="goLog">记一餐</view>
+      <view class="btn btn-line act-btn" bindtap="goAdd">记新食材</view>
+    </view>
+
+    <disclaimer text="辅食建议为通用科普，过敏的判断与处置请以儿科医生意见为准。" />
+
+    <!-- 食谱浮层 -->
+    <view class="mask" wx:if="{{sheet}}" bindtap="closeSheet">
+      <view class="sheet" catchtap="noop">
+        <view class="sheet-head">
+          <view class="sheet-emoji">{{recipe.emoji}}</view>
+          <view class="sheet-title">{{recipe.name}}</view>
+        </view>
+        <view class="sheet-meta">{{recipe.fromMonth}}-{{recipe.toMonth}} 月龄 · {{recipe.texture}} · 约 {{recipe.minutes}} 分钟 · {{recipe.mealText}}</view>
+
+        <view class="divider"></view>
+        <view class="mini-title">食材</view>
+        <view class="sheet-foods">
+          <text class="sheet-food" wx:for="{{recipe.foods}}" wx:key="*this">{{item}}</text>
+        </view>
+
+        <view class="divider"></view>
+        <view class="mini-title">做法</view>
+        <view class="sheet-step" wx:for="{{recipe.steps}}" wx:key="*this">
+          <text class="sheet-step-no">{{index + 1}}</text>
+          <text class="sheet-step-text">{{item}}</text>
+        </view>
+
+        <view class="sheet-tip" wx:if="{{recipe.tips}}">{{recipe.tips}}</view>
+
+        <view class="btn btn-line btn-block sheet-close" bindtap="closeSheet">知道了</view>
+      </view>
+    </view>
+  </block>
+</view>

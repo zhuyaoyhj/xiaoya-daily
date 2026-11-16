@@ -1,0 +1,236 @@
+/* pages/meal-log/meal-log.wxss —— 记一餐 */
+
+.top-tip {
+  font-size: 24rpx;
+  color: #A08D7D;
+  padding: 8rpx 4rpx 20rpx;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.card-title {
+  margin-bottom: 18rpx;
+}
+
+.opt {
+  font-size: 21rpx;
+  font-weight: 400;
+  color: #B3A195;
+  margin-left: 8rpx;
+}
+
+/* ---------- 选项 ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 4rpx;
+}
+
+/* ---------- 已选食材 ---------- */
+.recipe-line {
+  font-size: 22rpx;
+  color: #A08D7D;
+  background: #FBF6F0;
+  border-radius: 12rpx;
+  padding: 12rpx 18rpx;
+  margin-bottom: 18rpx;
+  line-height: 1.6;
+}
+
+.food-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.food-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 64rpx;
+  padding: 0 22rpx;
+  border-radius: 32rpx;
+  background: #FFF0E7;
+  border: 2rpx solid #F5C4A8;
+  color: #C4643F;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.food-chip-alr {
+  background: #FDF1DC;
+  border-color: #EBD3A2;
+  color: #A97A22;
+}
+
+.food-chip-x {
+  margin-left: 12rpx;
+  font-size: 26rpx;
+  opacity: 0.55;
+}
+
+.empty-hint {
+  font-size: 23rpx;
+  color: #B3A195;
+  text-align: center;
+  padding: 16rpx 0;
+}
+
+/* ---------- 表单 ---------- */
+.time-hint {
+  font-size: 21rpx;
+  color: #B3A195;
+  line-height: 1.6;
+  padding: 12rpx 0 4rpx;
+}
+
+.note-area {
+  width: 100%;
+  min-height: 110rpx;
+  font-size: 25rpx;
+  color: #3A2E26;
+  line-height: 1.6;
+}
+
+/* ---------- 按钮 ---------- */
+.save-btn {
+  margin-top: 8rpx;
+}
+
+.save-btn-off {
+  opacity: 0.45;
+}
+
+.del-btn {
+  margin-top: 20rpx;
+  color: #C43C2A;
+}
+
+/* ---------- 浮层 ---------- */
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(58, 46, 38, 0.45);
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  max-height: 82vh;
+  overflow-y: auto;
+  background: #FFFDFB;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 32rpx 32rpx calc(32rpx + env(safe-area-inset-bottom));
+}
+
+.sheet-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  margin-bottom: 24rpx;
+}
+
+.gtabs {
+  display: flex;
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+
+.gtab {
+  flex-shrink: 0;
+  padding: 12rpx 26rpx;
+  margin-right: 12rpx;
+  font-size: 25rpx;
+  color: #8C7B6E;
+  background: #FFFFFF;
+  border-radius: 999rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.15s;
+}
+
+.gtab-on {
+  color: #C4643F;
+  background: #FFEDE4;
+  border-color: #F5C4A8;
+  font-weight: 600;
+}
+
+.food-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.food-item {
+  width: calc((100% - 28rpx) / 3);
+  min-height: 112rpx;
+  padding: 18rpx 10rpx 16rpx;
+  background: #FDF9F4;
+  border: 2rpx solid #F2E7DA;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.15s;
+}
+
+.food-item-on {
+  background: #FFF0E7;
+  border-color: #F0876B;
+  box-shadow: 0 6rpx 16rpx rgba(240, 135, 107, 0.18);
+}
+
+.food-name {
+  font-size: 26rpx;
+  color: #3A2E26;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.food-item-on .food-name {
+  color: #C4643F;
+  font-weight: 600;
+}
+
+.food-meta {
+  font-size: 20rpx;
+  color: #B3A195;
+  margin-top: 8rpx;
+}
+
+.food-meta-bad {
+  color: #A97A22;
+}
+
+.food-custom {
+  position: absolute;
+  top: 6rpx;
+  right: 8rpx;
+  font-size: 18rpx;
+  color: #A88FC4;
+  background: #F2ECFA;
+  border-radius: 8rpx;
+  padding: 2rpx 8rpx;
+}
+
+.sheet-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 32rpx;
+}
+
+.sheet-actions .btn {
+  flex: 1;
+}

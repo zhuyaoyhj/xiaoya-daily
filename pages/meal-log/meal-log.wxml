@@ -1,0 +1,170 @@
+<view class="page-wrap">
+
+  <view class="top-tip">{{babyName}} · {{isEdit ? '改这一餐' : '记这一餐'}}</view>
+
+  <!-- 哪一餐 -->
+  <view class="card">
+    <view class="card-title">哪一餐</view>
+
+    <view class="chips">
+      <view
+        class="chip {{slot === item.key ? 'chip-active' : ''}}"
+        wx:for="{{slots}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="pickSlot"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <picker mode="date" value="{{date}}" start="2000-01-01" end="{{today}}" bindchange="onDate">
+      <view class="field">
+        <view class="field-label">哪天吃的</view>
+        <view class="field-value">{{date}}</view>
+        <view class="row-arrow"></view>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 吃了什么 -->
+  <view class="card">
+    <view class="card-head">
+      <view class="card-title">吃了什么</view>
+      <view class="pick-name" bindtap="openSheet">＋ 加食材</view>
+    </view>
+
+    <view class="recipe-line" wx:if="{{recipeName}}">按「{{recipeName}}」带出来的，多了少了都可以改</view>
+
+    <view class="food-chips" wx:if="{{foods.length > 0}}">
+      <view
+        class="food-chip {{item.allergen ? 'food-chip-alr' : ''}}"
+        wx:for="{{foods}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="removeFood"
+      >
+        {{item.name}}<text class="food-chip-x">×</text>
+      </view>
+    </view>
+    <view class="empty-hint" wx:else>还没选食材，点右上角「＋ 加食材」</view>
+  </view>
+
+  <!-- 吃了多少 -->
+  <view class="card">
+    <view class="card-title">吃了多少</view>
+    <view class="chips">
+      <view
+        class="chip {{amount === item.key ? 'chip-active' : ''}}"
+        wx:for="{{amounts}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="pickAmount"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <view class="field">
+      <view class="field-label">具体点</view>
+      <input
+        class="field-input"
+        placeholder="选填，比如「小半碗，两勺」"
+        placeholder-class="placeholder"
+        value="{{amountText}}"
+        maxlength="20"
+        bindinput="onAmountText"
+      />
+    </view>
+    <view class="time-hint">这里只记个大概，不用称克数——算不出营养，也没必要算。</view>
+  </view>
+
+  <!-- 吃得怎么样 -->
+  <view class="card">
+    <view class="card-title">吃得怎么样</view>
+    <view class="chips">
+      <view
+        class="chip {{accept === item.key ? 'chip-active' : ''}}"
+        wx:for="{{accepts}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="pickAccept"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <view class="divider-dashed"></view>
+
+    <view class="card-title">便便 <text class="opt">选填</text></view>
+    <view class="chips">
+      <view
+        class="chip chip-plain {{poop === item.key ? 'chip-active' : ''}}"
+        wx:for="{{poops}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="pickPoop"
+      >
+        {{item.label}}
+      </view>
+    </view>
+    <view class="time-hint">只记录，不参与任何判断。真出现血便、持续腹泻请直接找医生。</view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="card-title">记一句 <text class="opt">选填</text></view>
+    <textarea
+      class="note-area"
+      placeholder="比如「拌了点猪肝粉，吃得很香」"
+      placeholder-class="placeholder"
+      value="{{note}}"
+      maxlength="60"
+      bindinput="onNote"
+    />
+  </view>
+
+  <view class="btn btn-primary btn-block save-btn {{canSave ? '' : 'save-btn-off'}}" bindtap="save">保存</view>
+  <view class="btn btn-line btn-block del-btn" wx:if="{{isEdit}}" bindtap="remove">删除这一餐</view>
+
+  <disclaimer text="进食记录只用于回顾这一餐吃了什么，不做营养计算；过敏的判断与处置请以儿科医生意见为准。" />
+
+  <!-- 加食材浮层 -->
+  <view class="mask" wx:if="{{sheet}}" bindtap="closeSheet">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">加点食材</view>
+
+      <scroll-view class="gtabs" scroll-x enable-flex show-scrollbar="{{false}}">
+        <view
+          class="gtab {{group === item.key ? 'gtab-on' : ''}}"
+          wx:for="{{groups}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="switchGroup"
+        >
+          {{item.label}}
+        </view>
+      </scroll-view>
+
+      <view class="food-grid">
+        <view
+          class="food-item {{item.on ? 'food-item-on' : ''}}"
+          wx:for="{{lib}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="toggleFood"
+        >
+          <text class="food-name">{{item.name}}</text>
+          <text class="food-meta {{item.allergen ? 'food-meta-bad' : ''}}">{{item.meta}}</text>
+          <text class="food-custom" wx:if="{{item.custom}}">自定义</text>
+        </view>
+      </view>
+
+      <view class="empty-hint" wx:if="{{lib.length === 0}}">这一组还没有食材</view>
+
+      <view class="sheet-actions">
+        <view class="btn btn-primary btn-sm" bindtap="closeSheet">就这些</view>
+      </view>
+    </view>
+  </view>
+</view>
