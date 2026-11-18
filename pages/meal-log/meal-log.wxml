@@ -47,7 +47,14 @@
         {{item.name}}<text class="food-chip-x">×</text>
       </view>
     </view>
-    <view class="empty-hint" wx:else>还没选食材，点右上角「＋ 加食材」</view>
+    <block wx:else>
+      <view class="same-last" wx:if="{{lastMeal}}" bindtap="copyLast">
+        <text class="same-last-tag">同上一餐</text>
+        <text class="same-last-text">{{lastMeal.text}}</text>
+        <text class="same-last-go">带出 ›</text>
+      </view>
+      <view class="empty-hint">还没选食材，点右上角「＋ 加食材」</view>
+    </block>
   </view>
 
   <!-- 吃了多少 -->

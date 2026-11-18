@@ -464,3 +464,140 @@
   line-height: 1.55;
   margin-top: 4rpx;
 }
+
+/* ---------- 手动温度（天气兜底） ---------- */
+.state-alt {
+  margin-top: 20rpx;
+}
+
+.skeleton-line {
+  height: 24rpx;
+  border-radius: 12rpx;
+  margin: 20rpx auto 0;
+  width: 80%;
+  background: linear-gradient(90deg, #F5EBE1 25%, #FBF4EC 50%, #F5EBE1 75%);
+  background-size: 400% 100%;
+  animation: skeleton-shine 1.4s ease infinite;
+}
+
+.skeleton-short {
+  width: 50%;
+}
+
+@keyframes skeleton-shine {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.manual-bar {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  margin-top: 16rpx;
+  font-size: 24rpx;
+}
+
+.manual-tag {
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  background: #FFF1E6;
+  color: #D96B4F;
+  font-weight: 600;
+}
+
+.manual-link {
+  color: #F0876B;
+}
+
+.manual-entry {
+  text-align: center;
+  font-size: 24rpx;
+  color: #A8968A;
+  padding: 12rpx 0 4rpx;
+}
+
+.sheet-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(58, 46, 38, 0.42);
+  z-index: 100;
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 101;
+  background: #FFF8F0;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 36rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.sheet-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.sheet-desc {
+  font-size: 24rpx;
+  color: #9A8A7C;
+  line-height: 1.6;
+  margin: 8rpx 0 28rpx;
+}
+
+.quick-grid {
+  display: flex;
+  gap: 14rpx;
+}
+
+.quick-item {
+  flex: 1;
+  background: #FFFFFF;
+  border: 2rpx solid #F2E6DA;
+  border-radius: 20rpx;
+  padding: 20rpx 0;
+  text-align: center;
+}
+
+.quick-item:active {
+  background: #FFF1E6;
+  border-color: #F0876B;
+}
+
+.quick-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.quick-hint {
+  font-size: 20rpx;
+  color: #A8968A;
+  margin-top: 4rpx;
+}
+
+.manual-row {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 0 28rpx;
+  margin: 28rpx 0;
+  border: 2rpx solid #F2E6DA;
+}
+
+.manual-input {
+  flex: 1;
+  height: 92rpx;
+  font-size: 30rpx;
+}
+
+.manual-unit {
+  font-size: 28rpx;
+  color: #8C7B6E;
+}

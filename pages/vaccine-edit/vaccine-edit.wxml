@@ -16,7 +16,7 @@
   <view class="card">
     <view class="card-head">
       <view class="card-title">打的是哪种疫苗</view>
-      <view class="pick-name" wx:if="{{category === 'paid'}}">找不到？可以自己加</view>
+      <view class="pick-name" wx:if="{{category === 'paid'}}" bindtap="openSheet">找不到？可以自己加 ›</view>
     </view>
     <view class="vax-grid">
       <view

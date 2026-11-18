@@ -1,0 +1,97 @@
+<view class="page-wrap">
+
+  <view class="top-tip">{{babyName}} · {{isEdit ? '修改这条记录' : '补记一条'}}</view>
+
+  <!-- 时间 -->
+  <view class="card">
+    <view class="card-title">{{type === 'sleep' ? '几点睡的' : '什么时候'}}</view>
+    <view class="dt-row">
+      <picker mode="date" value="{{date}}" end="{{today}}" bindchange="onDate">
+        <view class="dt-cell">{{date}}</view>
+      </picker>
+      <picker mode="time" value="{{time}}" bindchange="onTime">
+        <view class="dt-cell dt-time">{{time}}</view>
+      </picker>
+    </view>
+
+    <block wx:if="{{type === 'sleep'}}">
+      <view class="card-title card-title-gap">几点醒的</view>
+      <view class="dt-row">
+        <picker mode="date" value="{{endDate}}" start="{{date}}" end="{{today}}" bindchange="onEndDate">
+          <view class="dt-cell">{{endDate}}</view>
+        </picker>
+        <picker mode="time" value="{{endTime}}" bindchange="onEndTime">
+          <view class="dt-cell dt-time">{{endTime}}</view>
+        </picker>
+      </view>
+    </block>
+  </view>
+
+  <!-- 喂奶 -->
+  <view class="card" wx:if="{{type === 'feed'}}">
+    <view class="seg">
+      <view class="seg-item {{feedMode === 'breast' ? 'seg-on' : ''}}" data-key="breast" bindtap="pickFeedMode">亲喂</view>
+      <view class="seg-item {{feedMode === 'bottle' ? 'seg-on' : ''}}" data-key="bottle" bindtap="pickFeedMode">瓶喂</view>
+    </view>
+
+    <block wx:if="{{feedMode === 'breast'}}">
+      <view class="field">
+        <view class="field-label">左侧（分钟）</view>
+        <input class="field-input" type="number" placeholder="0" placeholder-class="placeholder" value="{{leftMin}}" bindinput="onLeft" maxlength="3" />
+      </view>
+      <view class="field">
+        <view class="field-label">右侧（分钟）</view>
+        <input class="field-input" type="number" placeholder="0" placeholder-class="placeholder" value="{{rightMin}}" bindinput="onRight" maxlength="3" />
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="chips">
+        <view class="chip-opt {{bottleType === item.key ? 'chip-opt-on' : ''}}" wx:for="{{bottleTypes}}" wx:key="key" data-key="{{item.key}}" bindtap="pickBottleType">{{item.label}}</view>
+      </view>
+      <view class="chips">
+        <view class="chip-opt {{ml == item ? 'chip-opt-on' : ''}}" wx:for="{{bottleMl}}" wx:key="*this" data-ml="{{item}}" bindtap="pickMl">{{item}}ml</view>
+      </view>
+      <view class="field">
+        <view class="field-label">奶量（ml）</view>
+        <input class="field-input" type="number" placeholder="如 120" placeholder-class="placeholder" value="{{ml}}" bindinput="onMl" maxlength="3" />
+      </view>
+    </block>
+  </view>
+
+  <!-- 尿布 -->
+  <view class="card" wx:if="{{type === 'diaper'}}">
+    <view class="seg">
+      <view class="seg-item {{kind === item.key ? 'seg-on' : ''}}" wx:for="{{diaperKinds}}" wx:key="key" data-key="{{item.key}}" bindtap="pickKind">{{item.label}}</view>
+    </view>
+
+    <block wx:if="{{kind !== 'wet'}}">
+      <view class="card-title card-title-gap">颜色</view>
+      <view class="colors">
+        <view class="color {{color === item.key ? 'color-on' : ''}}" wx:for="{{poopColors}}" wx:key="key" data-key="{{item.key}}" bindtap="pickColor">
+          <view class="swatch" style="background:{{item.hex}}"></view>
+          <view class="color-label">{{item.label}}</view>
+        </view>
+      </view>
+      <view class="color-tip color-tip-{{colorTip.level}}" wx:if="{{colorTip}}">{{colorTip.label}}：{{colorTip.tip}}</view>
+
+      <view class="card-title card-title-gap">性状</view>
+      <view class="chips">
+        <view class="chip-opt {{texture === item.key ? 'chip-opt-on' : ''}}" wx:for="{{poopTextures}}" wx:key="key" data-key="{{item.key}}" bindtap="pickTexture">{{item.label}}</view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="field field-last">
+      <view class="field-label">备注</view>
+      <input class="field-input" placeholder="选填，如 吐奶、哭闹" placeholder-class="placeholder" value="{{note}}" bindinput="onNote" maxlength="60" />
+    </view>
+  </view>
+
+  <button class="btn btn-primary btn-block" bindtap="save">{{isEdit ? '保存修改' : '保存'}}</button>
+  <view class="btn btn-line btn-block del-btn" wx:if="{{isEdit}}" bindtap="remove">删除这条</view>
+
+  <disclaimer />
+</view>

@@ -154,6 +154,37 @@ function getWeather(opts) {
   });
 }
 
+/**
+ * 手动温度兜底：天气取不到时，用用户自己填的温度构造一份「天气」，穿衣算法照常工作。
+ * 只有温度，没有风/湿度/紫外线，相关提醒自然不会出现。
+ */
+function buildManual(temp, place) {
+  const t = Number(temp);
+  const p = place || store.getPlace();
+  const hasPlace = placeUtil.hasCoords(p);
+  return {
+    ok: true,
+    source: 'manual',
+    manual: true,
+    temp: t,
+    feelsLike: t,
+    code: undefined,
+    updatedAt: Date.now(),
+    place: hasPlace ? p : null,
+    label: hasPlace ? placeUtil.placeLabel(p) : '按你填的温度',
+    full: hasPlace ? placeUtil.formatPlace(p) : '按你填的温度估算'
+  };
+}
+
+/** 温度快捷档：用户不知道具体几度时，按体感选一档 */
+const QUICK_TEMPS = [
+  { key: 'cold', label: '很冷', hint: '0℃以下', temp: -3 },
+  { key: 'cool', label: '偏凉', hint: '约 8℃', temp: 8 },
+  { key: 'mild', label: '舒适', hint: '约 18℃', temp: 18 },
+  { key: 'warm', label: '偏热', hint: '约 26℃', temp: 26 },
+  { key: 'hot', label: '很热', hint: '32℃以上', temp: 33 }
+];
+
 /** 可选：使用当前位置取坐标（需在后台申请「位置接口」权限） */
 function getLocation() {
   return new Promise(function (resolve, reject) {
@@ -169,5 +200,7 @@ module.exports = {
   getWeather: getWeather,
   ensurePlace: ensurePlace,
   getLocation: getLocation,
-  parseOpenMeteo: parseOpenMeteo
+  parseOpenMeteo: parseOpenMeteo,
+  buildManual: buildManual,
+  QUICK_TEMPS: QUICK_TEMPS
 };

@@ -50,6 +50,10 @@
         "type": "folder"
       },
       {
+        "value": "analysis",
+        "type": "folder"
+      },
+      {
         "value": "README.md",
         "type": "file"
       },

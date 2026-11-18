@@ -54,18 +54,25 @@
         <view class="how-desc">把宝宝的月龄建议和今天的穿衣推荐合成一张图，转发到家庭群或单独发给某个人。</view>
       </view>
     </view>
-    <view class="how-item">
+    <view class="how-item" wx:if="{{tmplConfigured}}">
       <view class="how-step">2</view>
       <view class="how-text">
         <view class="how-title">订阅每日提醒</view>
-        <view class="how-desc">开启后每天固定时间收到一条提醒，点开就是当日建议。需要先在公众平台申请订阅消息模板。</view>
+        <view class="how-desc">开启后每天固定时间收到一条提醒，点开就是当日建议。</view>
+      </view>
+    </view>
+    <view class="how-item" wx:else>
+      <view class="how-step">2</view>
+      <view class="how-text">
+        <view class="how-title">转发到家庭群</view>
+        <view class="how-desc">在卡片页点「转发」，选家庭群或某个人。家人点开就是今天的建议，不用装任何东西。</view>
       </view>
     </view>
 
-    <view class="sub-row">
+    <view class="sub-row" wx:if="{{tmplConfigured}}">
       <view class="sub-info">
         <view class="sub-title">{{subscribeEnabled ? '每日提醒已开启' : '开启每日提醒'}}</view>
-        <view class="sub-desc">{{tmplConfigured ? '点右侧按钮完成授权' : '未配置模板 ID，仅可手动转发'}}</view>
+        <view class="sub-desc">点右侧按钮完成授权</view>
       </view>
       <view class="sub-btn {{subscribeEnabled ? 'sub-btn-off' : ''}}" bindtap="toggleSubscribe">
         {{subscribeEnabled ? '关闭' : '开启'}}
@@ -73,8 +80,8 @@
     </view>
   </view>
 
-  <view class="btn btn-primary btn-block" bindtap="goShare">生成今日卡片</view>
+  <view class="btn btn-ghost btn-block" bindtap="goShare">生成今日卡片</view>
   <view class="btn btn-line btn-block copy-btn" bindtap="copyNames">复制推送名单</view>
 
-  <disclaimer text="带娃人名单只保存在本机；订阅消息由微信官方通道下发，内容为照护参考。" />
+  <disclaimer text="带娃人名单和所有记录只保存在本机；内容为照护参考。" />
 </view>

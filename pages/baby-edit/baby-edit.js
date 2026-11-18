@@ -132,6 +132,18 @@ Page({
       return;
     }
 
+    // 体重身高选填，填了就做个合理范围检查，避免 85 写成 8.5 这类手误
+    const w = String(b.weight || '').trim();
+    if (w && !(Number(w) >= 1 && Number(w) <= 40)) {
+      wx.showToast({ title: '体重填 1~40 kg 之间', icon: 'none' });
+      return;
+    }
+    const h = String(b.height || '').trim();
+    if (h && !(Number(h) >= 30 && Number(h) <= 130)) {
+      wx.showToast({ title: '身高填 30~130 cm 之间', icon: 'none' });
+      return;
+    }
+
     const payload = {
       id: b.id || store.newBabyId(),
       name: String(b.name || '').trim() || '宝宝',
@@ -190,5 +202,9 @@ Page({
   goEdit(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({ url: '/pages/baby-edit/baby-edit?id=' + id });
+  },
+
+  goBackup() {
+    wx.switchTab({ url: '/pages/mine/mine' });
   }
 });

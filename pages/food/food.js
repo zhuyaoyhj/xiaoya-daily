@@ -469,5 +469,25 @@ Page({
   },
 
   /** 阻止浮层上的点击冒泡到遮罩 */
-  noop() {}
+  noop() {},
+
+  /** 打开食谱浮层时转发的是这道菜；否则转发这一阶段的辅食安排 */
+  onShareAppMessage() {
+    const r = this.data.sheet && this.data.recipe;
+    if (r) {
+      return {
+        title: r.name + '（' + (r.fromMonth || 6) + ' 月起）· 做法和要点',
+        path: '/pages/food/food'
+      };
+    }
+    const label = this.data.monthText;
+    return {
+      title: label ? label + '宝宝今天吃什么？一周辅食这样排' : '宝宝辅食怎么加 · 小芽日常',
+      path: '/pages/food/food'
+    };
+  },
+
+  onShareTimeline() {
+    return { title: '宝宝辅食一周怎么排 · 小芽日常' };
+  }
 });

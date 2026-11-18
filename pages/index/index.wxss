@@ -1,3 +1,5 @@
+@import "/components/care-panel/care-panel.wxss";
+
 /* pages/index/index.wxss */
 
 /* ---------- 顶部 ---------- */
@@ -411,4 +413,278 @@
   color: #6B5A4D;
   line-height: 1.8;
   margin-top: 12rpx;
+}
+
+/* ---------- 记一笔 ---------- */
+.quick-log {
+  display: flex;
+  gap: 16rpx;
+  margin: 8rpx 0 24rpx;
+}
+
+.quick-log-item {
+  flex: 1;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 24rpx 0 20rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 20rpx rgba(213, 176, 147, 0.13);
+}
+
+.quick-log-item:active {
+  transform: scale(0.97);
+  background: #FFF6EF;
+}
+
+.quick-log-emoji {
+  font-size: 44rpx;
+  line-height: 1.2;
+}
+
+.quick-log-text {
+  font-size: 24rpx;
+  color: #3A2E26;
+  font-weight: 600;
+  margin-top: 8rpx;
+}
+
+.recent-card {
+  padding-top: 24rpx;
+  padding-bottom: 12rpx;
+}
+
+.recent-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.recent-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.recent-more {
+  font-size: 24rpx;
+  color: #A8968A;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-top: 2rpx dashed #F2E6DA;
+}
+
+.recent-item:first-of-type {
+  border-top: none;
+}
+
+.recent-emoji {
+  font-size: 36rpx;
+  width: 56rpx;
+}
+
+.recent-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.recent-name {
+  font-size: 26rpx;
+  color: #3A2E26;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-desc {
+  font-size: 22rpx;
+  color: #8C7B6E;
+  margin-top: 2rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-when {
+  font-size: 22rpx;
+  color: #A8968A;
+  margin-left: 16rpx;
+}
+
+/* ---------- 天气空态 ---------- */
+.weather-empty-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.skeleton-line {
+  height: 24rpx;
+  border-radius: 12rpx;
+  margin-top: 20rpx;
+  width: 80%;
+  background: linear-gradient(90deg, #F5EBE1 25%, #FBF4EC 50%, #F5EBE1 75%);
+  background-size: 400% 100%;
+  animation: skeleton-shine 1.4s ease infinite;
+}
+
+.skeleton-short {
+  width: 50%;
+}
+
+@keyframes skeleton-shine {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* ---------- 一键记一餐 ---------- */
+.suggest-bar {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: linear-gradient(120deg, #FFF1E6 0%, #FFFFFF 100%);
+  border: 2rpx solid #F8DCCB;
+  border-radius: 24rpx;
+  padding: 22rpx 24rpx;
+  margin: 8rpx 0 20rpx;
+}
+
+.suggest-bar:active {
+  opacity: 0.85;
+}
+
+.suggest-emoji {
+  font-size: 48rpx;
+}
+
+.suggest-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggest-slot {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.suggest-name {
+  font-size: 24rpx;
+  color: #8C7B6E;
+  margin-top: 2rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggest-cta {
+  flex: none;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FFA07E, #F0876B);
+  border-radius: 999rpx;
+  padding: 12rpx 28rpx;
+}
+
+/* ---------- 照护状态卡 ---------- */
+.care-card {
+  padding: 24rpx 28rpx 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.care-alert {
+  font-size: 24rpx;
+  color: #A8432F;
+  background: #FBEBE7;
+  border-radius: 16rpx;
+  padding: 14rpx 18rpx;
+  margin-bottom: 12rpx;
+  line-height: 1.6;
+}
+
+.care-line {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+}
+
+.care-emoji {
+  font-size: 34rpx;
+  width: 56rpx;
+}
+
+.care-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.care-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3A2E26;
+}
+
+.care-text-empty {
+  font-weight: 400;
+  color: #A8968A;
+}
+
+.care-text-live {
+  color: #D96B4F;
+}
+
+.care-sub {
+  font-size: 22rpx;
+  color: #8C7B6E;
+  margin-top: 2rpx;
+}
+
+.care-actions {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 16rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx dashed #F2E6DA;
+}
+
+.care-act {
+  flex: 1;
+  text-align: center;
+  background: #FFF6EF;
+  border-radius: 22rpx;
+  padding: 18rpx 0 14rpx;
+}
+
+.care-act:active {
+  transform: scale(0.97);
+}
+
+.care-act-on {
+  background: #F0876B;
+}
+
+.care-act-on .care-act-text {
+  color: #FFFFFF;
+}
+
+.care-act-sleep {
+  background: #8E7BC0;
+}
+
+.care-act-emoji {
+  font-size: 40rpx;
+  line-height: 1.2;
+}
+
+.care-act-text {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  margin-top: 6rpx;
 }

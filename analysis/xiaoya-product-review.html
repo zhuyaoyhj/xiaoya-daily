@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小芽日常 · 产品诊断与优化建议</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#3A2E26; --ink2:#6B5A4E; --ink3:#A8998C;
+    --peach:#F0876B; --peach-d:#D96B4F; --peach-soft:#FFF1E6;
+    --bg:#FFF8F0; --card:#FFFFFF; --line:#F2E6DA; --line2:#EADCCC;
+    --green:#4E9370; --amber:#D99A3B; --red:#D2614E; --blue:#5B7FA6;
+    --shadow:0 2px 16px rgba(213,176,147,.16);
+  }
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg); color:var(--ink); line-height:1.72;
+    font-family:"PingFang SC","Hiragino Sans GB",-apple-system,BlinkMacSystemFont,"Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:0 28px 140px}
+
+  /* ---------- 顶部导航 ---------- */
+  .topnav{
+    position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:rgba(255,248,240,.88); border-bottom:1px solid var(--line);
+  }
+  .topnav-in{max-width:1060px;margin:0 auto;padding:0 28px;display:flex;align-items:center;gap:22px;height:54px;overflow-x:auto;scrollbar-width:none}
+  .topnav-in::-webkit-scrollbar{display:none}
+  .brand{font-weight:700;font-size:14px;letter-spacing:.02em;color:var(--peach-d);white-space:nowrap}
+  .topnav a{font-size:13px;color:var(--ink3);text-decoration:none;white-space:nowrap;transition:color .2s}
+  .topnav a:hover{color:var(--peach-d)}
+
+  /* ---------- 封面 ---------- */
+  .hero{position:relative;padding:76px 0 54px;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(6px);opacity:.55;pointer-events:none}
+  .b1{width:340px;height:340px;right:-90px;top:-120px;background:radial-gradient(circle,#FFD9C4 0%,rgba(255,217,196,0) 70%)}
+  .b2{width:280px;height:280px;left:-100px;top:60px;background:radial-gradient(circle,#FFE8D2 0%,rgba(255,232,210,0) 70%)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--peach-d);font-weight:600;margin-bottom:20px}
+  .eyebrow::before{content:"";width:22px;height:2px;background:var(--peach);border-radius:2px}
+  h1{font-size:clamp(30px,4.4vw,46px);line-height:1.28;letter-spacing:-.01em;font-weight:800;position:relative}
+  h1 em{font-style:normal;color:var(--peach-d)}
+  .lede{margin-top:20px;font-size:16px;color:var(--ink2);max-width:660px;line-height:1.85}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+  .meta-chip{font-size:12px;padding:5px 13px;border-radius:100px;background:#fff;border:1px solid var(--line2);color:var(--ink2)}
+  .meta-chip b{color:var(--peach-d);font-weight:700}
+
+  /* ---------- 章节 ---------- */
+  section{padding-top:64px;scroll-margin-top:70px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+  .sec-num{font-size:12px;font-weight:800;color:var(--peach);letter-spacing:.1em;font-variant-numeric:tabular-nums}
+  h2{font-size:clamp(22px,2.6vw,28px);font-weight:800;letter-spacing:-.01em;line-height:1.4}
+  .sec-sub{color:var(--ink3);font-size:14px;margin-bottom:30px;max-width:720px}
+  h3{font-size:16px;font-weight:700;margin-bottom:10px}
+  p{margin-bottom:14px}
+  .muted{color:var(--ink3)}
+
+  /* ---------- 数字卡 ---------- */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:26px 0 8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px 18px;box-shadow:var(--shadow)}
+  .stat-n{font-size:30px;font-weight:800;color:var(--peach-d);line-height:1.1;font-variant-numeric:tabular-nums}
+  .stat-n small{font-size:14px;font-weight:600;color:var(--ink3);margin-left:2px}
+  .stat-l{font-size:12.5px;color:var(--ink2);margin-top:7px;line-height:1.5}
+
+  /* ---------- 通用卡片 ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 28px;box-shadow:var(--shadow)}
+  .card + .card{margin-top:16px}
+  .callout{
+    border-left:3px solid var(--peach);background:linear-gradient(90deg,#FFF4EC,#FFFBF7);
+    padding:18px 22px;border-radius:0 14px 14px 0;margin:22px 0;font-size:14.5px;color:var(--ink2)
+  }
+  .callout b{color:var(--ink);font-weight:700}
+
+  /* ---------- 页面地图 ---------- */
+  .map{display:grid;gap:14px;margin-top:8px}
+  .lane{display:grid;grid-template-columns:112px 1fr;gap:16px;align-items:stretch}
+  .lane-h{display:flex;flex-direction:column;justify-content:center;padding:6px 0}
+  .lane-t{font-size:13.5px;font-weight:800}
+  .lane-s{font-size:11.5px;color:var(--ink3);margin-top:2px;line-height:1.5}
+  .lane-body{display:flex;flex-wrap:wrap;gap:9px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 14px;box-shadow:var(--shadow)}
+  .node{
+    display:flex;flex-direction:column;gap:3px;padding:9px 13px;border-radius:11px;
+    border:1.5px solid var(--line2);background:#FFFCF9;min-width:104px
+  }
+  .node-n{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+  .node-p{font-size:10.5px;color:var(--ink3);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .node.d1{border-color:#BFD8C9;background:#F4FAF6}
+  .node.d2{border-color:#F2DDBE;background:#FFFAF0}
+  .node.d3{border-color:#F3C4B6;background:#FFF3EE}
+  .dot{width:7px;height:7px;border-radius:50%;flex:none}
+  .dot-g{background:var(--green)} .dot-a{background:var(--amber)} .dot-r{background:var(--red)}
+  .legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px;font-size:12px;color:var(--ink2)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .swatch{width:12px;height:12px;border-radius:4px;border:1.5px solid}
+
+  /* ---------- 表格 ---------- */
+  .tbl-wrap{overflow-x:auto;border-radius:16px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:660px}
+  th{background:#FFF6EF;text-align:left;padding:11px 13px;font-size:11.5px;font-weight:700;color:var(--ink2);white-space:nowrap;border-bottom:1px solid var(--line2);letter-spacing:.02em}
+  td{padding:11px 13px;border-bottom:1px solid #F7EEE5;vertical-align:top;line-height:1.6}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:#FFFCF8}
+  td:first-child{font-weight:700;white-space:nowrap}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.5px;background:#F7EEE5;padding:1.5px 5px;border-radius:4px;color:#8A5A3C;white-space:nowrap}
+  .tag{display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:100px;font-weight:700;white-space:nowrap}
+  .t-g{background:#EAF5EE;color:#2F7350} .t-a{background:#FDF3E0;color:#9A6A15} .t-r{background:#FBEBE7;color:#A8432F}
+
+  /* ---------- 热力矩阵 ---------- */
+  .heat{min-width:720px}
+  .heat td.c,.heat th.c{text-align:center;padding:9px 6px}
+  .cell{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;font-size:13px;font-weight:700}
+  .ok{background:#E3F2E8;color:#2E7A52}
+  .part{background:#FDF0DC;color:#A6761A}
+  .no{background:#FAE7E2;color:#AE4834}
+  .na{background:#F5F1EC;color:#B8AA9C}
+
+  /* ---------- 优缺点 ---------- */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .pillar{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow)}
+  .pillar-h{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;margin-bottom:16px}
+  .pillar-h .bar{width:3px;height:15px;border-radius:2px}
+  .item{padding:13px 0;border-top:1px dashed var(--line2)}
+  .item:first-of-type{border-top:none;padding-top:2px}
+  .item-t{font-size:13.5px;font-weight:700;margin-bottom:5px;display:flex;gap:8px;align-items:baseline}
+  .item-t i{font-style:normal;font-size:11px;color:var(--ink3);font-weight:600;flex:none;font-variant-numeric:tabular-nums}
+  .item-d{font-size:12.5px;color:var(--ink2);line-height:1.7}
+  .item-d b{color:var(--ink);font-weight:700}
+  .item-d code{font-size:11px}
+
+  /* ---------- 旅程断点 ---------- */
+  .journey{display:flex;gap:0;margin-top:26px;overflow-x:auto;padding-bottom:8px}
+  .jstep{flex:1;min-width:132px;position:relative;padding:0 6px}
+  .jstep::after{content:"";position:absolute;right:-4px;top:19px;width:8px;height:8px;border-top:2px solid var(--line2);border-right:2px solid var(--line2);transform:rotate(45deg)}
+  .jstep:last-child::after{display:none}
+  .jnum{width:34px;height:34px;border-radius:11px;background:#F7EEE5;color:var(--ink2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;margin-bottom:12px}
+  .jstep.bad .jnum{background:#FBE3DC;color:#AD4632}
+  .jt{font-size:12.5px;font-weight:700;line-height:1.5;margin-bottom:5px}
+  .jd{font-size:11.5px;color:var(--ink3);line-height:1.6}
+  .jstep.bad .jt{color:#A8432F}
+
+  /* ---------- 优先级 ---------- */
+  .prio{display:grid;gap:14px;margin-top:8px}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .pcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+  .pcard.p0::before{background:var(--red)} .pcard.p1::before{background:var(--amber)} .pcard.p2::before{background:var(--blue)}
+  .phead{display:flex;align-items:center;gap:11px;margin-bottom:12px;flex-wrap:wrap}
+  .plv{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:6px;letter-spacing:.06em}
+  .p0 .plv{background:#FBEBE7;color:#A8432F} .p1 .plv{background:#FDF3E0;color:#9A6A15} .p2 .plv{background:#EBF1F7;color:#456B94}
+  .pt{font-size:15px;font-weight:800;flex:1;min-width:180px}
+  .pbody{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:12.5px}
+  .pbody > div > .lbl{font-size:10.5px;font-weight:800;color:var(--ink3);letter-spacing:.08em;margin-bottom:5px}
+  .pbody .why{color:var(--ink2);line-height:1.7}
+  .pbody .how{color:var(--ink);line-height:1.7}
+  .pbody .how code{display:inline-block;margin:2px 3px 2px 0}
+
+  /* ---------- 结尾 ---------- */
+  .final{
+    margin-top:60px;background:linear-gradient(135deg,#FFF3EA,#FFFAF5);
+    border:1px solid #F6DECB;border-radius:24px;padding:38px 36px;text-align:center
+  }
+  .final q{font-size:clamp(17px,2.2vw,21px);font-weight:800;line-height:1.65;quotes:none;display:block;max-width:720px;margin:0 auto}
+  .final q em{font-style:normal;color:var(--peach-d)}
+  .final p{font-size:13px;color:var(--ink2);margin-top:16px;max-width:640px;margin-left:auto;margin-right:auto}
+  footer{margin-top:44px;padding-top:22px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+  @media (max-width:760px){
+    .wrap{padding:0 18px 90px}
+    .two-col{grid-template-columns:1fr}
+    .lane{grid-template-columns:1fr;gap:8px}
+    .lane-h{flex-direction:row;align-items:baseline;gap:8px}
+    .pbody{grid-template-columns:1fr}
+    .card{padding:20px 18px}
+    .hero{padding:52px 0 34px}
+    .final{padding:28px 20px}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-in">
+    <span class="brand">小芽日常 · 产品诊断</span>
+    <a href="#overview">一页看懂</a>
+    <a href="#map">页面地图</a>
+    <a href="#pages">逐页拆解</a>
+    <a href="#cost">投入产出</a>
+    <a href="#verdict">优缺点</a>
+    <a href="#journey">新用户旅程</a>
+    <a href="#roadmap">改造路线</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ========== 封面 ========== -->
+  <header class="hero">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="eyebrow">Product Review · 2026</div>
+    <h1>一个内容很扎实的育儿小程序，<br>卡在了<em>「入口」</em>和<em>「信任」</em>上</h1>
+    <p class="lede">
+      12 个页面、6234 行数据与算法层、67 种食材、18 种疫苗、约 800 项测试断言 —— 这不是一个todo式的小项目。
+      但从产品视角看，它把最重的功能放在了最深的入口，把最重要的三个卖点里有两个交给了「用户自己配」。
+      这份报告拆开它的页面结构，找出真正的瓶颈。
+    </p>
+    <div class="meta-row">
+      <span class="meta-chip">12 个页面</span>
+      <span class="meta-chip">4 个 tab（<b>无图标</b>）</span>
+      <span class="meta-chip">0 个用户账号</span>
+      <span class="meta-chip">0 处加载状态</span>
+      <span class="meta-chip">6234 行 <b>data + utils</b></span>
+    </div>
+  </header>
+
+  <!-- ========== 1. 一页看懂 ========== -->
+  <section id="overview">
+    <div class="sec-head"><span class="sec-num">01</span><h2>一页看懂</h2></div>
+    <p class="sec-sub">先摆事实。以下数字全部来自代码统计，不含推测。</p>
+
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-n">12</div><div class="stat-l">页面，其中 4 个是一级 tab</div></div>
+      <div class="stat"><div class="stat-n">3<small>级</small></div><div class="stat-l">辅食页的入口深度（最重功能）</div></div>
+      <div class="stat"><div class="stat-n">67<small>种</small></div><div class="stat-l">食材库 + 47 道食谱 + 5 套月龄餐单</div></div>
+      <div class="stat"><div class="stat-n">18<small>种</small></div><div class="stat-l">疫苗 + 22 条免疫规划 + 护理分期</div></div>
+      <div class="stat"><div class="stat-n">≈800</div><div class="stat-l">条冒烟测试断言（6 个脚本）</div></div>
+      <div class="stat"><div class="stat-n">11<small>个</small></div><div class="stat-l">本地存储 key，全部存在本机</div></div>
+    </div>
+
+    <div class="callout">
+      <b>一句话定位：</b>这是一款「0–3 岁照护助手」，本质是<b>内容库 + 规则引擎 + 本地记录本</b>。
+      它的三条卖点是：① 按月龄给吃 / 动 / 学 / 睡建议；② 天气 → 穿衣层数 + 睡袋 TOG；③ 疫苗护理；
+      隐藏的第四条、也是做得最重的：<b>辅食排敏 + 餐单生成</b>。
+    </div>
+
+    <div class="card" style="margin-top:22px">
+      <h3>业务与技术的真实构成</h3>
+      <p style="font-size:13px;color:var(--ink2)">
+        页面层（.js + .wxml）合计约 4000 行；而支撑层（<code>data/</code> + <code>utils/</code>）有 <b>6234 行</b>，
+        其中 <code>utils/food.js</code> 1430 行、<code>utils/store.js</code> 964 行。
+        <b>支撑层大于页面层</b>，说明这个产品的价值主要沉淀在规则与内容里，而不是界面里 —— 这是好事，也解释了后面所有问题的由来。
+      </p>
+    </div>
+  </section>
+
+  <!-- ========== 2. 页面地图 ========== -->
+  <section id="map">
+    <div class="sec-head"><span class="sec-num">02</span><h2>页面地图：按「任务」重排，问题自己就浮出来了</h2></div>
+    <p class="sec-sub">下面的分组不是按 tabBar 排的，而是按用户真实要做的事排的。颜色 = 可触达深度：绿=一级 tab，黄=二级，红=三级深链。</p>
+
+    <div class="map">
+      <div class="lane">
+        <div class="lane-h"><div class="lane-t">今天做什么</div><div class="lane-s">打开就看，决策型</div></div>
+        <div class="lane-body">
+          <div class="node d1"><div class="node-n"><span class="dot dot-g"></span>今日</div><div class="node-p">index · tab 1</div></div>
+          <div class="node d2"><div class="node-n"><span class="dot dot-a"></span>月龄建议</div><div class="node-p">guide · 二级</div></div>
+          <div class="node d2"><div class="node-n"><span class="dot dot-a"></span>今日卡片</div><div class="node-p">share · 二级</div></div>
+        </div>
+      </div>
+
+      <div class="lane">
+        <div class="lane-h"><div class="lane-t">查一下</div><div class="lane-s">低频、有明确问题</div></div>
+        <div class="lane-body">
+          <div class="node d1"><div class="node-n"><span class="dot dot-g"></span>天气穿衣</div><div class="node-p">weather · tab 2</div></div>
+          <div class="node d1"><div class="node-n"><span class="dot dot-g"></span>疫苗护理</div><div class="node-p">vaccine · tab 3</div></div>
+          <div class="node d2"><div class="node-n"><span class="dot dot-a"></span>记录接种</div><div class="node-p">vaccine-edit</div></div>
+        </div>
+      </div>
+
+      <div class="lane">
+        <div class="lane-h"><div class="lane-t">记一笔</div><div class="lane-s">高频、产生留存<br>但<b>零一级入口</b></div></div>
+        <div class="lane-body" style="border-color:#F3C4B6;background:#FFFBF9">
+          <div class="node d3"><div class="node-n"><span class="dot dot-r"></span>辅食喂养</div><div class="node-p">food · 三级</div></div>
+          <div class="node d3"><div class="node-n"><span class="dot dot-r"></span>记录辅食</div><div class="node-p">food-edit · 三级</div></div>
+          <div class="node d3"><div class="node-n"><span class="dot dot-r"></span>记一餐</div><div class="node-p">meal-log · 三级</div></div>
+        </div>
+      </div>
+
+      <div class="lane">
+        <div class="lane-h"><div class="lane-t">我的</div><div class="lane-s">设置型，一次性</div></div>
+        <div class="lane-body">
+          <div class="node d1"><div class="node-n"><span class="dot dot-g"></span>带娃人</div><div class="node-p">family · tab 4</div></div>
+          <div class="node d2"><div class="node-n"><span class="dot dot-a"></span>宝宝在哪</div><div class="node-p">place · 二级</div></div>
+          <div class="node d2"><div class="node-n"><span class="dot dot-a"></span>宝宝档案</div><div class="node-p">baby-edit · 二级</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><i class="swatch" style="background:#F4FAF6;border-color:#BFD8C9"></i>一级：tabBar 直达</span>
+      <span><i class="swatch" style="background:#FFFAF0;border-color:#F2DDBE"></i>二级：首页/详情页跳转</span>
+      <span><i class="swatch" style="background:#FFF3EE;border-color:#F3C4B6"></i>三级：需经「月龄建议」中转</span>
+    </div>
+
+    <div class="callout">
+      <b>看这张图最扎眼的一件事：</b>「记一笔」这一整行是唯一会产出数据、唯一能产生回访动机的动作，
+      却是唯一<b>没有任何一级入口</b>的一行 —— 而且全红（三级）。
+      而 4 个 tab 里，2 个是「查」、1 个是「设置」、1 个是「看板」。
+      <b>这就是信息架构问题：一级导航是按开发模块切的，不是按用户任务切的。</b>
+    </div>
+  </section>
+
+  <!-- ========== 3. 逐页拆解 ========== -->
+  <section id="pages">
+    <div class="sec-head"><span class="sec-num">03</span><h2>12 个页面，逐页拆</h2></div>
+    <p class="sec-sub">行数为真实统计（js / wxml / wxss）。「完成度」是产品视角判断：功能是否闭环、用户能否无障碍走完。</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>页面</th><th>js/wxml/wxss</th><th>职责</th><th>完成度</th><th>最该说的一句</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>今日<br><span class="node-p">index</span></td><td>206/149/414</td>
+            <td>问候 + 宝宝卡 + 今日重点 + 穿衣卡 + 疫苗卡 + 推送卡</td>
+            <td><span class="tag t-g">高</span></td>
+            <td>信息聚合做得最好的页面，但它是<b>只读的</b> —— 什么都能看，什么都记不了。</td>
+          </tr>
+          <tr>
+            <td>天气穿衣<br><span class="node-p">weather</span></td><td>168/173/466</td>
+            <td>实时天气 + 穿衣分层 + 睡袋 TOG 对照表 + 风险提醒</td>
+            <td><span class="tag t-g">高</span></td>
+            <td>产品力最强的一页。已内置「室温 ± 手动覆盖」并<b>重算整张 TOG 表</b> —— 这个设计思路本身就是天气兜底的正解。</td>
+          </tr>
+          <tr>
+            <td>疫苗护理<br><span class="node-p">vaccine</span></td><td>301/197/633</td>
+            <td>接种后观察、待安排、接种记录、免疫规划表</td>
+            <td><span class="tag t-g">高</span></td>
+            <td>三态齐全、有记录、有规划表，是一个真正闭环的页面。全项目最接近「完成品」的模块。</td>
+          </tr>
+          <tr>
+            <td>记录接种<br><span class="node-p">vaccine-edit</span></td><td>338/193/370</td>
+            <td>免费/自费/自定义疫苗、剂次、日期</td>
+            <td><span class="tag t-a">中</span></td>
+            <td>「找不到？可以自己加」有链接样式但<b>没有 bindtap</b>，点了没反应。</td>
+          </tr>
+          <tr>
+            <td>辅食喂养<br><span class="node-p">food</span></td><td>473/333/1106</td>
+            <td>今天吃什么、3 天/7 天餐单、排敏进度、过敏原、食材库、食谱浮层（11 个区块）</td>
+            <td><span class="tag t-a">中</span></td>
+            <td><b>全项目最重的页面（wxss 1106 行）</b>，藏在三级入口后面。投入与触达严重倒挂。</td>
+          </tr>
+          <tr>
+            <td>记录辅食<br><span class="node-p">food-edit</span></td><td>399/212/392</td>
+            <td>排敏台账：一食材一条，记反应、观察窗</td>
+            <td><span class="tag t-a">中</span></td>
+            <td>与 meal-log 职责分离得很干净（台账 vs 流水），但同样有伪按钮问题。</td>
+          </tr>
+          <tr>
+            <td>记一餐<br><span class="node-p">meal-log</span></td><td>324/170/236</td>
+            <td>餐次、食材、份量、接受度、便便</td>
+            <td><span class="tag t-a">中</span></td>
+            <td>最该被高频使用的一页。<b>零加载态、零骨架屏、无分享</b>，像一个没装修完的房间。</td>
+          </tr>
+          <tr>
+            <td>宝宝在哪<br><span class="node-p">place</span></td><td>318/135/308</td>
+            <td>北京 16 区 → 小区检索（POI / 选点 / 区中心）</td>
+            <td><span class="tag t-r">低</span></td>
+            <td>页面直接显示「未配置地图 Key」；且<b>只支持北京</b>，外地用户第一步就走不通。</td>
+          </tr>
+          <tr>
+            <td>带娃人<br><span class="node-p">family</span></td><td>164/80/187</td>
+            <td>家人增删、勾选推送对象、订阅消息</td>
+            <td><span class="tag t-r">低</span></td>
+            <td>页面自述「未配置模板 ID，仅可手动转发」。<b>一个 tab 级卖点，功能是死的。</b></td>
+          </tr>
+          <tr>
+            <td>月龄建议<br><span class="node-p">guide</span></td><td>157/65/236</td>
+            <td>0–36 月龄分 tab 建议（吃/动/学/睡）+ 辅食入口</td>
+            <td><span class="tag t-a">中</span></td>
+            <td>它其实是<b>辅食的唯一入口</b>，却把自己做成了「文字列表 + 一个内嵌卡」，正文全是「· 一句话」的圆点行。</td>
+          </tr>
+          <tr>
+            <td>宝宝档案<br><span class="node-p">baby-edit</span></td><td>194/130/168</td>
+            <td>档案列表 + 姓名/性别/生日/身高体重/头像</td>
+            <td><span class="tag t-g">高</span></td>
+            <td>整个产品的数据源头，流程干净。但体重身高<b>只校验必填、不校验范围</b>。</td>
+          </tr>
+          <tr>
+            <td>今日卡片<br><span class="node-p">share</span></td><td>308/63/95</td>
+            <td>Canvas 2D 卡片 + 文字版 + 转发/存相册</td>
+            <td><span class="tag t-g">高</span></td>
+            <td><b>全项目唯一的骨架屏</b>在这里。一个「锦上添花」的页面享受了最好的体验待遇。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 热力矩阵 -->
+    <h3 style="margin:38px 0 8px">能力覆盖热力矩阵</h3>
+    <p style="font-size:13px;color:var(--ink2);margin-bottom:20px">每一格都能在代码里找到对应证据。这张表能看出「哪些缺陷是普遍的，哪些是个案」。</p>
+
+    <div class="tbl-wrap">
+      <table class="heat">
+        <thead>
+          <tr>
+            <th>页面</th>
+            <th class="c">无开发者文案<br>无死路</th>
+            <th class="c">加载/骨架态</th>
+            <th class="c">空状态引导</th>
+            <th class="c">可分享</th>
+            <th class="c">沉淀数据</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>今日 index</td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell na">—</span></td></tr>
+          <tr><td>天气 weather</td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell part">△</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell na">—</span></td></tr>
+          <tr><td>疫苗 vaccine</td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>记录接种 vaccine-edit</td><td class="c"><span class="cell part">△</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell na">—</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>辅食 food</td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>记录辅食 food-edit</td><td class="c"><span class="cell part">△</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell na">—</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>记一餐 meal-log</td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell part">△</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>宝宝在哪 place</td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>带娃人 family</td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>月龄建议 guide</td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell na">—</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell na">—</span></td></tr>
+          <tr><td>宝宝档案 baby-edit</td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell no">✗</span></td><td class="c"><span class="cell ok">✓</span></td></tr>
+          <tr><td>今日卡片 share</td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell ok">✓</span></td><td class="c"><span class="cell na">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <b>矩阵最刺眼的两个纵列：</b>
+      「加载/骨架态」<b>12 个页面只有 1 个及格</b>；「无开发者文案」有 <b>5 个页面不及格</b>。
+      前者是系统性的体验欠账，后者是<b>性质更严重的问题 —— 面向用户的产品里出现了面向开发者的报错</b>。
+    </div>
+  </section>
+
+  <!-- ========== 4. 投入产出 ========== -->
+  <section id="cost">
+    <div class="sec-head"><span class="sec-num">04</span><h2>投入 vs 触达：最重的页面，在最深的角落</h2></div>
+    <p class="sec-sub">横轴是预估使用频次（基于入口深度与场景推演，非埋点数据），纵轴是 JS 行数，气泡大小是 wxss 行数（即视觉投入量）。</p>
+
+    <div class="card" style="padding:20px 14px 10px">
+      <svg viewBox="0 0 900 470" width="100%" style="display:block;max-width:100%" font-family="'PingFang SC',-apple-system,sans-serif">
+        <!-- 网格 -->
+        <g stroke="#F2E6DA" stroke-width="1">
+          <line x1="80" y1="60" x2="860" y2="60"/>
+          <line x1="80" y1="126" x2="860" y2="126"/>
+          <line x1="80" y1="192" x2="860" y2="192"/>
+          <line x1="80" y1="258" x2="860" y2="258"/>
+          <line x1="80" y1="324" x2="860" y2="324"/>
+          <line x1="80" y1="390" x2="860" y2="390"/>
+        </g>
+        <!-- 轴标签 Y -->
+        <g fill="#A8998C" font-size="11" text-anchor="end">
+          <text x="70" y="64">500</text>
+          <text x="70" y="130">400</text>
+          <text x="70" y="196">300</text>
+          <text x="70" y="262">200</text>
+          <text x="70" y="328">100</text>
+          <text x="70" y="394">0</text>
+        </g>
+        <text x="24" y="230" fill="#6B5A4E" font-size="12" font-weight="700" transform="rotate(-90 24 230)" text-anchor="middle">JS 行数（开发投入）</text>
+        <!-- 轴标签 X -->
+        <g fill="#A8998C" font-size="11" text-anchor="middle">
+          <text x="80" y="412">低</text>
+          <text x="270" y="412">25</text>
+          <text x="460" y="412">50</text>
+          <text x="650" y="412">75</text>
+          <text x="840" y="412">高</text>
+        </g>
+        <text x="470" y="440" fill="#6B5A4E" font-size="12" font-weight="700" text-anchor="middle">预估使用频次 →</text>
+
+        <!-- 倒挂区高亮 -->
+        <rect x="88" y="66" width="330" height="180" fill="#D2614E" opacity="0.045" rx="12"/>
+        <text x="104" y="88" fill="#C0705F" font-size="11.5" font-weight="700">⚠ 投入高 · 触达低</text>
+
+        <!-- 气泡 -->
+        <g opacity="0.88">
+          <!-- food -->
+          <circle cx="498" cy="78" r="36" fill="#F0876B" opacity="0.28" stroke="#F0876B" stroke-width="2"/>
+          <text x="498" y="75" text-anchor="middle" font-size="12.5" font-weight="800" fill="#B4522F">辅食</text>
+          <text x="498" y="89" text-anchor="middle" font-size="9.5" fill="#B4522F">473行 · 三级</text>
+
+          <!-- vaccine -->
+          <circle cx="399" cy="191" r="26" fill="#F0876B" opacity="0.22" stroke="#F0876B" stroke-width="1.8"/>
+          <text x="399" y="194" text-anchor="middle" font-size="11" font-weight="700" fill="#B4522F">疫苗</text>
+
+          <!-- index -->
+          <circle cx="802" cy="254" r="21" fill="#4E9370" opacity="0.26" stroke="#4E9370" stroke-width="2"/>
+          <text x="802" y="257" text-anchor="middle" font-size="11" font-weight="700" fill="#356E52">今日</text>
+
+          <!-- weather -->
+          <circle cx="627" cy="279" r="22" fill="#4E9370" opacity="0.26" stroke="#4E9370" stroke-width="2"/>
+          <text x="627" y="282" text-anchor="middle" font-size="10.5" font-weight="700" fill="#356E52">天气</text>
+
+          <!-- share -->
+          <circle cx="460" cy="187" r="14" fill="#5B7FA6" opacity="0.24" stroke="#5B7FA6" stroke-width="1.6"/>
+          <text x="460" y="190" text-anchor="middle" font-size="9.5" font-weight="700" fill="#456B94">卡片</text>
+
+          <!-- meal-log -->
+          <circle cx="308" cy="176" r="17" fill="#D99A3B" opacity="0.26" stroke="#D99A3B" stroke-width="1.8"/>
+          <text x="308" y="179" text-anchor="middle" font-size="10" font-weight="700" fill="#9A6A15">一餐</text>
+
+          <!-- food-edit -->
+          <circle cx="262" cy="127" r="20" fill="#D99A3B" opacity="0.26" stroke="#D99A3B" stroke-width="1.8"/>
+          <text x="262" y="130" text-anchor="middle" font-size="10" font-weight="700" fill="#9A6A15">辅食记录</text>
+
+          <!-- vaccine-edit -->
+          <circle cx="202" cy="167" r="20" fill="#D99A3B" opacity="0.24" stroke="#D99A3B" stroke-width="1.6"/>
+          <text x="202" y="170" text-anchor="middle" font-size="9.5" font-weight="700" fill="#9A6A15">接种记录</text>
+
+          <!-- place -->
+          <circle cx="141" cy="180" r="18" fill="#A8998C" opacity="0.26" stroke="#A8998C" stroke-width="1.6"/>
+          <text x="141" y="183" text-anchor="middle" font-size="9.5" font-weight="700" fill="#7D7166">地点</text>
+
+          <!-- guide -->
+          <circle cx="369" cy="286" r="17" fill="#D99A3B" opacity="0.24" stroke="#D99A3B" stroke-width="1.6"/>
+          <text x="369" y="289" text-anchor="middle" font-size="9.5" font-weight="700" fill="#9A6A15">月龄</text>
+
+          <!-- family -->
+          <circle cx="171" cy="282" r="16" fill="#A8998C" opacity="0.26" stroke="#A8998C" stroke-width="1.6"/>
+          <text x="171" y="285" text-anchor="middle" font-size="9.5" font-weight="700" fill="#7D7166">带娃人</text>
+
+          <!-- baby-edit -->
+          <circle cx="118" cy="262" r="15.5" fill="#A8998C" opacity="0.26" stroke="#A8998C" stroke-width="1.6"/>
+          <text x="118" y="265" text-anchor="middle" font-size="9.5" font-weight="700" fill="#7D7166">档案</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="callout" style="margin-top:26px">
+      <b>两个气泡够说明问题：</b>
+      「辅食」是全项目投入最重的页面（JS 473、wxss 1106），却落在左侧三级深链区；
+      「卡片」只承担一次分享，却拿到了唯一的骨架屏和一门 Canvas 绘制库。
+      <b>资源分配不是按用户价值，而是按「哪个做起来更有意思」。</b>
+    </div>
+  </section>
+
+  <!-- ========== 5. 优缺点 ========== -->
+  <section id="verdict">
+    <div class="sec-head"><span class="sec-num">05</span><h2>优缺点：好的是真资产，差的是系统性</h2></div>
+    <p class="sec-sub">每一条都回答「这在产品上意味着什么」，而不是罗列代码现象。</p>
+
+    <div class="two-col">
+      <!-- 优点 -->
+      <div class="pillar">
+        <div class="pillar-h"><span class="bar" style="background:var(--green)"></span>值得被保护的优势</div>
+
+        <div class="item">
+          <div class="item-t"><i>01</i>内容是结构化资产，不是占位文案</div>
+          <div class="item-d">67 种食材带月龄门槛、过敏原标记、铁含量；18 种疫苗带反应清单与危险信号；9 档温度带的穿衣规则。<b>这些内容有专业壁垒，是可迁移到任何平台的护城河。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>02</i>是「规则引擎」而不是「静态文章」</div>
+          <div class="item-d">餐单生成有加权随机 + 固定种子（同一天打开结果稳定，换天会变），穿衣是温度 × 月龄双维查表，疫苗按接种后分期给护理。<b>这意味着它能给出「你家宝宝此刻」的答案，而不是通用科普 —— 这是它区别于母婴公众号的唯一理由。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>03</i>数据层收口干净，可测试</div>
+          <div class="item-d">11 个存储 key 全部走 <code>utils/store.js</code> 单一入口，<code>utils/*</code> 是纯函数。<b>所以它才有能力跑出约 800 条断言 —— 这是一个能安全重构的代码库，也意味着后面的改造不会失控。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>04</i>天气三级降级 + 合规意识</div>
+          <div class="item-d">云函数 → 直连 → 30 分钟本地缓存 → 离线兜底标注「离线缓存」；12 个页面统一挂医疗免责声明组件。<b>说明作者对「不误导用户」是有敬畏的。</b></div>
+        </div>
+      </div>
+
+      <!-- 缺点 -->
+      <div class="pillar">
+        <div class="pillar-h"><span class="bar" style="background:var(--red)"></span>需要正视的问题</div>
+
+        <div class="item">
+          <div class="item-t"><i>01</i>定位撕裂：今日页在为三种产品同时妥协</div>
+          <div class="item-d">内容产品要让人「逛」，工具要「3 秒出答案」，记录产品要「零摩擦记一笔」。今日页三件都做，结果三件都不极致。<b>证据就在 tabBar 里：4 个 tab 全是「查」，但唯一有数据沉淀的模块全在二级以外 —— 团队内心当自己是内容产品，而留存只能来自记录。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>02</i>一级导航按开发模块切，不按用户任务切</div>
+          <div class="item-d">今日 / 天气 / 疫苗 / 带娃人 = 1 个看板 + 2 个查询 + 1 个设置，缺「记录」和「我的宝宝」。<b>这不是入口深浅的问题，是分类维度错了。用户想的是「我刚喂完，记一下」，导航想的是「这是辅食模块」。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>03</i>三个卖点里两个默认残缺，且残缺写在了脸上</div>
+          <div class="item-d">首页写「需部署 weather 云函数」，设置页写「未配置模板 ID」，地点页写「未配置地图 Key」。<b>对一个要发给别人用的小程序，这等于把「半成品」直接交付给用户。三条卖点里穿衣和推送两条默认不工作。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>04</i>交互诚信：假刷新、伪按钮、toast 万能</div>
+          <div class="item-d">下拉刷新是固定 800ms 后强制停止；两处「可以自己加」点了没反应；约 54 处 toast 承担全部提示，0 处 loading。<b>它训练出的是「这个产品的反馈不可信」—— 用户不会报 bug，只会停止点击。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>05</i>数据不可携带，且损失是沉默的</div>
+          <div class="item-d">无登录、无账号、11 个 key 全在本机，换手机即全部归零。<b>对记录型产品，这是最危险的一类问题：用户投入越多，损失越大，而他不会投诉，只会卸载并在群里说一句「别用了，会丢」。</b></div>
+        </div>
+
+        <div class="item">
+          <div class="item-t"><i>06</i>投入与触达倒挂</div>
+          <div class="item-d">最重的辅食页在最深的入口，最轻的卡片页拿到最好的体验待遇。<b>结果是：做得最用心的部分，最少人看见。</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 6. 新用户旅程 ========== -->
+  <section id="journey">
+    <div class="sec-head"><span class="sec-num">06</span><h2>新用户的前 5 分钟：三个断点</h2></div>
+    <p class="sec-sub">把上面所有问题串起来，走一遍真实路径。红色即流失点。</p>
+
+    <div class="journey">
+      <div class="jstep"><div class="jnum">1</div><div class="jt">打开小程序</div><div class="jd">今日页，引导「先添加宝宝」<br>文案清楚，是好开头</div></div>
+      <div class="jstep"><div class="jnum">2</div><div class="jt">填宝宝生日</div><div class="jd">流程顺，填完立刻拿到月龄建议<br>这一步有「啊，有用」的感觉</div></div>
+      <div class="jstep bad"><div class="jnum">3</div><div class="jt">看到「今天穿什么」</div><div class="jd"><b>断点 ①</b>　卡片显示「需部署 weather 云函数，或在开发者工具里勾选不校验合法域名」</div></div>
+      <div class="jstep"><div class="jnum">4</div><div class="jt">去设地点</div><div class="jd">又见「未配置地图 Key」<br>且只支持北京 16 区</div></div>
+      <div class="jstep bad"><div class="jnum">5</div><div class="jt">刚喂完，想记一笔</div><div class="jd"><b>断点 ②</b>　首页找不到任何记录入口，4 个 tab 里也没有</div></div>
+      <div class="jstep"><div class="jnum">6</div><div class="jt">试着点「记录辅食」</div><div class="jd">点「找不到？可以自己加」<br>无反应</div></div>
+      <div class="jstep bad"><div class="jnum">7</div><div class="jt">想推给家人</div><div class="jd"><b>断点 ③</b>　「未配置模板 ID，仅可手动转发」</div></div>
+      <div class="jstep"><div class="jnum">8</div><div class="jt">退出</div><div class="jd">记得的是「要我配什么东西」<br>而不是「它帮我算好了穿衣」</div></div>
+    </div>
+
+    <div class="callout">
+      <b>关键判断：</b>第 3、4 步的断点，问题不在「没配置」，而在<b>把配置责任转嫁给了用户</b>。
+      穿衣算法 100% 在本地（<code>data/clothing.js</code> 9 档温度带 + 完整 TOG 表），云端只提供「今天几度」这一个数字。
+      <b>为了一个数字，废掉了一整条产品线。</b>
+    </div>
+  </section>
+
+  <!-- ========== 7. 改造路线 ========== -->
+  <section id="roadmap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>改造路线：按「不可逆损失」排序，不按工作量</h2></div>
+    <p class="sec-sub">排序原则只有一条：<b>哪件事不做，用户会永久流失且不会告诉你。</b>技术上容易改 ≠ 优先级高。</p>
+
+    <div class="prio">
+      <div class="pcard p0">
+        <div class="phead"><span class="plv">P0</span><span class="pt">天气兜底：把「温度」的输入权还给用户</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">为什么是 P0</div>
+            <div class="why">三块核心能力之一默认不工作。但真正的原因不是「没配环境 ID」，而是<b>可用性被赌在一个部署动作上</b>。天气页其实已经证明了解法：它的「室温 ± 手动覆盖 → 重算整张 TOG 表」就是同一个思路。</div>
+          </div>
+          <div>
+            <div class="lbl">怎么做</div>
+            <div class="how">在天气卡加「手输温度 / 选城市 / 选内置温度带」三选一，走通后再顺手删掉三处开发者文案：<code>index.wxml:99</code>、<code>weather.wxml:28</code>、<code>place.wxml:56</code>。<b>先让能力可用，文案会自己消失。</b>只删文案不改逻辑，等于把残废藏起来。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard p0">
+        <div class="phead"><span class="plv">P0</span><span class="pt">数据知情权 + 一键可带走</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">为什么是 P0</div>
+            <div class="why">记录的不可逆损失是<b>沉默的</b>：用户不报 bug，只卸载 + 劝退。而且现在用户最少，恰是迁移成本最低的时点；等有量再补账号，历史数据已经回填不回来了。</div>
+          </div>
+          <div>
+            <div class="lbl">怎么做</div>
+            <div class="how">不做账号也能解决的版本：① 在宝宝档案页明确写「数据仅存本机」；② 提供<b>导出 / 导入备份</b>（把 <code>store.js</code> 的 11 个 KEYS 全量序列化成一段文本或二维码）。账号上云留到 P1，不要卡在这一步。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard p0">
+        <div class="phead"><span class="plv">P0</span><span class="pt">今日页首屏加「记一笔」</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">为什么是 P0</div>
+            <div class="why">这是入口问题的正解，而且<b>比加 tab 便宜得多</b>。4 个 tab 里 3 个是「查」，唯一能产生留存的动作全靠深链。改首屏一行，收益大于重做导航。</div>
+          </div>
+          <div>
+            <div class="lbl">怎么做</div>
+            <div class="how">在 <code>pages/index/index.wxml</code> 宝宝卡下方加一组常驻快捷入口：记一餐 / 记辅食 / 记接种 / 记便便，直达 <code>meal-log</code>、<code>food-edit</code>。顺手把最近 3 条记录展示出来 —— 让用户看到「我记的东西在积累」。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard p0">
+        <div class="phead"><span class="plv">P0</span><span class="pt">交互诚信整改</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">为什么是 P0</div>
+            <div class="why">假刷新 + 伪按钮 + 只有 toast 没有 loading，会训练出「这个产品的反馈不可信」。<b>这是信任税，交久了就没人再点。</b></div>
+          </div>
+          <div>
+            <div class="lbl">怎么做</div>
+            <div class="how">① 假下拉改真刷新或直接去掉（<code>index.js:32-34</code>、<code>weather.js:31-33</code>）；② 伪按钮补 bindtap 或删除（<code>food-edit.wxml:28</code>、<code>vaccine-edit.wxml:19</code>）；③ 给 meal-log / food 这类重页面补骨架屏。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard p1">
+        <div class="phead"><span class="plv">P1</span><span class="pt">导航补「记录」与「辅食」，并给 tabBar 补图标</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">为什么放 P1 不放 P0</div>
+            <div class="why">辅食有月龄窗口（约 6–24 个月），不是每个人都需要；而且再加第 5 个<b>纯文字</b> tab 只会让现有的无图标导航更糊。所以这两件事必须一起做。</div>
+          </div>
+          <div>
+            <div class="lbl">怎么做</div>
+            <div class="how">先补 4 组 tab 图标（<code>app.json:40-57</code> 目前无 <code>iconPath</code>），再把「辅食」提上来；或更彻底一步：一级导航按任务重组为「今日 / 记录 / 查一下 / 我的」。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard p1">
+        <div class="phead"><span class="plv">P1</span><span class="pt">打通「推送给带娃人」，或诚实地降级</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">为什么重要</div>
+            <div class="why">这是产品里<b>唯一的增长机制</b>：一个带娃人拉来另一个带娃人。现在它被一句「去公众平台申请模板」堵死（<code>family.js:89-97</code>、<code>app.js:8</code>）。</div>
+          </div>
+          <div>
+            <div class="lbl">怎么做</div>
+            <div class="how">短期：把它从「每日提醒」明确改成「生成卡片手动转发」，文案承诺和能力对齐。<b>长期：这本来就是唯一可行的社交裂变点，值得单独设计。</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard p1">
+        <div class="phead"><span class="plv">P1</span><span class="pt">重做「月龄建议」页</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">为什么重要</div>
+            <div class="why">它同时是两个东西：内容的消费入口，和辅食的唯一大门。但正文全是「· 一句话」的圆点行，字级从 44rpx 直接跳到 20rpx。<b>内容型页面不该长成待办清单。</b></div>
+          </div>
+          <div>
+            <div class="lbl">怎么做</div>
+            <div class="how">做「一条主建议 + 若干可展开细项」的层次；把辅食卡从「内嵌小卡」升级为页面级主入口；补齐分享（它是最想被转发给家人的一页）。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard p2">
+        <div class="phead"><span class="plv">P2</span><span class="pt">工程与打磨</span></div>
+        <div class="pbody">
+          <div>
+            <div class="lbl">内容</div>
+            <div class="why">引入设计 token 收敛 206 个唯一色值（<code>#B3A294</code> vs <code>#B3A195</code> 这类漂移）；随业务增长做分包，把 <code>data/</code> 与 food 相关下沉；表单加范围校验（<code>baby-edit.js:128-133</code> 体重身高不校验）；长列表上拉分页；补无障碍。</div>
+          </div>
+          <div>
+            <div class="lbl">判断依据</div>
+            <div class="how">这些都影响「专业感」但不影响「能不能用」。<b>在 P0 的信任问题解决之前，做这些属于优化一个用户还没决定要不要留下来的产品。</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:26px">
+      <b>如果你只能做一件事：</b>做 P0-1（天气兜底 + 删文案）。
+      因为它用最小的改动，同时解决「核心能力不可用」和「半成品观感」两个最伤信任的问题，
+      并且天气页已有的手动室温覆盖<b>就是现成的实现范式</b>，不需要新设计。
+    </div>
+  </section>
+
+  <!-- ========== 结尾 ========== -->
+  <div class="final">
+    <q>它已经是一个「有用的东西」，但还不是一个「别人愿意推荐的东西」。<br><em>差距不在功能，在第一步的可用性和第三步的可信度。</em></q>
+    <p>内容与规则是这三年攒下来的真资产，改造的核心不是重写，而是<b>把这些资产挪到用户走得到的地方</b>，并停止把配置责任转嫁给使用者。</p>
+  </div>
+
+  <footer>
+    <span>小芽日常 · 产品诊断报告　|　基于 12 个页面全量代码通读</span>
+    <span>行数与统计口径：js / wxml / wxss 实际行数；频次为推演估算，非埋点数据</span>
+  </footer>
+
+</div>
+</body>
+</html>

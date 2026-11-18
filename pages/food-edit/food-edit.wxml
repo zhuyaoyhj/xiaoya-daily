@@ -25,7 +25,7 @@
   <view class="card">
     <view class="card-head">
       <view class="card-title">这次吃的是</view>
-      <view class="pick-name">找不到？可以自己加</view>
+      <view class="pick-name" bindtap="openSheet">找不到？可以自己加 ›</view>
     </view>
 
     <view class="food-grid">

@@ -166,3 +166,11 @@
   color: #C9694A;
   border-color: #F3DACD;
 }
+
+.local-note {
+  font-size: 22rpx;
+  color: #A8968A;
+  text-align: center;
+  line-height: 1.6;
+  padding: 24rpx 24rpx 0;
+}

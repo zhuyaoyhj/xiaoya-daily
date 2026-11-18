@@ -1,21 +1,35 @@
 <view class="page-wrap">
 
-  <!-- 月龄切换 -->
+  <!-- 月龄段：箭头按段切换，下方小圆点可直接跳 -->
   <view class="month-bar">
-    <view class="month-nav" bindtap="prevMonth">‹</view>
+    <view class="month-nav {{segIndex <= 0 ? 'month-nav-off' : ''}}" bindtap="prevMonth">‹</view>
     <view class="month-center">
       <view class="month-label">{{label}}</view>
-      <view class="month-tag">{{tag}}</view>
+      <view class="month-tag">{{tag}}<text wx:if="{{isCurrent && hasBaby}}" class="month-now"> · {{babyName || '宝宝'}}现在</text></view>
     </view>
-    <view class="month-nav" bindtap="nextMonth">›</view>
+    <view class="month-nav {{segIndex >= segments.length - 1 ? 'month-nav-off' : ''}}" bindtap="nextMonth">›</view>
   </view>
 
-  <view class="month-hint" wx:if="{{!isCurrent}}" bindtap="backToCurrent">
-    这是第 {{month}} 个月的参考，点这里回到{{babyName || '宝宝'}}当前月龄（{{currentMonth}} 个月）
-  </view>
-  <view class="month-hint" wx:else>左右箭头可以看前后月龄，提前准备不慌张</view>
+  <scroll-view class="seg-bar" scroll-x enable-flex show-scrollbar="{{false}}" scroll-into-view="seg-{{segIndex}}">
+    <view
+      class="seg {{segIndex === item.i ? 'seg-on' : ''}}"
+      id="seg-{{item.i}}"
+      wx:for="{{segments}}"
+      wx:key="i"
+      data-i="{{item.i}}"
+      bindtap="pickSeg"
+    >{{item.short}}</view>
+  </scroll-view>
 
-  <!-- 分类 tab -->
+  <view class="month-hint month-hint-link" wx:if="{{!isCurrent && hasBaby}}" bindtap="backToCurrent">
+    这是 {{label}} 的参考 · 回到{{babyName || '宝宝'}}现在（{{currentMonth}} 个月）›
+  </view>
+  <view class="month-hint" wx:elif="{{!hasBaby}}">
+    <text>还没填宝宝生日，先看通用建议。</text>
+    <text class="month-hint-link" bindtap="goAddBaby">添加宝宝 ›</text>
+  </view>
+
+  <!-- 分类 -->
   <scroll-view class="tab-bar" scroll-x enable-flex show-scrollbar="{{false}}">
     <view
       class="tab {{tab === item.key ? 'tab-on' : ''}}"
@@ -28,8 +42,24 @@
     </view>
   </scroll-view>
 
-  <!-- 辅食专区（只在「吃」tab 出现） -->
-  <view class="food-entry entry-{{foodCard.tone}}" wx:if="{{tab === 'eat' && foodCard}}" bindtap="goFood">
+  <!-- 本段要点：一屏看完四条主建议 -->
+  <view class="digest card" wx:if="{{tab === 'all'}}">
+    <view class="digest-title">这个阶段，抓住这四件事</view>
+    <view
+      class="digest-row"
+      wx:for="{{visible}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="switchTab"
+    >
+      <view class="digest-icon" style="background:{{item.soft}};color:{{item.color}}">{{item.emoji}}</view>
+      <view class="digest-text">{{item.heading}}</view>
+      <view class="digest-go">›</view>
+    </view>
+  </view>
+
+  <!-- 辅食入口：只在宝宝所在的月龄段出现 -->
+  <view class="food-entry entry-{{foodCard.tone}}" wx:if="{{showFood}}" bindtap="goFood">
     <view class="entry-top">
       <view class="entry-badge">辅食</view>
       <view class="entry-chip">{{foodCard.stageLabel}}</view>
@@ -38,28 +68,59 @@
     <view class="entry-month" wx:if="{{foodCard.focusTitle}}">{{foodCard.focusTitle}}</view>
     <view class="entry-desc">{{foodCard.desc}}</view>
     <view class="entry-today" wx:if="{{foodCard.todayText}}">今天这顿：{{foodCard.todayText}}</view>
-    <view class="entry-go">打开辅食喂养 · 已试 {{foodCard.tried}} 种 ›</view>
+    <view class="entry-go">打开辅食记录 · 已试 {{foodCard.tried}} 种 ›</view>
   </view>
 
-  <!-- 内容 -->
+  <!-- 分类详情：主建议放大，细项默认露两条 -->
   <view class="sec" wx:for="{{visible}}" wx:key="key">
     <view class="sec-head">
       <view class="sec-emoji" style="background:{{item.soft}};color:{{item.color}}">{{item.emoji}}</view>
       <view class="sec-head-text">
-        <view class="sec-title">{{item.title}}</view>
+        <view class="sec-title" style="color:{{item.color}}">{{item.title}}</view>
         <view class="sec-heading">{{item.heading}}</view>
       </view>
     </view>
 
     <view class="card sec-card">
-      <view class="li" wx:for="{{item.rows}}" wx:for-item="row" wx:key="k">
-        <view class="li-dot" style="background:{{item.color}}"></view>
+      <view class="lead" style="border-color:{{item.color}}">{{item.lead}}</view>
+
+      <view
+        class="li"
+        wx:for="{{item.rows}}"
+        wx:for-item="row"
+        wx:key="k"
+        wx:if="{{row.show}}"
+      >
+        <view class="li-dot" style="background:{{row.color}}"></view>
         <view class="li-text">{{row.t}}</view>
+      </view>
+
+      <view class="more" wx:if="{{item.more > 0}}" data-key="{{item.key}}" bindtap="toggleMore">
+        {{item.open ? '收起' : '再看 ' + item.more + ' 条'}}
       </view>
     </view>
   </view>
 
-  <button class="btn btn-primary btn-block share-btn" bindtap="goShare">把这份建议发给家人</button>
+  <!-- 这一阶段要留意 -->
+  <view class="alert-card" wx:if="{{alerts}}">
+    <view class="alert-title">💡 这一阶段要留意</view>
+    <view class="alert-li" wx:for="{{alerts.items}}" wx:key="*this">
+      <view class="alert-dot"></view>
+      <view class="alert-text">{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 下一阶段预告 -->
+  <view class="next-card" wx:if="{{nextSeg && tab === 'all'}}" bindtap="goNext">
+    <view class="next-top">
+      <text class="next-badge">接下来</text>
+      <text class="next-label">{{nextSeg.label}} · {{nextSeg.tag}}</text>
+    </view>
+    <view class="next-point" wx:for="{{nextSeg.points}}" wx:key="*this">· {{item}}</view>
+    <view class="next-go">提前看看 ›</view>
+  </view>
+
+  <view class="btn btn-primary btn-block share-btn" bindtap="goShare">把这份建议发给家人</view>
 
   <disclaimer />
 </view>

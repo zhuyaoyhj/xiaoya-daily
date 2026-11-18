@@ -1,0 +1,258 @@
+/* 记录面板与计时条（配合 care-panel.wxml 模板使用） */
+
+.cp-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(58, 46, 38, 0.42);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.cp-sheet {
+  width: 100%;
+  max-height: 86vh;
+  overflow-y: auto;
+  background: #FFF8F0;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 36rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.cp-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.cp-sub {
+  font-size: 24rpx;
+  color: #9A8A7C;
+  line-height: 1.6;
+  margin: 8rpx 0 24rpx;
+}
+
+.cp-sub-tight {
+  margin: 28rpx 0 12rpx;
+}
+
+.cp-row {
+  display: flex;
+  gap: 20rpx;
+}
+
+.cp-big {
+  flex: 1;
+  background: #FFFFFF;
+  border: 2rpx solid #F2E6DA;
+  border-radius: 28rpx;
+  padding: 32rpx 0;
+  text-align: center;
+  margin-top: 16rpx;
+}
+
+.cp-big:active {
+  background: #FFF1E6;
+  border-color: #F0876B;
+}
+
+.cp-big-emoji {
+  font-size: 48rpx;
+  line-height: 1.2;
+}
+
+.cp-big-label {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.cp-big-hint {
+  font-size: 22rpx;
+  color: #A8968A;
+  margin-top: 4rpx;
+}
+
+.cp-divider {
+  text-align: center;
+  font-size: 22rpx;
+  color: #B8A797;
+  margin: 36rpx 0 20rpx;
+}
+
+.cp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.cp-chip {
+  font-size: 26rpx;
+  color: #6B5A4E;
+  background: #FFFFFF;
+  border: 2rpx solid #F2E6DA;
+  border-radius: 999rpx;
+  padding: 10rpx 28rpx;
+}
+
+.cp-chip-on {
+  color: #FFFFFF;
+  background: #F0876B;
+  border-color: #F0876B;
+}
+
+.cp-grid {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 20rpx;
+}
+
+.cp-ml {
+  flex: 1;
+  background: #FFFFFF;
+  border: 2rpx solid #F2E6DA;
+  border-radius: 20rpx;
+  padding: 22rpx 0;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.cp-ml:active {
+  background: #FFF1E6;
+  border-color: #F0876B;
+}
+
+.cp-unit {
+  font-size: 20rpx;
+  font-weight: 400;
+  color: #A8968A;
+  margin-left: 2rpx;
+}
+
+.cp-input-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.cp-input {
+  flex: 1;
+  height: 84rpx;
+  background: #FFFFFF;
+  border: 2rpx solid #F2E6DA;
+  border-radius: 20rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+}
+
+.cp-input-btn {
+  flex: none;
+  height: 84rpx;
+  line-height: 84rpx;
+  padding: 0 36rpx;
+  border-radius: 20rpx;
+  background: #F0876B;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.cp-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx 0;
+}
+
+.cp-color {
+  width: 25%;
+  text-align: center;
+}
+
+.cp-color:active {
+  opacity: 0.7;
+}
+
+.cp-swatch {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  margin: 0 auto;
+  border: 4rpx solid #FFFFFF;
+  box-shadow: 0 4rpx 14rpx rgba(58, 46, 38, 0.15);
+}
+
+.cp-color-label {
+  font-size: 22rpx;
+  color: #6B5A4E;
+  margin-top: 8rpx;
+}
+
+.cp-skip,
+.cp-link {
+  text-align: center;
+  font-size: 24rpx;
+  color: #A8968A;
+  margin-top: 36rpx;
+}
+
+.cp-link {
+  color: #D9724F;
+}
+
+/* ---------- 进行中计时条 ---------- */
+.cl-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: linear-gradient(120deg, #FFE9DC 0%, #FFF4EC 100%);
+  border: 2rpx solid #F8CDB6;
+  border-radius: 24rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.cl-bar-sleep {
+  background: linear-gradient(120deg, #ECE7F8 0%, #F6F3FC 100%);
+  border-color: #D9CFF0;
+}
+
+.cl-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.cl-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.cl-sub {
+  font-size: 24rpx;
+  color: #8C7B6E;
+  margin-top: 4rpx;
+}
+
+.cl-btn {
+  flex: none;
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: #F0876B;
+  border-radius: 999rpx;
+  padding: 14rpx 30rpx;
+}
+
+.cl-bar-sleep .cl-btn {
+  background: #8E7BC0;
+}
+
+.cl-btn-line {
+  color: #D9724F;
+  background: #FFFFFF;
+  border: 2rpx solid #F3C4B6;
+}

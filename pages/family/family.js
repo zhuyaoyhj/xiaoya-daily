@@ -86,13 +86,17 @@ Page({
     const app = getApp();
     const tmplIds = (app.globalData && app.globalData.tmplIds) || [];
 
+    // 正常不会走到这里：未配置模板时页面不展示开关。兜底时引导去转发卡片，不出现开发者术语
     if (!tmplIds.length) {
       wx.showModal({
-        title: '还差一步',
-        content:
-          '每日自动提醒需要用到微信「订阅消息」。请先在公众平台申请模板，把模板 ID 填进 app.js 的 tmplIds，再回来开启。现在也可以直接用「生成今日卡片」转发给家人。',
-        showCancel: false,
-        confirmText: '知道了'
+        title: '每日提醒暂未开放',
+        content: '可以先「生成今日卡片」转发到家庭群，家人点开就是当天的建议。',
+        confirmText: '去生成',
+        cancelText: '稍后',
+        confirmColor: '#E0795A',
+        success: function (res) {
+          if (res.confirm) wx.navigateTo({ url: '/pages/share/share' });
+        }
       });
       return;
     }

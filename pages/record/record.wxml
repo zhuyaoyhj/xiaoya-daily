@@ -1,0 +1,142 @@
+<import src="/components/care-panel/care-panel.wxml" />
+
+<view class="page-wrap">
+
+  <!-- 没有宝宝 -->
+  <view class="card empty-card" wx:if="{{!hasBaby}}">
+    <view class="empty-emoji">📋</view>
+    <view class="h3">先添加宝宝</view>
+    <view class="muted empty-desc">喂奶、睡觉、换尿布、辅食，都按宝宝分开记</view>
+    <view class="btn btn-primary btn-sm" bindtap="goAddBaby">添加宝宝</view>
+  </view>
+
+  <block wx:else>
+    <!-- 计时中 -->
+    <template is="care-live" data="{{careActive}}" />
+
+    <!-- 三个大按钮：只在看今天时显示，看过去某天时换成「补记」 -->
+    <view class="acts" wx:if="{{isToday}}">
+      <view class="act {{careActive.feed ? 'act-on' : ''}}" data-type="feed" bindtap="openCarePanel">
+        <view class="act-emoji">🍼</view>
+        <view class="act-text">{{careActive.feed ? '结束喂奶' : '喂奶'}}</view>
+      </view>
+      <view class="act {{careActive.sleep ? 'act-on act-sleep' : ''}}" data-type="sleep" bindtap="openCarePanel">
+        <view class="act-emoji">{{careActive.sleep ? '☀️' : '😴'}}</view>
+        <view class="act-text">{{careActive.sleep ? '醒了' : '睡觉'}}</view>
+      </view>
+      <view class="act" data-type="diaper" bindtap="openCarePanel">
+        <view class="act-emoji">🧷</view>
+        <view class="act-text">换尿布</view>
+      </view>
+    </view>
+    <view class="acts acts-past" wx:else>
+      <view class="act act-line" data-type="feed" bindtap="addPast">＋ 补记喂奶</view>
+      <view class="act act-line" data-type="sleep" bindtap="addPast">＋ 补记睡眠</view>
+      <view class="act act-line" data-type="diaper" bindtap="addPast">＋ 补记尿布</view>
+    </view>
+
+    <!-- 日期 -->
+    <view class="day-bar">
+      <view class="day-nav" bindtap="prevDay">‹</view>
+      <picker mode="date" value="{{date}}" end="{{today}}" bindchange="onPickDate">
+        <view class="day-label">{{dateLabel}} <text class="day-arrow">▾</text></view>
+      </picker>
+      <view class="day-nav {{isToday ? 'day-nav-off' : ''}}" bindtap="nextDay">›</view>
+    </view>
+    <view class="back-today" wx:if="{{!isToday}}" bindtap="backToday">回到今天 ›</view>
+
+    <!-- 当天汇总 -->
+    <view class="card sum-card">
+      <view class="sum-grid">
+        <view class="sum-cell">
+          <view class="sum-num">{{sum.feeds}}<text class="sum-unit">次</text></view>
+          <view class="sum-key">喂奶</view>
+          <view class="sum-ref">参考 {{sum.ref.feeds}}</view>
+        </view>
+        <view class="sum-cell">
+          <view class="sum-num">{{sum.sleepText}}</view>
+          <view class="sum-key">睡眠</view>
+          <view class="sum-ref">参考 {{sum.ref.sleep}}</view>
+        </view>
+        <view class="sum-cell">
+          <view class="sum-num">{{sum.diapers}}<text class="sum-unit">片</text></view>
+          <view class="sum-key">尿布</view>
+          <view class="sum-ref">尿 {{sum.wet}} · 便 {{sum.dirty}}</view>
+        </view>
+      </view>
+      <view class="sum-extra" wx:if="{{sum.bottleMl || sum.breastMin}}">
+        <text wx:if="{{sum.bottleMl}}">瓶喂共 {{sum.bottleMl}}ml</text>
+        <text wx:if="{{sum.bottleMl && sum.breastMin}}"> · </text>
+        <text wx:if="{{sum.breastMin}}">亲喂共 {{sum.breastMin}} 分钟</text>
+      </view>
+      <view class="hint hint-{{item.level}}" wx:for="{{sum.hints}}" wx:key="text">{{item.text}}</view>
+    </view>
+
+    <!-- 时间线 -->
+    <view class="tl-head">
+      <view class="tl-title">时间线</view>
+      <view class="tl-filters">
+        <view
+          class="tl-filter {{filter === item.key ? 'tl-filter-on' : ''}}"
+          wx:for="{{filters}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="switchFilter"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="card tl-card" wx:if="{{rows.length > 0}}">
+      <view class="tl-row" wx:for="{{rows}}" wx:key="id" data-id="{{item.id}}" bindtap="openRow">
+        <view class="tl-time">{{item.time}}</view>
+        <view class="tl-dot tl-dot-{{item.type}}"></view>
+        <view class="tl-main">
+          <view class="tl-name">
+            <text>{{item.emoji}} {{item.title}}</text>
+            <text class="tl-swatch" wx:if="{{item.colorHex}}" style="background:{{item.colorHex}}"></text>
+          </view>
+          <view class="tl-detail tl-detail-{{item.level}}" wx:if="{{item.detail}}">{{item.detail}}</view>
+        </view>
+        <view class="tl-go">›</view>
+      </view>
+    </view>
+    <view class="card tl-empty" wx:else>
+      <view class="muted">{{total > 0 ? '这一类今天还没有记录' : (isToday ? '今天还没有记录，点上面的按钮开始' : '这一天没有记录')}}</view>
+    </view>
+
+    <!-- 其他记录 -->
+    <view class="section-head">
+      <view class="section-title">更多记录</view>
+    </view>
+    <view class="card more-card">
+      <view class="more-row" wx:if="{{showFood}}" bindtap="goFood">
+        <text class="more-emoji">🥣</text>
+        <view class="more-main">
+          <view class="more-title">辅食本</view>
+          <view class="more-sub">{{foodText}}</view>
+        </view>
+        <text class="more-go">›</text>
+      </view>
+      <view class="more-row" wx:if="{{showFood && months >= 6}}" bindtap="goMealLog">
+        <text class="more-emoji">🥄</text>
+        <view class="more-main">
+          <view class="more-title">记一餐辅食</view>
+          <view class="more-sub">吃了什么、吃了多少</view>
+        </view>
+        <text class="more-go">›</text>
+      </view>
+      <view class="more-row" bindtap="goVaccineEdit">
+        <text class="more-emoji">💉</text>
+        <view class="more-main">
+          <view class="more-title">记接种</view>
+          <view class="more-sub">打了哪一针，自动生成护理提醒</view>
+        </view>
+        <text class="more-go">›</text>
+      </view>
+    </view>
+
+    <disclaimer text="参考区间为通用范围，个体差异很大；宝宝精神好、体重稳步增长比数字更重要。" />
+  </block>
+
+  <template is="care-panel" data="{{carePanel, careBottleMl, careBottleTypes, careBottleType, careBottleInput, careDiaperKinds, carePoopColors, carePoopTextures, carePendingDiaper}}" />
+</view>

@@ -1,0 +1,95 @@
+<!-- 喂奶 / 尿布记录面板：首页和「记录」页共用。数据与方法来自 utils/care-actions.js -->
+<template name="care-panel">
+  <view class="cp-mask" wx:if="{{carePanel}}" bindtap="closeCarePanel">
+    <view class="cp-sheet" catchtap="careNoop">
+
+      <!-- 喂奶：亲喂选边开始计时 / 瓶喂选量直接记 -->
+      <block wx:if="{{carePanel === 'feed'}}">
+        <view class="cp-title">喂奶</view>
+        <view class="cp-sub">亲喂点一侧开始计时，喂完回来点「结束」；中途可以换边</view>
+        <view class="cp-row">
+          <view class="cp-big" data-side="left" bindtap="startFeed">
+            <view class="cp-big-label">左侧</view>
+            <view class="cp-big-hint">开始计时</view>
+          </view>
+          <view class="cp-big" data-side="right" bindtap="startFeed">
+            <view class="cp-big-label">右侧</view>
+            <view class="cp-big-hint">开始计时</view>
+          </view>
+        </view>
+        <view class="cp-divider"><text>或者瓶喂</text></view>
+        <view class="cp-chips">
+          <view
+            class="cp-chip {{careBottleType === item.key ? 'cp-chip-on' : ''}}"
+            wx:for="{{careBottleTypes}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="pickBottleType"
+          >{{item.label}}</view>
+        </view>
+        <view class="cp-grid">
+          <view class="cp-ml" wx:for="{{careBottleMl}}" wx:key="*this" data-ml="{{item}}" bindtap="logBottle">{{item}}<text class="cp-unit">ml</text></view>
+        </view>
+        <view class="cp-input-row">
+          <input class="cp-input" type="number" placeholder="其他奶量" placeholder-class="placeholder" value="{{careBottleInput}}" bindinput="onBottleInput" maxlength="3" />
+          <view class="cp-input-btn" bindtap="logBottle">记录</view>
+        </view>
+        <view class="cp-link" data-type="feed" bindtap="goCareEdit">补记之前的喂奶 ›</view>
+      </block>
+
+      <!-- 尿布：尿 → 直接记；便 / 都有 → 选颜色 -->
+      <block wx:elif="{{carePanel === 'diaper'}}">
+        <view class="cp-title">换尿布</view>
+        <view class="cp-row">
+          <view class="cp-big" wx:for="{{careDiaperKinds}}" wx:key="key" data-key="{{item.key}}" bindtap="pickDiaper">
+            <view class="cp-big-emoji">{{item.emoji}}</view>
+            <view class="cp-big-label">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="cp-link" data-type="diaper" bindtap="goCareEdit">补记之前的尿布 ›</view>
+      </block>
+
+      <block wx:elif="{{carePanel === 'poop'}}">
+        <view class="cp-title">便便什么颜色？</view>
+        <view class="cp-sub">点颜色就保存。灰白、带红、黑色会提醒就医</view>
+        <view class="cp-colors">
+          <view class="cp-color" wx:for="{{carePoopColors}}" wx:key="key" data-key="{{item.key}}" bindtap="pickPoopColor">
+            <view class="cp-swatch" style="background:{{item.hex}}"></view>
+            <view class="cp-color-label">{{item.label}}</view>
+          </view>
+        </view>
+        <view class="cp-sub cp-sub-tight">性状（选填）</view>
+        <view class="cp-chips">
+          <view
+            class="cp-chip {{carePendingDiaper.texture === item.key ? 'cp-chip-on' : ''}}"
+            wx:for="{{carePoopTextures}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="pickPoopTexture"
+          >{{item.label}}</view>
+        </view>
+        <view class="cp-skip" data-key="" bindtap="pickPoopColor">不记颜色，直接保存</view>
+      </block>
+
+    </view>
+  </view>
+</template>
+
+<!-- 进行中的计时条：正在喂 / 正在睡 -->
+<template name="care-live">
+  <view class="cl-bar" wx:if="{{careActive.feed}}">
+    <view class="cl-main">
+      <view class="cl-title">🍼 正在喂 · {{careActive.feed.sideLabel}}</view>
+      <view class="cl-sub">已 {{careActive.feed.elapsed}}<text wx:if="{{careActive.feed.leftText}}"> · 左 {{careActive.feed.leftText}}</text><text wx:if="{{careActive.feed.rightText}}"> · 右 {{careActive.feed.rightText}}</text></view>
+    </view>
+    <view class="cl-btn cl-btn-line" bindtap="switchFeedSide">换边</view>
+    <view class="cl-btn" bindtap="endFeed">结束</view>
+  </view>
+  <view class="cl-bar cl-bar-sleep" wx:if="{{careActive.sleep}}">
+    <view class="cl-main">
+      <view class="cl-title">😴 正在睡 · {{careActive.sleep.since}} 入睡</view>
+      <view class="cl-sub">已睡 {{careActive.sleep.elapsed}}</view>
+    </view>
+    <view class="cl-btn" bindtap="endSleep">醒了</view>
+  </view>
+</template>

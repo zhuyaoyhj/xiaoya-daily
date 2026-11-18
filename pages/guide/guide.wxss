@@ -41,7 +41,7 @@
 }
 
 .month-hint {
-  font-size: 22rpx;
+  font-size: 24rpx;
   color: #A5836C;
   text-align: center;
   padding: 8rpx 20rpx 22rpx;
@@ -80,30 +80,36 @@
 }
 
 .sec {
-  margin-bottom: 12rpx;
+  margin-bottom: 32rpx;
 }
 
 .sec-head {
   display: flex;
   align-items: center;
-  padding: 14rpx 6rpx 18rpx;
+  gap: 20rpx;
+  margin-bottom: 16rpx;
 }
 
 .sec-emoji {
-  width: 60rpx;
-  height: 60rpx;
+  width: 64rpx;
+  height: 64rpx;
   border-radius: 20rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30rpx;
-  margin-right: 18rpx;
+  font-size: 32rpx;
   flex-shrink: 0;
 }
 
+.sec-head-text {
+  flex: 1;
+  min-width: 0;
+}
+
 .sec-title {
-  font-size: 26rpx;
-  color: #A5836C;
+  font-size: 24rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
 }
 
 .sec-heading {
@@ -111,39 +117,53 @@
   font-weight: 700;
   color: #3A2E26;
   margin-top: 2rpx;
-  line-height: 1.45;
+  line-height: 1.4;
 }
 
 .sec-card {
-  padding: 10rpx 32rpx;
+  padding: 28rpx 30rpx 20rpx;
+}
+
+/* 主建议：放大一号，左侧色条，扫一眼就能抓住 */
+.lead {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  line-height: 1.6;
+  padding-left: 20rpx;
+  border-left: 6rpx solid #F0876B;
+  margin-bottom: 18rpx;
 }
 
 .li {
   display: flex;
   align-items: flex-start;
-  padding: 22rpx 0;
-  border-bottom: 2rpx solid #F7EFE7;
-}
-
-.li:last-child {
-  border-bottom: none;
+  padding: 12rpx 0;
 }
 
 .li-dot {
-  width: 12rpx;
-  height: 12rpx;
+  width: 10rpx;
+  height: 10rpx;
   border-radius: 50%;
-  margin-top: 16rpx;
-  margin-right: 18rpx;
+  margin: 18rpx 18rpx 0 8rpx;
   flex-shrink: 0;
-  opacity: 0.85;
+  opacity: 0.7;
 }
 
 .li-text {
   flex: 1;
   font-size: 28rpx;
-  color: #4A3E34;
-  line-height: 1.7;
+  color: #5A4A3E;
+  line-height: 1.65;
+}
+
+.more {
+  font-size: 24rpx;
+  color: #F0876B;
+  text-align: center;
+  padding: 16rpx 0 4rpx;
+  border-top: 2rpx dashed #F2E6DA;
+  margin-top: 10rpx;
 }
 
 .share-btn {
@@ -183,7 +203,7 @@
 }
 
 .entry-badge {
-  font-size: 20rpx;
+  font-size: 22rpx;
   color: #FFFFFF;
   background: #F0876B;
   border-radius: 8rpx;
@@ -191,7 +211,7 @@
 }
 
 .entry-chip {
-  font-size: 20rpx;
+  font-size: 22rpx;
   color: #8C7B6E;
   background: rgba(255, 255, 255, 0.75);
   border-radius: 999rpx;
@@ -221,7 +241,7 @@
 
 .entry-today {
   margin-top: 14rpx;
-  font-size: 23rpx;
+  font-size: 24rpx;
   color: #9A6A4C;
   background: rgba(255, 255, 255, 0.72);
   border-radius: 12rpx;
@@ -230,7 +250,180 @@
 
 .entry-go {
   margin-top: 16rpx;
-  font-size: 23rpx;
+  font-size: 24rpx;
   color: #C4643F;
   font-weight: 500;
+}
+
+/* ---------- 月龄段切换 ---------- */
+.month-nav-off {
+  opacity: 0.35;
+}
+
+.month-now {
+  color: #D9724F;
+  font-weight: 600;
+}
+
+.seg-bar {
+  display: flex;
+  white-space: nowrap;
+  margin: 4rpx 0 8rpx;
+}
+
+.seg {
+  display: inline-block;
+  font-size: 24rpx;
+  color: #A5836C;
+  padding: 8rpx 20rpx;
+  margin-right: 10rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.seg-on {
+  color: #FFFFFF;
+  background: #F0876B;
+  font-weight: 600;
+}
+
+.month-hint-link {
+  color: #D9724F;
+}
+
+/* ---------- 本段要点 ---------- */
+.digest {
+  padding: 28rpx 30rpx 12rpx;
+  margin-bottom: 28rpx;
+}
+
+.digest-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #3A2E26;
+  margin-bottom: 8rpx;
+}
+
+.digest-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 18rpx 0;
+  border-top: 2rpx solid #F7EEE5;
+}
+
+.digest-row:first-of-type {
+  border-top: none;
+}
+
+.digest-row:active {
+  opacity: 0.7;
+}
+
+.digest-icon {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.digest-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #3A2E26;
+  line-height: 1.5;
+}
+
+.digest-go {
+  font-size: 32rpx;
+  color: #C9B8A9;
+}
+
+/* ---------- 要留意 ---------- */
+.alert-card {
+  background: #FFF8E8;
+  border: 2rpx solid #F5E2B8;
+  border-radius: 28rpx;
+  padding: 26rpx 30rpx 16rpx;
+  margin-bottom: 28rpx;
+}
+
+.alert-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #8A6418;
+  margin-bottom: 8rpx;
+}
+
+.alert-li {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+}
+
+.alert-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #D9A441;
+  margin: 18rpx 18rpx 0 6rpx;
+  flex-shrink: 0;
+}
+
+.alert-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #6B5A3A;
+  line-height: 1.65;
+}
+
+/* ---------- 下一阶段 ---------- */
+.next-card {
+  background: #FFFFFF;
+  border: 2rpx dashed #E9D5C4;
+  border-radius: 28rpx;
+  padding: 26rpx 30rpx;
+  margin-bottom: 32rpx;
+}
+
+.next-card:active {
+  opacity: 0.8;
+}
+
+.next-top {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  margin-bottom: 10rpx;
+}
+
+.next-badge {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #6E8FC4;
+  background: #E9F0FA;
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx;
+}
+
+.next-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.next-point {
+  font-size: 26rpx;
+  color: #6B5A4E;
+  line-height: 1.7;
+}
+
+.next-go {
+  font-size: 24rpx;
+  color: #F0876B;
+  margin-top: 10rpx;
 }

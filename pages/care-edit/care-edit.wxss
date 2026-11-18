@@ -1,0 +1,145 @@
+/* pages/care-edit/care-edit.wxss */
+
+.top-tip {
+  font-size: 24rpx;
+  color: #A8968A;
+  padding: 24rpx 8rpx 8rpx;
+}
+
+.card-title-gap {
+  margin-top: 28rpx;
+}
+
+.dt-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.dt-cell {
+  background: #FFF6EF;
+  border-radius: 18rpx;
+  padding: 20rpx 28rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #3A2E26;
+  font-variant-numeric: tabular-nums;
+}
+
+.dt-time {
+  min-width: 160rpx;
+  text-align: center;
+}
+
+.seg {
+  display: flex;
+  background: #FFF6EF;
+  border-radius: 20rpx;
+  padding: 6rpx;
+  margin-bottom: 12rpx;
+}
+
+.seg-item {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: #8C7B6E;
+  padding: 16rpx 0;
+  border-radius: 16rpx;
+}
+
+.seg-on {
+  background: #FFFFFF;
+  color: #D96B4F;
+  font-weight: 700;
+  box-shadow: 0 4rpx 12rpx rgba(213, 176, 147, 0.2);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-top: 16rpx;
+}
+
+.chip-opt {
+  font-size: 26rpx;
+  color: #6B5A4E;
+  background: #FFF6EF;
+  border-radius: 999rpx;
+  padding: 10rpx 26rpx;
+}
+
+.chip-opt-on {
+  color: #FFFFFF;
+  background: #F0876B;
+}
+
+.colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18rpx 0;
+  margin-top: 16rpx;
+}
+
+.color {
+  width: 25%;
+  text-align: center;
+  padding: 6rpx 0;
+  border-radius: 16rpx;
+}
+
+.color-on {
+  background: #FFF1E6;
+}
+
+.swatch {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  margin: 0 auto;
+  border: 4rpx solid #FFFFFF;
+  box-shadow: 0 4rpx 12rpx rgba(58, 46, 38, 0.15);
+}
+
+.color-on .swatch {
+  box-shadow: 0 0 0 4rpx #F0876B;
+}
+
+.color-label {
+  font-size: 22rpx;
+  color: #6B5A4E;
+  margin-top: 6rpx;
+}
+
+.color-tip {
+  font-size: 24rpx;
+  line-height: 1.6;
+  border-radius: 16rpx;
+  padding: 14rpx 18rpx;
+  margin-top: 16rpx;
+}
+
+.color-tip-ok {
+  color: #2F7350;
+  background: #EAF5EE;
+}
+
+.color-tip-watch {
+  color: #8A6418;
+  background: #FFF6E0;
+}
+
+.color-tip-doctor {
+  color: #A8432F;
+  background: #FBEBE7;
+  font-weight: 600;
+}
+
+.field-last {
+  border-bottom: none;
+}
+
+.del-btn {
+  margin-top: 20rpx;
+}

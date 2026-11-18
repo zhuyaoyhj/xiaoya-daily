@@ -133,8 +133,13 @@ Page({
 
   loadWeather() {
     const that = this;
-    weatherApi
-      .getWeather({})
+    const manualTemp = store.getManualTemp();
+    // 今天手动填过温度就直接用（与首页、天气页一致）
+    const source =
+      manualTemp !== null
+        ? Promise.resolve(weatherApi.buildManual(manualTemp))
+        : weatherApi.getWeather({});
+    source
       .then(function (w) {
         const place = w.place || store.getPlace();
         const mi = placeUtil.mountainInfo(place);
@@ -145,10 +150,11 @@ Page({
         });
 
         // 卡片上一行放不下全地址，用「区·小区」的紧凑写法
-        const compact =
-          [place && place.district, place && place.community].filter(Boolean).join('·') ||
-          placeUtil.placeLabel(place) ||
-          '当前位置';
+        const compact = w.manual
+          ? '今日气温'
+          : [place && place.district, place && place.community].filter(Boolean).join('·') ||
+            placeUtil.placeLabel(place) ||
+            '当前位置';
 
         const cardData = Object.assign({}, that.data.cardData, {
           weather: {
@@ -186,7 +192,12 @@ Page({
       })
       .catch(function (err) {
         console.warn('[share] 天气不可用，卡片不含穿衣段：', err && err.message);
-        that.setData({ weatherNote: '还没设置地点（北京市 → 区 → 小区），卡片里暂时不显示穿衣建议' });
+        const noPlace = err && err.message === 'NO_LOCATION';
+        that.setData({
+          weatherNote: noPlace
+            ? '还没设置地点，卡片里暂时不含穿衣建议。在「天气穿衣」页设地点或填一下温度就有了'
+            : '天气暂时取不到，卡片里先不放穿衣建议。在「天气穿衣」页填一下今天的温度就能补上'
+        });
       });
   },
 
@@ -290,7 +301,7 @@ Page({
   },
 
   goFamily() {
-    wx.switchTab({ url: '/pages/family/family' });
+    wx.navigateTo({ url: '/pages/family/family' });
   },
 
   goAddBaby() {

@@ -234,3 +234,42 @@
 .sheet-actions .btn {
   flex: 1;
 }
+
+/* ---------- 同上一餐 ---------- */
+.same-last {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: #FFF4EA;
+  border: 2rpx dashed #F3C9B2;
+  border-radius: 18rpx;
+  padding: 20rpx 22rpx;
+  margin: 8rpx 0 12rpx;
+}
+
+.same-last:active {
+  opacity: 0.8;
+}
+
+.same-last-tag {
+  flex: none;
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #D96B4F;
+}
+
+.same-last-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  color: #3A2E26;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.same-last-go {
+  flex: none;
+  font-size: 24rpx;
+  color: #F0876B;
+}

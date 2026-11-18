@@ -126,5 +126,8 @@
   <button class="btn btn-primary btn-block" bindtap="save">保存</button>
   <view class="btn btn-line btn-block delete-btn" wx:if="{{!isNew}}" bindtap="remove">删除这份档案</view>
 
-  <disclaimer text="宝宝信息只保存在你的手机本地，不会上传。" />
+  <view class="local-note" bindtap="goBackup">
+    宝宝信息只保存在这台手机上，不会上传。换手机前记得在「我的」页备份 ›
+  </view>
+  <disclaimer />
 </view>

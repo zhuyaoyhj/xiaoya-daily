@@ -32,6 +32,8 @@ Page({
     note: '',
     canSave: false,
     // 加食材浮层
+    // 同上一餐 { id, text }
+    lastMeal: null,
     sheet: false,
     groups: [],
     group: 'grain',
@@ -115,6 +117,64 @@ Page({
     // 也可以直接从某个食材进（比如 3 天计划里点某道菜）
     if (options.foodId) this.addById(options.foodId);
 
+    // 没有预填时，给一个「同上一餐」：宝宝常常连着几顿吃一样的
+    if (!options.recipeId && !options.foodId) {
+      const last = this.findLastMeal(baby.id);
+      if (last) this.setData({ lastMeal: last });
+    }
+
+    this.renderLib();
+  },
+
+  /** 最近一条有食材的进食记录，转成「同上一餐」的预览 */
+  findLastMeal(babyId) {
+    const logs = store
+      .getMealLogs(babyId)
+      .filter(function (l) {
+        return l.foods && l.foods.length;
+      })
+      .sort(function (a, b) {
+        if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
+    const l = logs[0];
+    if (!l) return null;
+    const names = l.foods
+      .map(function (id) {
+        const f = foodUtil.foodById(id);
+        return f ? f.name : '';
+      })
+      .filter(Boolean);
+    if (!names.length) return null;
+    return {
+      id: l.id,
+      text: (l.recipeName || names.slice(0, 3).join('、')) + (names.length > 3 ? ' 等' : '')
+    };
+  },
+
+  /** 一键带出上一餐的食谱与食材（份量、接受度这些每顿不同，不复制） */
+  copyLast() {
+    const last = this.data.lastMeal;
+    if (!last) return;
+    const log = store.getMealLog(last.id);
+    if (!log) return;
+    const foods = (log.foods || [])
+      .map(function (id) {
+        return foodUtil.foodById(id);
+      })
+      .filter(function (f) {
+        return !!f;
+      })
+      .map(function (f) {
+        return { id: f.id, name: f.name, emoji: f.emoji, allergen: !!f.allergen };
+      });
+    this.setData({
+      recipeId: log.recipeId || '',
+      recipeName: log.recipeName || '',
+      foods: foods,
+      canSave: foods.length > 0,
+      lastMeal: null
+    });
     this.renderLib();
   },
 

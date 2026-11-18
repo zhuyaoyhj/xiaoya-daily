@@ -127,11 +127,29 @@ wxmlFiles.forEach(function (f) {
   const wxml = fs.readFileSync(f, 'utf8');
   const jsPath = f.replace(/\.wxml$/, '.js');
   if (!fs.existsSync(jsPath)) return;
-  const js = fs.readFileSync(jsPath, 'utf8');
+  let js = fs.readFileSync(jsPath, 'utf8');
+  // 页面通过 Object.assign({}, xxx.methods, {...}) 混入共享方法时，把被 require 的模块源码也算进来
+  const mixRe = /const\s+(\w+)\s*=\s*require\(\s*['"]([^'"]+)['"]\s*\)/g;
+  let mx;
+  while ((mx = mixRe.exec(js))) {
+    if (!new RegExp('\\b' + mx[1] + '\\.methods\\b').test(js)) continue;
+    const modPath = path.resolve(path.dirname(jsPath), /\.js$/.test(mx[2]) ? mx[2] : mx[2] + '.js');
+    if (fs.existsSync(modPath)) js += '\n' + fs.readFileSync(modPath, 'utf8');
+  }
+
+  // 模板文件里的事件（<import> 进来的）也要能在页面 js（含混入）里找到
+  const impRe = /<import\s+src="([^"]+)"/g;
+  let im;
+  let wxmlAll = wxml;
+  while ((im = impRe.exec(wxml))) {
+    const tp = im[1].charAt(0) === '/' ? path.join(ROOT, im[1]) : path.resolve(path.dirname(f), im[1]);
+    if (fs.existsSync(tp)) wxmlAll += '\n' + fs.readFileSync(tp, 'utf8');
+    else fail(rel(f) + ' → import 的模板不存在：' + im[1]);
+  }
 
   const re = /\b(?:bind|catch)([a-zA-Z]+)\s*=\s*"([^"{}]+)"/g;
   let m;
-  while ((m = re.exec(wxml))) {
+  while ((m = re.exec(wxmlAll))) {
     const handler = m[2].trim();
     const exists =
       new RegExp('(^|[^\\w.])' + handler + '\\s*[:(]').test(js) ||

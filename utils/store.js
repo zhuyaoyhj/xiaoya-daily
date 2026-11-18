@@ -13,8 +13,13 @@ const KEYS = {
   customFoods: 'xyd_custom_foods',
   foodHidden: 'xyd_food_hidden',
   menuSwap: 'xyd_menu_swap',
-  mealLogs: 'xyd_meal_logs'
+  mealLogs: 'xyd_meal_logs',
+  // 照护记录（喂奶/睡眠/尿布）按月分片存：xyd_care_YYYYMM；这里只放索引和进行中的计时
+  careIndex: 'xyd_care_index',
+  careActive: 'xyd_care_active'
 };
+
+const CARE_PREFIX = 'xyd_care_';
 
 const DEFAULT_SETTINGS = {
   activeBabyId: '',
@@ -24,7 +29,8 @@ const DEFAULT_SETTINGS = {
   family: [],
   pushTargets: [],
   subscribeEnabled: false,
-  lastPushAt: 0
+  lastPushAt: 0,
+  manualTemp: null // 手动温度 { temp, date }：取不到天气时由用户自己填，只在当天有效
 };
 
 function read(key, fallback) {
@@ -116,6 +122,9 @@ function removeBaby(id) {
     write(KEYS.menuSwap, swap);
   }
 
+  // 照护记录：每个月的分片都要过一遍，计时也一并停掉
+  removeCareOfBaby(id);
+
   const s = getSettings();
   if (s.activeBabyId === id) {
     updateSettings({ activeBabyId: list.length ? list[0].id : '' });
@@ -140,6 +149,130 @@ function getActiveBaby() {
 
 function setActiveBabyId(id) {
   return updateSettings({ activeBabyId: id });
+}
+
+/* ---------------- 手动温度（天气兜底） ---------------- */
+
+function todayStr() {
+  const d = new Date();
+  const p = function (n) {
+    return n < 10 ? '0' + n : '' + n;
+  };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+
+/** 今天手动填过的温度；跨天自动失效，返回 null */
+function getManualTemp() {
+  const m = getSettings().manualTemp;
+  if (!m || typeof m.temp !== 'number' || !isFinite(m.temp)) return null;
+  if (m.date !== todayStr()) return null;
+  return m.temp;
+}
+
+function setManualTemp(temp) {
+  const t = Number(temp);
+  if (!isFinite(t)) return updateSettings({ manualTemp: null });
+  return updateSettings({ manualTemp: { temp: Math.round(t), date: todayStr() } });
+}
+
+function clearManualTemp() {
+  return updateSettings({ manualTemp: null });
+}
+
+/* ---------------- 备份：导出 / 导入 ---------------- */
+
+const BACKUP_MAGIC = 'XYD1';
+// 天气缓存、进行中的计时是临时数据，不进备份
+const BACKUP_KEYS = Object.keys(KEYS).filter(function (k) {
+  return k !== 'weatherCache' && k !== 'careActive';
+});
+
+/** 把全部业务数据打成一段可复制的文本 */
+function exportBackup() {
+  const data = {};
+  BACKUP_KEYS.forEach(function (k) {
+    const v = read(KEYS[k], undefined);
+    if (v !== undefined) data[k] = v;
+  });
+  const shards = {};
+  getCareIndex().forEach(function (m) {
+    const list = read(CARE_PREFIX + m, []);
+    if (Array.isArray(list) && list.length) shards[m] = list;
+  });
+  data.careShards = shards;
+  const payload = { v: 1, at: Date.now(), data: data };
+  return BACKUP_MAGIC + ':' + JSON.stringify(payload);
+}
+
+/** 统计备份/本机数据量，给用户一个直观的数字 */
+function backupStats(data) {
+  const d = data || {};
+  const len = function (k) {
+    return Array.isArray(d[k]) ? d[k].length : 0;
+  };
+  let care = 0;
+  const shards = d.careShards && typeof d.careShards === 'object' ? d.careShards : {};
+  Object.keys(shards).forEach(function (m) {
+    if (Array.isArray(shards[m])) care += shards[m].length;
+  });
+  return {
+    babies: len('babies'),
+    vaccine: len('vaccineRecords'),
+    food: len('foodRecords'),
+    meals: len('mealLogs'),
+    care: care
+  };
+}
+
+function localStats() {
+  const data = {};
+  BACKUP_KEYS.forEach(function (k) {
+    data[k] = read(KEYS[k], undefined);
+  });
+  const shards = {};
+  getCareIndex().forEach(function (m) {
+    shards[m] = read(CARE_PREFIX + m, []);
+  });
+  data.careShards = shards;
+  return backupStats(data);
+}
+
+/** 解析备份文本；失败抛错，不写入任何数据 */
+function parseBackup(text) {
+  const raw = String(text || '').trim();
+  if (raw.indexOf(BACKUP_MAGIC + ':') !== 0) throw new Error('BAD_FORMAT');
+  let payload;
+  try {
+    payload = JSON.parse(raw.slice(BACKUP_MAGIC.length + 1));
+  } catch (e) {
+    throw new Error('BAD_JSON');
+  }
+  if (!payload || typeof payload.data !== 'object' || !payload.data) throw new Error('BAD_FORMAT');
+  return { at: payload.at || 0, data: payload.data, stats: backupStats(payload.data) };
+}
+
+/** 用备份覆盖本机数据（只覆盖备份里有的 key） */
+function importBackup(text) {
+  const parsed = parseBackup(text);
+  // 照护分片先整体清掉再按备份写回，避免本机多出备份里没有的月份
+  if (parsed.data.careShards && typeof parsed.data.careShards === 'object') {
+    getCareIndex().forEach(function (m) {
+      write(CARE_PREFIX + m, '');
+    });
+    const months = [];
+    Object.keys(parsed.data.careShards).forEach(function (m) {
+      if (!/^\d{6}$/.test(m) || !Array.isArray(parsed.data.careShards[m])) return;
+      write(CARE_PREFIX + m, parsed.data.careShards[m]);
+      months.push(m);
+    });
+    write(KEYS.careIndex, months.sort());
+  }
+  BACKUP_KEYS.forEach(function (k) {
+    if (k === 'careIndex' && parsed.data.careShards) return;
+    if (Object.prototype.hasOwnProperty.call(parsed.data, k)) write(KEYS[k], parsed.data[k]);
+  });
+  write(KEYS.weatherCache, '');
+  return parsed;
 }
 
 /* ---------------- 设置 ---------------- */
@@ -884,6 +1017,196 @@ function trimMealLogs(babyId, max) {
   return { trimmed: mine.length - limit, total: limit };
 }
 
+/* ---------------- 照护记录：喂奶 / 睡眠 / 尿布 ---------------- */
+// 一天 15-20 条，3 年约 2 万条。单个 key 上限 1MB，所以按「开始时间所在月份」分片：
+//   xyd_care_202611 = [entry, ...]   xyd_care_index = ['202610', '202611']
+// entry: { id, babyId, type: 'feed'|'sleep'|'diaper', start, end, ...类型字段, note, createdAt }
+
+const CARE_TYPES = ['feed', 'sleep', 'diaper'];
+
+function monthKeyOf(ts) {
+  const d = new Date(ts);
+  const m = d.getMonth() + 1;
+  return d.getFullYear() + (m < 10 ? '0' + m : '' + m);
+}
+
+function getCareIndex() {
+  const list = read(KEYS.careIndex, []);
+  return Array.isArray(list) ? list : [];
+}
+
+function getCareShard(month) {
+  const list = read(CARE_PREFIX + month, []);
+  return Array.isArray(list) ? list : [];
+}
+
+function saveCareShard(month, list) {
+  const idx = getCareIndex();
+  if (list.length) {
+    write(CARE_PREFIX + month, list);
+    if (idx.indexOf(month) === -1) {
+      idx.push(month);
+      write(KEYS.careIndex, idx.sort());
+    }
+  } else {
+    write(CARE_PREFIX + month, '');
+    if (idx.indexOf(month) > -1) {
+      write(
+        KEYS.careIndex,
+        idx.filter(function (m) {
+          return m !== month;
+        })
+      );
+    }
+  }
+}
+
+let careSeq = 0;
+function newCareId() {
+  careSeq = (careSeq + 1) % 100000;
+  return 'c' + Date.now() + careSeq;
+}
+
+function findCareShardOf(id) {
+  const idx = getCareIndex();
+  // 从最近的月份往前找，编辑的绝大多数是最近的记录
+  for (let i = idx.length - 1; i >= 0; i--) {
+    const list = getCareShard(idx[i]);
+    for (let j = 0; j < list.length; j++) {
+      if (list[j].id === id) return { month: idx[i], list: list, index: j };
+    }
+  }
+  return null;
+}
+
+function getCareEntry(id) {
+  const hit = id ? findCareShardOf(id) : null;
+  return hit ? hit.list[hit.index] : null;
+}
+
+/** 新增或更新；开始时间改到别的月份时会自动搬分片 */
+function upsertCare(entry) {
+  const e = Object.assign({}, entry);
+  if (CARE_TYPES.indexOf(e.type) === -1) throw new Error('BAD_TYPE');
+  e.start = Number(e.start);
+  if (!isFinite(e.start)) throw new Error('BAD_START');
+  if (e.end !== null && e.end !== undefined) e.end = Number(e.end);
+  e.note = String(e.note || '').trim().slice(0, 60);
+
+  if (e.id) {
+    const old = findCareShardOf(e.id);
+    if (old) {
+      const merged = Object.assign({}, old.list[old.index], e);
+      const target = monthKeyOf(merged.start);
+      if (target === old.month) {
+        old.list[old.index] = merged;
+        saveCareShard(old.month, old.list);
+      } else {
+        old.list.splice(old.index, 1);
+        saveCareShard(old.month, old.list);
+        const tl = getCareShard(target);
+        tl.push(merged);
+        saveCareShard(target, tl);
+      }
+      return merged;
+    }
+  } else {
+    e.id = newCareId();
+    e.createdAt = Date.now();
+  }
+  const month = monthKeyOf(e.start);
+  const list = getCareShard(month);
+  list.push(e);
+  saveCareShard(month, list);
+  return e;
+}
+
+function removeCare(id) {
+  const hit = findCareShardOf(id);
+  if (!hit) return false;
+  hit.list.splice(hit.index, 1);
+  saveCareShard(hit.month, hit.list);
+  return true;
+}
+
+/**
+ * 取 [fromTs, toTs) 内有交集的记录（睡眠可能跨夜，所以多读前一个月的分片）
+ * 按开始时间倒序
+ */
+function getCareRange(babyId, fromTs, toTs) {
+  const months = {};
+  months[monthKeyOf(fromTs - 24 * 3600 * 1000)] = true;
+  for (let t = fromTs; t < toTs; t += 24 * 3600 * 1000) months[monthKeyOf(t)] = true;
+  months[monthKeyOf(toTs - 1)] = true;
+
+  const out = [];
+  Object.keys(months).forEach(function (m) {
+    getCareShard(m).forEach(function (e) {
+      if (babyId && e.babyId !== babyId) return;
+      const end = e.end || e.start;
+      if (e.start < toTs && end >= fromTs) out.push(e);
+    });
+  });
+  return out.sort(function (a, b) {
+    return b.start - a.start;
+  });
+}
+
+/** 某一类最近的一条（往回最多翻 3 个月分片就够判断「距上次」） */
+function getLatestCare(babyId, type, beforeTs) {
+  const idx = getCareIndex();
+  const limit = beforeTs || Infinity;
+  let seen = 0;
+  for (let i = idx.length - 1; i >= 0 && seen < 3; i--, seen++) {
+    let best = null;
+    getCareShard(idx[i]).forEach(function (e) {
+      if (e.babyId !== babyId || e.type !== type || e.start >= limit) return;
+      // 同一毫秒的记录（连点）取后写入的那条：分片按写入顺序追加，所以用 >=
+      if (!best || e.start >= best.start) best = e;
+    });
+    if (best) return best;
+  }
+  return null;
+}
+
+/* 进行中的计时：{ [babyId]: { feed: {...}, sleep: {...} } }，只存开始时间，页面现算时长 */
+
+function getAllCareActive() {
+  const v = read(KEYS.careActive, {});
+  return v && typeof v === 'object' ? v : {};
+}
+
+function getCareActive(babyId) {
+  const all = getAllCareActive();
+  return all[babyId] || {};
+}
+
+function setCareActive(babyId, type, value) {
+  const all = getAllCareActive();
+  const mine = Object.assign({}, all[babyId] || {});
+  if (value) mine[type] = value;
+  else delete mine[type];
+  if (Object.keys(mine).length) all[babyId] = mine;
+  else delete all[babyId];
+  write(KEYS.careActive, all);
+  return mine;
+}
+
+function removeCareOfBaby(babyId) {
+  getCareIndex().forEach(function (m) {
+    const list = getCareShard(m);
+    const rest = list.filter(function (e) {
+      return e.babyId !== babyId;
+    });
+    if (rest.length !== list.length) saveCareShard(m, rest);
+  });
+  const all = getAllCareActive();
+  if (all[babyId]) {
+    delete all[babyId];
+    write(KEYS.careActive, all);
+  }
+}
+
 module.exports = {
   KEYS,
   RELATIONS,
@@ -897,6 +1220,13 @@ module.exports = {
   setActiveBabyId: setActiveBabyId,
   getSettings: getSettings,
   updateSettings: updateSettings,
+  getManualTemp: getManualTemp,
+  setManualTemp: setManualTemp,
+  clearManualTemp: clearManualTemp,
+  exportBackup: exportBackup,
+  parseBackup: parseBackup,
+  importBackup: importBackup,
+  localStats: localStats,
   getPlace: getPlace,
   savePlace: savePlace,
   getPlaces: getPlaces,
@@ -960,5 +1290,18 @@ module.exports = {
   normalizeMealLog: normalizeMealLog,
   upsertMealLog: upsertMealLog,
   removeMealLog: removeMealLog,
-  trimMealLogs: trimMealLogs
+  trimMealLogs: trimMealLogs,
+  // 照护记录
+  CARE_PREFIX: CARE_PREFIX,
+  monthKeyOf: monthKeyOf,
+  getCareIndex: getCareIndex,
+  getCareShard: getCareShard,
+  getCareEntry: getCareEntry,
+  upsertCare: upsertCare,
+  removeCare: removeCare,
+  getCareRange: getCareRange,
+  getLatestCare: getLatestCare,
+  getCareActive: getCareActive,
+  setCareActive: setCareActive,
+  removeCareOfBaby: removeCareOfBaby
 };

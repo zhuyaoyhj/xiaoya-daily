@@ -297,5 +297,9 @@ Page({
       title: baby ? baby.name + '的疫苗接种记录' : '疫苗接种与护理记录',
       path: '/pages/vaccine/vaccine'
     };
+  },
+
+  onShareTimeline() {
+    return { title: '宝宝打完疫苗怎么护理 · 小芽日常' };
   }
 });
