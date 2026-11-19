@@ -117,11 +117,10 @@ const HOUR = care.HOUR;
 const TODAY = care.dateOf(Date.now());
 const YEST = care.dateOf(Date.now() - care.DAY);
 
-function birthdayMonthsAgo(n) {
-  const d = new Date();
-  d.setDate(1);
-  d.setMonth(d.getMonth() - n);
-  return care.dateOf(d.getTime());
+const fixtures = require('./fixtures.js');
+// 相对今天构造生日（月末安全，口径同 calcAge）。不要写死生日：今天在走，月龄会跟着变
+function birthdayMonthsAgo(n, days) {
+  return fixtures.birthdayForAge(n, days || 0);
 }
 
 /* ================= 1. 存储分片 ================= */
@@ -465,16 +464,19 @@ ce.save();
 saved = store.getCareEntry(saved.id);
 eq([saved.side, saved.ml, saved.leftMin], ['bottle', 150, 0], '改成瓶喂，亲喂字段清零');
 
+// 跨夜补记放在「前天晚上 → 昨天早上」：如果用「昨晚 → 今早 5 点」，凌晨跑测试时 5 点还没到，
+// 产品会正确地拦下「醒来时间不能晚于现在」，测试就误报了
+const DAY2 = care.dateOf(Date.now() - 2 * care.DAY);
 ce = instance(mount('pages/care-edit/care-edit.js'));
-ce.onLoad({ type: 'sleep', date: YEST });
-ce.setData({ time: '22:00', endDate: YEST, endTime: '21:00' });
+ce.onLoad({ type: 'sleep', date: DAY2 });
+ce.setData({ time: '22:00', endDate: DAY2, endTime: '21:00' });
 ce.save();
 ok(/晚于入睡/.test(lastToast), '醒来早于入睡被拦下');
-ce.setData({ endDate: TODAY, endTime: '05:00' });
+ce.setData({ endDate: YEST, endTime: '05:00' });
 ce.save();
 const night = store.getLatestCare('b1', 'sleep');
 eq(Math.round((night.end - night.start) / HOUR), 7, '跨夜睡眠补记');
-ce.setData({ time: '20:00', endDate: TODAY, endTime: '18:00' });
+ce.setData({ time: '20:00', endDate: YEST, endTime: '18:00' });
 ce.save();
 ok(/16 小时/.test(lastToast), '一觉超过 16 小时被拦下');
 

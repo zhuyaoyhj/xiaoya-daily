@@ -83,7 +83,31 @@
       </view>
     </picker>
 
+    <view class="field" wx:if="{{baby.birthday}}">
+      <view class="field-label">早产宝宝</view>
+      <view class="field-value field-hint">不足 37 周出生</view>
+      <switch checked="{{preterm}}" color="#F0876B" bindchange="togglePreterm" />
+    </view>
+
+    <picker
+      wx:if="{{preterm}}"
+      mode="date"
+      value="{{baby.dueDate || dueStart}}"
+      start="{{dueStart}}"
+      end="{{dueEnd}}"
+      bindchange="onDueDate"
+    >
+      <view class="field">
+        <view class="field-label">预产期</view>
+        <view class="field-value {{baby.dueDate ? '' : 'placeholder'}}">{{baby.dueDate || '请选择'}}</view>
+        <view class="row-arrow"></view>
+      </view>
+    </picker>
+
     <view class="age-preview" wx:if="{{agePreview}}">当前月龄：{{agePreview}}</view>
+    <view class="preterm-note" wx:if="{{preterm && baby.dueDate}}">
+      2 岁前的成长建议、辅食时机、喂养参考按矫正月龄；疫苗仍按实际月龄接种。
+    </view>
 
     <view class="field">
       <view class="field-label">体重 (kg)</view>

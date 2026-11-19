@@ -10,6 +10,36 @@ const foodUtil = require('../../utils/food.js');
 const care = require('../../utils/care.js');
 const careActions = require('../../utils/care-actions.js');
 
+/** 订阅消息模板 ID 配好了没（app.js globalData.tmplIds） */
+function hasTemplates() {
+  const app = typeof getApp === 'function' ? getApp() : null;
+  return !!(app && app.globalData && app.globalData.tmplIds && app.globalData.tmplIds.length);
+}
+
+/**
+ * 首页宫格按月龄换内容：喂奶/睡/尿布已在照护卡里，「记一餐」由一键记餐条承担，这里不再重复
+ *   <5 月：记接种 / 穿衣 / 月龄建议
+ *   5 月：+ 辅食准备（看看什么时候能加）
+ *   ≥6 月：试新食材 / 辅食本 / 记接种 / 穿衣
+ */
+function quickItems(months) {
+  if (months >= 6) {
+    return [
+      { key: 'foodEdit', emoji: '🥕', text: '试新食材' },
+      { key: 'food', emoji: '📒', text: '辅食本' },
+      { key: 'vaxEdit', emoji: '💉', text: '记接种' },
+      { key: 'weather', emoji: '🧥', text: '穿衣' }
+    ];
+  }
+  const list = [
+    { key: 'vaxEdit', emoji: '💉', text: '记接种' },
+    { key: 'weather', emoji: '🧥', text: '穿衣' },
+    { key: 'guide', emoji: '🌱', text: '月龄建议' }
+  ];
+  if (months >= 5) list.push({ key: 'food', emoji: '🥄', text: '辅食准备' });
+  return list;
+}
+
 /** 首页照护状态：距上次喂奶、睡眠、今天尿布，外加进行中的计时 */
 function careState(baby, months) {
   const now = Date.now();
@@ -152,6 +182,9 @@ Page(Object.assign({}, careActions.methods, {
     vax: null,
     recent: [],
     suggest: null,
+    quickItems: [],
+    vaxRemind: null,
+    tmplConfigured: false,
     manualTemp: false
   }),
 
@@ -187,7 +220,7 @@ Page(Object.assign({}, careActions.methods, {
   refreshCare() {
     const baby = store.getActiveBaby();
     if (!baby) return;
-    const age = dateUtil.calcAge(baby.birthday);
+    const age = dateUtil.babyAge(baby);
     this.setData(careState(baby, age.valid ? age.months : 0));
   },
 
@@ -212,7 +245,8 @@ Page(Object.assign({}, careActions.methods, {
       greeting: dateUtil.greeting(),
       dateText: dateUtil.formatCN(),
       babies: babies,
-      targetNames: targetNames
+      targetNames: targetNames,
+      tmplConfigured: hasTemplates()
     };
 
     if (!baby) {
@@ -224,12 +258,14 @@ Page(Object.assign({}, careActions.methods, {
       patch.vax = null;
       patch.recent = [];
       patch.suggest = null;
+      patch.quickItems = [];
+      patch.vaxRemind = null;
       patch.weatherState = 'no-baby';
       this.setData(patch);
       return Promise.resolve();
     }
 
-    const age = dateUtil.calcAge(baby.birthday);
+    const age = dateUtil.babyAge(baby);
     const months = age.valid ? age.months : 0;
     const meta = [];
     if (baby.birthday) meta.push(baby.birthday.replace(/-/g, '/') + ' 出生');
@@ -241,7 +277,7 @@ Page(Object.assign({}, careActions.methods, {
       name: baby.name || '宝宝',
       avatar: baby.avatar || '👶',
       genderText: baby.gender === 'girl' ? '女宝' : '男宝',
-      ageText: dateUtil.ageText(age) || '月龄未知',
+      ageText: dateUtil.babyAgeText(age) || '月龄未知',
       metaText: meta.join(' · ')
     };
     patch.ageMonths = months;
@@ -249,7 +285,9 @@ Page(Object.assign({}, careActions.methods, {
     patch.tips = guideUtil.getTips(months);
 
     // 疫苗卡片：正在观察期就给护理提示，否则提醒该打什么
-    const vaxBrief = vaccine.brief(store.getVaccineRecords(baby.id), months);
+    // 疫苗按实际月龄（免疫规划不做早产矫正）
+    const vaxMonths = age.actual && age.actual.valid ? age.actual.months : months;
+    const vaxBrief = vaccine.brief(store.getVaccineRecords(baby.id), vaxMonths);
     patch.vax = {
       tone: vaxBrief.tone,
       emoji: vaxBrief.type === 'care' ? '🩹' : vaxBrief.type === 'due' ? '💉' : '🗓',
@@ -258,7 +296,17 @@ Page(Object.assign({}, careActions.methods, {
     };
 
     patch.recent = recentRecords(baby.id, 3);
+    patch.quickItems = quickItems(months);
     Object.assign(patch, careState(baby, months));
+    // 7 天内到期 / 已过建议日期的那一针，单独顶到照护卡下面
+    try {
+      const r = vaccine.dueReminder(baby.birthday, store.getVaccineRecords(baby.id));
+      patch.vaxRemind = r
+        ? { text: r.text, overdue: r.overdue, vaccineId: r.vaccineId, dose: r.dose, more: r.more }
+        : null;
+    } catch (e) {
+      patch.vaxRemind = null;
+    }
     try {
       patch.suggest = suggestMeal(baby, months);
     } catch (e) {
@@ -351,6 +399,25 @@ Page(Object.assign({}, careActions.methods, {
 
   goFood() {
     wx.navigateTo({ url: '/pages/food/food' });
+  },
+
+  /** 宫格统一入口 */
+  onQuick(e) {
+    const k = e.currentTarget.dataset.key;
+    if (k === 'foodEdit') this.goFoodEdit();
+    else if (k === 'food') this.goFood();
+    else if (k === 'vaxEdit') this.goVaccineEdit();
+    else if (k === 'weather') this.goWeather();
+    else if (k === 'guide') this.goGuide();
+  },
+
+  /** 到期提醒 → 直接进预选好疫苗和剂次的记接种 */
+  goVaxRemind() {
+    const r = this.data.vaxRemind;
+    if (!r) return this.goVaccine();
+    wx.navigateTo({
+      url: '/pages/vaccine-edit/vaccine-edit?vaccineId=' + r.vaccineId + '&dose=' + r.dose
+    });
   },
 
   goRecord() {

@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   padding: 24rpx 0;
-  border-bottom: 2rpx solid #F7EFE7;
+  border-bottom: 2rpx solid var(--sunken-2);
 }
 
 .member:last-child {
@@ -19,19 +19,19 @@
   width: 46rpx;
   height: 46rpx;
   border-radius: 50%;
-  border: 3rpx solid #E6D6C7;
+  border: 3rpx solid var(--line-strong);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
+  color: var(--card);
   font-size: 26rpx;
   margin-right: 22rpx;
   flex-shrink: 0;
 }
 
 .member-check-on {
-  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
-  border-color: #F0876B;
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
+  border-color: var(--brand);
 }
 
 .member-main {
@@ -42,18 +42,18 @@
 .member-name {
   font-size: 30rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .member-rel {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 4rpx;
 }
 
 .member-del {
   font-size: 24rpx;
-  color: #C0AFA1;
+  color: var(--text-5);
   padding: 10rpx 0 10rpx 20rpx;
 }
 
@@ -73,7 +73,7 @@
   display: flex;
   align-items: center;
   margin-top: 22rpx;
-  background: #F8F2EB;
+  background: var(--sunken);
   border-radius: 24rpx;
   padding: 0 12rpx 0 26rpx;
   height: 88rpx;
@@ -82,7 +82,7 @@
 .add-input {
   flex: 1;
   font-size: 28rpx;
-  color: #3A2E26;
+  color: var(--text);
   height: 88rpx;
 }
 
@@ -91,9 +91,9 @@
   line-height: 62rpx;
   padding: 0 24rpx;
   border-radius: 31rpx;
-  background: #FFFFFF;
-  color: #C9694A;
-  font-size: 25rpx;
+  background: var(--card);
+  color: var(--brand-deep);
+  font-size: 24rpx;
 }
 
 .add-btn {
@@ -102,7 +102,7 @@
 
 /* ---------- 说明 ---------- */
 .how-card {
-  background: linear-gradient(140deg, #FFFFFF 0%, #FFF7F0 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--bg) 100%);
 }
 
 .how-item {
@@ -115,8 +115,8 @@
   width: 44rpx;
   height: 44rpx;
   border-radius: 50%;
-  background: #FFEBDD;
-  color: #D9724F;
+  background: var(--brand-tint);
+  color: var(--brand-strong);
   font-size: 24rpx;
   font-weight: 700;
   text-align: center;
@@ -128,12 +128,12 @@
 .how-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .how-desc {
-  font-size: 23rpx;
-  color: #96867A;
+  font-size: 22rpx;
+  color: var(--text-3);
   line-height: 1.65;
   margin-top: 6rpx;
 }
@@ -145,7 +145,7 @@
   justify-content: space-between;
   margin-top: 30rpx;
   padding-top: 26rpx;
-  border-top: 2rpx dashed #EFE2D4;
+  border-top: 2rpx dashed var(--line);
 }
 
 .sub-info {
@@ -156,12 +156,12 @@
 .sub-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .sub-desc {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 6rpx;
 }
 
@@ -170,16 +170,16 @@
   line-height: 64rpx;
   padding: 0 34rpx;
   border-radius: 32rpx;
-  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
+  color: var(--card);
   font-size: 26rpx;
   font-weight: 600;
   flex-shrink: 0;
 }
 
 .sub-btn-off {
-  background: #F3EDE6;
-  color: #9A8B7D;
+  background: var(--sunken-2);
+  color: var(--text-4);
 }
 
 .copy-btn {

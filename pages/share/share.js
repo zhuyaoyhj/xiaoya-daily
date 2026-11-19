@@ -68,7 +68,7 @@ Page({
       return;
     }
 
-    const age = dateUtil.calcAge(baby.birthday);
+    const age = dateUtil.babyAge(baby);
     const months = this.optionMonth !== null ? this.optionMonth : age.valid ? age.months : 0;
     const tips = guideUtil.getTips(months).map(function (t) {
       return { emoji: t.emoji, title: t.title, heading: t.heading, text: t.summary };
@@ -80,7 +80,7 @@ Page({
     const targets = this.buildTargets();
     const cardData = {
       babyName: this.babyName,
-      ageText: dateUtil.ageText(age) || months + ' 个月',
+      ageText: dateUtil.babyAgeText(age) || months + ' 个月',
       dateText: dateUtil.formatCN(),
       tips: tips,
       weather: null,

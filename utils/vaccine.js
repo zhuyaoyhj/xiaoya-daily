@@ -540,6 +540,56 @@ function brief(records, months, now, today) {
   };
 }
 
+/**
+ * 精确到天的接种提醒（首页用）：应接种日 = 生日 + 建议月龄
+ * 返回最紧迫的一条：已逾期的优先（逾期最久的那针往往已不再适用，取逾期最短的），否则 7 天内到期的
+ * @return {null | { key, short, doseText, dueDate, days, overdue, text }}
+ */
+function dueReminder(birthday, records, today, hidden) {
+  const b = dateUtil.parseDate(birthday);
+  if (!b) return null;
+  const t = today || dateUtil.todayStr();
+  const age = dateUtil.calcAge(birthday, dateUtil.parseDate(t));
+  if (!age.valid) return null;
+  const all = planFor(age.months, records, hidden, t);
+  const cands = [];
+  all.forEach(function (p) {
+    if (p.done || p.coveredBy || p.hidden) return;
+    const d = new Date(b.getFullYear(), b.getMonth() + p.month, b.getDate());
+    const dueDate = d.getFullYear() + '-' + dateUtil.pad(d.getMonth() + 1) + '-' + dateUtil.pad(d.getDate());
+    const days = dateUtil.diffDays(t, dueDate);
+    // 只提醒 7 天内要到的、和 30 天内刚过的；更早漏记的多半是没回填，交给疫苗卡「还有 N 针没记录」
+    if (days > 7 || days < -30) return;
+    cands.push({
+      key: p.key,
+      vaccineId: p.vaccineId,
+      dose: p.dose,
+      short: p.short,
+      doseText: p.doseText,
+      dueDate: dueDate,
+      days: days,
+      overdue: days < 0
+    });
+  });
+  if (!cands.length) return null;
+  // 已到期/逾期的取离今天最近的；否则取最快到期的
+  const past = cands.filter(function (c) {
+    return c.days <= 0;
+  });
+  const pick = (past.length ? past : cands).sort(function (x, y) {
+    return Math.abs(x.days) - Math.abs(y.days);
+  })[0];
+  const name = pick.short + ' ' + pick.doseText;
+  pick.text =
+    pick.days > 0
+      ? pick.days + ' 天后该打 ' + name
+      : pick.days === 0
+        ? '今天该打 ' + name
+        : name + ' 已过建议日期 ' + -pick.days + ' 天';
+  pick.more = cands.length - 1;
+  return pick;
+}
+
 /** 已接种记录的汇总统计（待安排的不算） */
 function stats(records, today) {
   const t = today || dateUtil.todayStr();
@@ -660,6 +710,7 @@ module.exports = {
   decorate,
   latest,
   brief,
+  dueReminder,
   stats,
   dietFlagFor
 };

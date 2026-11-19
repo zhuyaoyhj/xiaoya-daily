@@ -11,7 +11,7 @@
   height: 148rpx;
   border-radius: 50%;
   margin: 0 auto;
-  background: linear-gradient(140deg, #FFF3E7 0%, #FFE3D2 100%);
+  background: linear-gradient(140deg, var(--brand-tint) 0%, var(--peach-soft) 100%);
   font-size: 76rpx;
   line-height: 148rpx;
   box-shadow: 0 10rpx 26rpx rgba(226, 168, 132, 0.22);
@@ -19,7 +19,7 @@
 
 .avatar-hint {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 16rpx;
 }
 
@@ -38,13 +38,13 @@
   line-height: 78rpx;
   text-align: center;
   margin: 8rpx;
-  background: #FBF5EE;
+  background: var(--sunken);
   border: 3rpx solid transparent;
 }
 
 .avatar-on {
-  background: #FFFFFF;
-  border-color: #F0876B;
+  background: var(--card);
+  border-color: var(--brand);
   box-shadow: 0 6rpx 18rpx rgba(240, 135, 107, 0.24);
 }
 
@@ -60,23 +60,23 @@
   line-height: 62rpx;
   padding: 0 32rpx;
   border-radius: 31rpx;
-  background: #FBF5EE;
-  color: #8C7B6E;
+  background: var(--sunken);
+  color: var(--text-3);
   font-size: 26rpx;
   margin-left: 16rpx;
 }
 
 .gender-on {
-  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
+  color: var(--card);
   font-weight: 600;
 }
 
 /* ---------- 其他 ---------- */
 .age-preview {
-  font-size: 23rpx;
-  color: #E0795A;
-  background: #FFF4EC;
+  font-size: 22rpx;
+  color: var(--brand-strong);
+  background: var(--bg);
   border-radius: 16rpx;
   padding: 14rpx 20rpx;
   margin: 18rpx 0 6rpx;
@@ -90,7 +90,7 @@
 .field-textarea-input {
   flex: 1;
   font-size: 28rpx;
-  color: #3A2E26;
+  color: var(--text);
   text-align: right;
   min-height: 88rpx;
   line-height: 1.6;
@@ -100,7 +100,7 @@
 .baby-item {
   display: flex;
   align-items: center;
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 30rpx;
   padding: 26rpx 28rpx;
   margin-bottom: 20rpx;
@@ -109,15 +109,15 @@
 }
 
 .baby-item-on {
-  border-color: #F8B79E;
-  background: #FFFBF7;
+  border-color: var(--brand-soft);
+  background: var(--sunken);
 }
 
 .baby-item-avatar {
   width: 92rpx;
   height: 92rpx;
   border-radius: 50%;
-  background: #FFF3E7;
+  background: var(--brand-tint);
   font-size: 48rpx;
   line-height: 92rpx;
   text-align: center;
@@ -133,19 +133,19 @@
 .baby-item-name {
   font-size: 32rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .baby-item-sub {
-  font-size: 23rpx;
-  color: #A8968A;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 6rpx;
 }
 
 .baby-item-check {
-  font-size: 20rpx;
-  color: #FFFFFF;
-  background: #F0876B;
+  font-size: 22rpx;
+  color: var(--card);
+  background: var(--brand);
   border-radius: 20rpx;
   padding: 4rpx 14rpx;
   margin-right: 12rpx;
@@ -153,7 +153,7 @@
 
 .baby-item-edit {
   font-size: 24rpx;
-  color: #B2886F;
+  color: var(--text-warm);
   padding: 10rpx 0 10rpx 16rpx;
 }
 
@@ -163,14 +163,26 @@
 
 .delete-btn {
   margin-top: 20rpx;
-  color: #C9694A;
-  border-color: #F3DACD;
+  color: var(--brand-deep);
+  border-color: var(--line-strong);
 }
 
 .local-note {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   text-align: center;
   line-height: 1.6;
   padding: 24rpx 24rpx 0;
+}
+
+.field-hint {
+  color: var(--text-4);
+  font-size: 24rpx;
+}
+
+.preterm-note {
+  font-size: 22rpx;
+  color: var(--text-3);
+  line-height: 1.6;
+  padding: 4rpx 8rpx 8rpx;
 }

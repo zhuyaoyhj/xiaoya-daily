@@ -4,8 +4,22 @@ const dateUtil = require('../../utils/date.js');
 
 const AVATARS = ['👶', '🐣', '🌱', '🍑', '🐻', '🐰', '🌟', '🍼', '🐼', '🦊'];
 
+/** 预产期可选范围：生日后 3 周 ~ 17 周 */
+function dueRange(birthday) {
+  if (!birthday) return { start: '', end: '' };
+  return {
+    start: dateUtil.shiftDate(birthday, dateUtil.PRETERM_MIN_DAYS),
+    end: dateUtil.shiftDate(birthday, dateUtil.PRETERM_MAX_DAYS)
+  };
+}
+
+function previewText(b) {
+  if (!b.birthday) return '';
+  return dateUtil.babyAgeText(dateUtil.babyAge(b));
+}
+
 function decorate(b) {
-  const age = dateUtil.calcAge(b.birthday);
+  const age = dateUtil.babyAge(b);
   const parts = [];
   if (b.weight) parts.push(b.weight + ' kg');
   if (b.height) parts.push(b.height + ' cm');
@@ -13,7 +27,7 @@ function decorate(b) {
     id: b.id,
     name: b.name || '宝宝',
     avatar: b.avatar || '👶',
-    ageText: dateUtil.ageText(age) || '月龄未知',
+    ageText: dateUtil.babyAgeText(age) || '月龄未知',
     subtitle: parts.join(' · ') || (b.gender === 'girl' ? '女宝' : '男宝')
   };
 }
@@ -28,9 +42,13 @@ Page({
       birthday: '',
       weight: '',
       height: '',
+      dueDate: '',
       avatar: '👶',
       note: ''
     },
+    preterm: false,
+    dueStart: '',
+    dueEnd: '',
     babies: [],
     activeId: '',
     avatars: AVATARS,
@@ -75,10 +93,12 @@ Page({
         birthday: '',
         weight: '',
         height: '',
+        dueDate: '',
         avatar: '👶',
         note: ''
       };
     }
+    const range = dueRange(baby.birthday);
 
     this.setData({
       mode: 'edit',
@@ -86,7 +106,10 @@ Page({
       isNew: isNew,
       today: today,
       minDate: minDate,
-      agePreview: baby.birthday ? dateUtil.ageText(dateUtil.calcAge(baby.birthday)) : ''
+      preterm: !!baby.dueDate,
+      dueStart: range.start,
+      dueEnd: range.end,
+      agePreview: previewText(baby)
     });
     wx.setNavigationBarTitle({ title: isNew ? '添加宝宝' : '编辑档案' });
   },
@@ -119,10 +142,29 @@ Page({
 
   onBirthday(e) {
     const birthday = e.detail.value;
+    const range = dueRange(birthday);
+    const b = Object.assign({}, this.data.baby, { birthday: birthday });
+    // 生日改了，原来的预产期可能不在合理范围了，清掉让用户重选
+    if (b.dueDate && (b.dueDate < range.start || b.dueDate > range.end)) b.dueDate = '';
     this.setData({
-      'baby.birthday': birthday,
-      agePreview: dateUtil.ageText(dateUtil.calcAge(birthday))
+      baby: b,
+      dueStart: range.start,
+      dueEnd: range.end,
+      agePreview: previewText(b)
     });
+  },
+
+  /** 早产开关：关掉即清空预产期 */
+  togglePreterm(e) {
+    const on = !!e.detail.value;
+    const b = Object.assign({}, this.data.baby);
+    if (!on) b.dueDate = '';
+    this.setData({ preterm: on, baby: b, agePreview: previewText(b) });
+  },
+
+  onDueDate(e) {
+    const b = Object.assign({}, this.data.baby, { dueDate: e.detail.value });
+    this.setData({ baby: b, agePreview: previewText(b) });
   },
 
   save() {
@@ -144,6 +186,15 @@ Page({
       return;
     }
 
+    if (this.data.preterm && !b.dueDate) {
+      wx.showToast({ title: '选一下预产期，或关掉「早产宝宝」', icon: 'none' });
+      return;
+    }
+    if (b.dueDate && !dateUtil.pretermDays(b)) {
+      wx.showToast({ title: '预产期要比出生晚 3~17 周', icon: 'none' });
+      return;
+    }
+
     const payload = {
       id: b.id || store.newBabyId(),
       name: String(b.name || '').trim() || '宝宝',
@@ -151,6 +202,7 @@ Page({
       birthday: b.birthday,
       weight: String(b.weight || '').trim(),
       height: String(b.height || '').trim(),
+      dueDate: this.data.preterm ? b.dueDate : '',
       avatar: b.avatar || '👶',
       note: String(b.note || '').trim(),
       updatedAt: Date.now()

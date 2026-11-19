@@ -209,11 +209,10 @@ const store = require(path.join(ROOT, 'utils/store.js'));
 const dateUtil = require(path.join(ROOT, 'utils/date.js'));
 const TODAY = dateUtil.todayStr();
 
-function birthdayMonthsAgo(n) {
-  const d = new Date();
-  d.setMonth(d.getMonth() - n);
-  d.setDate(Math.min(d.getDate(), 28));
-  return d.getFullYear() + '-' + dateUtil.pad(d.getMonth() + 1) + '-' + dateUtil.pad(d.getDate());
+const fixtures = require('./fixtures.js');
+// 相对今天构造生日（月末安全，口径同 calcAge）。不要写死生日：今天在走，月龄会跟着变
+function birthdayMonthsAgo(n, days) {
+  return fixtures.birthdayForAge(n, days || 0);
 }
 
 (async function () {

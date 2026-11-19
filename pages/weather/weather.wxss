@@ -27,15 +27,15 @@
 .city-name {
   font-size: 30rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .city-sub {
-  font-size: 20rpx;
-  color: #A8968A;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 2rpx;
   white-space: nowrap;
   overflow: hidden;
@@ -44,16 +44,16 @@
 
 .city-arrow {
   font-size: 22rpx;
-  color: #B2886F;
+  color: var(--text-warm);
   margin-left: 14rpx;
   padding: 4rpx 14rpx;
-  background: #FFF1E6;
+  background: var(--brand-tint);
   border-radius: 20rpx;
 }
 
 .city-refresh {
   font-size: 24rpx;
-  color: #B2886F;
+  color: var(--text-warm);
 }
 
 /* ---------- 状态卡 ---------- */
@@ -70,20 +70,20 @@
 .state-title {
   font-size: 34rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
   margin-top: 12rpx;
 }
 
 .state-desc {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   line-height: 1.7;
   margin: 14rpx 0 32rpx;
 }
 
 /* ---------- 天气主卡 ---------- */
 .main-card {
-  background: linear-gradient(145deg, #FFF4E9 0%, #FFE6D7 55%, #FFD9C4 100%);
+  background: linear-gradient(145deg, var(--brand-tint) 0%, var(--line) 55%, var(--peach-soft) 100%);
   box-shadow: 0 16rpx 36rpx rgba(226, 168, 132, 0.2);
 }
 
@@ -96,35 +96,35 @@
 .main-temp {
   font-size: 96rpx;
   font-weight: 700;
-  color: #40301F;
+  color: var(--shade);
   line-height: 1.05;
   letter-spacing: -2rpx;
 }
 
 .main-text {
   font-size: 26rpx;
-  color: #8A6C55;
+  color: var(--text-warm);
   margin-top: 10rpx;
 }
 
 .main-place {
   display: flex;
   align-items: center;
-  font-size: 21rpx;
-  color: #8A6C55;
+  font-size: 22rpx;
+  color: var(--text-warm);
   margin-top: 16rpx;
 }
 
 .main-place-pin {
   margin-right: 6rpx;
-  font-size: 20rpx;
+  font-size: 22rpx;
 }
 
 .main-stale {
   margin-left: 12rpx;
-  font-size: 18rpx;
-  color: #B4743F;
-  background: #FFF7EC;
+  font-size: 22rpx;
+  color: var(--amber);
+  background: var(--bg);
   border-radius: 14rpx;
   padding: 2rpx 12rpx;
 }
@@ -137,7 +137,7 @@
 .main-range {
   font-size: 28rpx;
   font-weight: 600;
-  color: #6B4C38;
+  color: var(--text-2);
   margin-top: 6rpx;
 }
 
@@ -158,18 +158,18 @@
 .metric-val {
   font-size: 32rpx;
   font-weight: 700;
-  color: #4A3627;
+  color: var(--shade);
 }
 
 .metric-key {
-  font-size: 20rpx;
-  color: #A5836C;
+  font-size: 22rpx;
+  color: var(--text-warm);
   margin-top: 4rpx;
 }
 
 .main-updated {
-  font-size: 20rpx;
-  color: #B29A86;
+  font-size: 22rpx;
+  color: var(--text-4);
   text-align: right;
   margin-top: 16rpx;
 }
@@ -185,21 +185,21 @@
 .card-title {
   font-size: 32rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .level-tag {
   font-size: 22rpx;
-  color: #E0795A;
-  background: #FFF1E6;
+  color: var(--brand-strong);
+  background: var(--brand-tint);
   border-radius: 22rpx;
   padding: 6rpx 20rpx;
 }
 
 .sleep-tog {
   font-size: 22rpx;
-  color: #7A6AA8;
-  background: #F0EBFA;
+  color: var(--sleep);
+  background: var(--sleep-soft);
   border-radius: 22rpx;
   padding: 6rpx 20rpx;
 }
@@ -207,13 +207,13 @@
 .advice-main {
   font-size: 32rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.6;
 }
 
 .advice-basis {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 10rpx;
   line-height: 1.6;
 }
@@ -223,7 +223,7 @@
   display: flex;
   align-items: flex-start;
   padding: 20rpx 0;
-  border-bottom: 2rpx solid #F7EFE7;
+  border-bottom: 2rpx solid var(--sunken-2);
 }
 
 .layer:last-of-type {
@@ -234,7 +234,7 @@
   width: 96rpx;
   flex-shrink: 0;
   font-size: 24rpx;
-  color: #B2886F;
+  color: var(--text-warm);
   padding-top: 4rpx;
 }
 
@@ -244,22 +244,22 @@
 
 .layer-text {
   font-size: 28rpx;
-  color: #4A3E34;
+  color: var(--text);
   font-weight: 600;
   line-height: 1.55;
 }
 
 .layer-tip {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 6rpx;
   line-height: 1.55;
 }
 
 .band-tip {
-  font-size: 23rpx;
-  color: #B4743F;
-  background: #FFF7EC;
+  font-size: 22rpx;
+  color: var(--amber);
+  background: var(--bg);
   border-radius: 18rpx;
   padding: 18rpx 20rpx;
   margin-top: 20rpx;
@@ -277,7 +277,7 @@
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  background: #F0A78B;
+  background: var(--brand-light);
   margin-top: 16rpx;
   margin-right: 16rpx;
   flex-shrink: 0;
@@ -285,25 +285,25 @@
 
 .alert-text {
   flex: 1;
-  font-size: 27rpx;
-  color: #4A3E34;
+  font-size: 26rpx;
+  color: var(--text);
   line-height: 1.7;
 }
 
 /* ---------- 判断 ---------- */
 .judge-card {
-  background: linear-gradient(140deg, #FFFFFF 0%, #F4F8F5 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--card) 100%);
 }
 
 .judge-title {
   font-size: 28rpx;
   font-weight: 700;
-  color: #4F7A63;
+  color: var(--ok);
 }
 
 .judge-text {
   font-size: 26rpx;
-  color: #5E7A6B;
+  color: var(--sage);
   line-height: 1.7;
   margin-top: 10rpx;
 }
@@ -315,8 +315,8 @@
 /* ---------- 月龄阶段提示 ---------- */
 .stage-line {
   font-size: 22rpx;
-  color: #5E7A6B;
-  background: #EDF6F0;
+  color: var(--sage);
+  background: var(--ok-soft);
   border-radius: 16rpx;
   padding: 14rpx 18rpx;
   line-height: 1.6;
@@ -328,7 +328,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #F7F3FB;
+  background: var(--info-soft);
   border-radius: 20rpx;
   padding: 16rpx 20rpx;
   margin-top: 6rpx;
@@ -341,21 +341,21 @@
 
 .room-key {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-right: 12rpx;
 }
 
 .room-val {
   font-size: 40rpx;
   font-weight: 700;
-  color: #7A6AA8;
+  color: var(--sleep);
   letter-spacing: -1rpx;
 }
 
 .room-tag {
-  font-size: 18rpx;
-  color: #7A6AA8;
-  background: #FFFFFF;
+  font-size: 22rpx;
+  color: var(--sleep);
+  background: var(--card);
   border-radius: 14rpx;
   padding: 2rpx 12rpx;
   margin-left: 12rpx;
@@ -371,19 +371,19 @@
   line-height: 60rpx;
   text-align: center;
   font-size: 34rpx;
-  color: #7A6AA8;
-  background: #FFFFFF;
+  color: var(--sleep);
+  background: var(--card);
   border-radius: 18rpx;
   margin-left: 14rpx;
 }
 
 .room-btn:active {
-  background: #EDE6F7;
+  background: var(--sleep-soft);
 }
 
 .room-hint {
-  font-size: 20rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 12rpx;
   line-height: 1.6;
   display: flex;
@@ -391,26 +391,26 @@
 }
 
 .room-reset {
-  color: #7A6AA8;
+  color: var(--sleep);
   margin-left: 16rpx;
   flex-shrink: 0;
 }
 
 .sleep-style-note {
-  font-size: 21rpx;
-  color: #9A8AA8;
+  font-size: 22rpx;
+  color: var(--sleep-muted);
   margin-top: 8rpx;
   line-height: 1.6;
 }
 
 .sleep-head {
-  font-size: 23rpx;
-  color: #8C7B6E;
+  font-size: 22rpx;
+  color: var(--text-3);
   margin-bottom: 16rpx;
 }
 
 .sleep-row {
-  background: #FBF7F3;
+  background: var(--sunken);
   border-radius: 20rpx;
   border: 2rpx solid transparent;
   padding: 18rpx 20rpx;
@@ -418,8 +418,8 @@
 }
 
 .sleep-row-on {
-  background: #F4F0FC;
-  border-color: #D9CEF0;
+  background: var(--sleep-soft);
+  border-color: var(--sleep-line);
 }
 
 .sleep-row-top {
@@ -428,24 +428,24 @@
 }
 
 .sleep-range {
-  font-size: 25rpx;
+  font-size: 24rpx;
   font-weight: 700;
-  color: #4A3E34;
+  color: var(--text);
 }
 
 .sleep-tog-sm {
-  font-size: 21rpx;
-  color: #7A6AA8;
-  background: #FFFFFF;
+  font-size: 22rpx;
+  color: var(--sleep);
+  background: var(--card);
   border-radius: 16rpx;
   padding: 2rpx 14rpx;
   margin-left: 14rpx;
 }
 
 .sleep-now {
-  font-size: 18rpx;
-  color: #FFFFFF;
-  background: #8E7BC0;
+  font-size: 22rpx;
+  color: var(--card);
+  background: var(--sleep);
   border-radius: 14rpx;
   padding: 2rpx 12rpx;
   margin-left: auto;
@@ -453,14 +453,14 @@
 
 .sleep-text {
   font-size: 24rpx;
-  color: #5C4E42;
+  color: var(--text-2);
   line-height: 1.6;
   margin-top: 8rpx;
 }
 
 .sleep-note {
-  font-size: 20rpx;
-  color: #A8968A;
+  font-size: 22rpx;
+  color: var(--text-4);
   line-height: 1.55;
   margin-top: 4rpx;
 }
@@ -475,7 +475,7 @@
   border-radius: 12rpx;
   margin: 20rpx auto 0;
   width: 80%;
-  background: linear-gradient(90deg, #F5EBE1 25%, #FBF4EC 50%, #F5EBE1 75%);
+  background: linear-gradient(90deg, var(--sunken-2) 25%, var(--sunken) 50%, var(--sunken-2) 75%);
   background-size: 400% 100%;
   animation: skeleton-shine 1.4s ease infinite;
 }
@@ -500,19 +500,19 @@
 .manual-tag {
   padding: 4rpx 16rpx;
   border-radius: 999rpx;
-  background: #FFF1E6;
-  color: #D96B4F;
+  background: var(--brand-tint);
+  color: var(--brand-strong);
   font-weight: 600;
 }
 
 .manual-link {
-  color: #F0876B;
+  color: var(--brand);
 }
 
 .manual-entry {
   text-align: center;
   font-size: 24rpx;
-  color: #A8968A;
+  color: var(--text-4);
   padding: 12rpx 0 4rpx;
 }
 
@@ -532,7 +532,7 @@
   right: 0;
   bottom: 0;
   z-index: 101;
-  background: #FFF8F0;
+  background: var(--bg);
   border-radius: 40rpx 40rpx 0 0;
   padding: 36rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
 }
@@ -540,12 +540,12 @@
 .sheet-title {
   font-size: 34rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .sheet-desc {
   font-size: 24rpx;
-  color: #9A8A7C;
+  color: var(--text-4);
   line-height: 1.6;
   margin: 8rpx 0 28rpx;
 }
@@ -557,38 +557,38 @@
 
 .quick-item {
   flex: 1;
-  background: #FFFFFF;
-  border: 2rpx solid #F2E6DA;
+  background: var(--card);
+  border: 2rpx solid var(--line);
   border-radius: 20rpx;
   padding: 20rpx 0;
   text-align: center;
 }
 
 .quick-item:active {
-  background: #FFF1E6;
-  border-color: #F0876B;
+  background: var(--brand-tint);
+  border-color: var(--brand);
 }
 
 .quick-label {
   font-size: 28rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .quick-hint {
-  font-size: 20rpx;
-  color: #A8968A;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 4rpx;
 }
 
 .manual-row {
   display: flex;
   align-items: center;
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 20rpx;
   padding: 0 28rpx;
   margin: 28rpx 0;
-  border: 2rpx solid #F2E6DA;
+  border: 2rpx solid var(--line);
 }
 
 .manual-input {
@@ -599,5 +599,5 @@
 
 .manual-unit {
   font-size: 28rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
 }

@@ -127,6 +127,10 @@ function pad(n) {
 }
 const now = new Date();
 const TODAY = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+// 日期一律相对今天：原来写死 2025-12-08 出生，月龄每个月都在变
+const fixtures = require('./fixtures.js');
+const BIRTH11 = fixtures.birthdayForAge(11, 11);
+const shiftDate = require(path.join(ROOT, 'utils/date.js')).shiftDate;
 
 function tick() {
   return new Promise(function (r) {
@@ -155,7 +159,7 @@ function tick() {
 
   /* ================= 2. 天气页：无地点也能出建议 ================= */
   console.log('\n[2] 天气页 · 没设地点');
-  store.saveBabies([{ id: 'b1', name: '小芽', birthday: '2025-12-08', gender: 'girl' }]);
+  store.saveBabies([{ id: 'b1', name: '小芽', birthday: BIRTH11, gender: 'girl' }]);
   store.updateSettings({ activeBabyId: 'b1' });
 
   let wp = instance(mount('pages/weather/weather.js'));
@@ -222,7 +226,7 @@ function tick() {
   console.log('\n[4] 首页');
   store.upsertMealLog({ babyId: 'b1', date: TODAY, slot: 'noon', foods: ['rice_cereal'], accept: 'love' });
   store.upsertFoodRecord({ babyId: 'b1', foodId: 'rice_cereal', date: TODAY, reaction: 'none' });
-  store.upsertVaccineRecord({ babyId: 'b1', vaccineId: 'hepb', dose: 2, date: '2026-01-08' });
+  store.upsertVaccineRecord({ babyId: 'b1', vaccineId: 'hepb', dose: 2, date: shiftDate(BIRTH11, 31) });
 
   let ip = instance(mount('pages/index/index.js'));
   ip.onShow();

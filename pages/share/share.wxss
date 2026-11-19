@@ -16,7 +16,7 @@
   width: 100%;
   height: 860rpx;
   border-radius: 28rpx;
-  background: linear-gradient(150deg, #FFF4E9 0%, #FFE7D8 100%);
+  background: linear-gradient(150deg, var(--brand-tint) 0%, var(--line) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,8 +31,8 @@
 
 .note {
   font-size: 22rpx;
-  color: #B4743F;
-  background: #FFF6E8;
+  color: var(--amber);
+  background: var(--warn-soft);
   border-radius: 16rpx;
   padding: 16rpx 20rpx;
   margin-bottom: 22rpx;
@@ -48,7 +48,7 @@
 
 .target-line {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 10rpx;
 }
 
@@ -56,7 +56,7 @@
 .share-text {
   display: block;
   font-size: 24rpx;
-  color: #5C4E42;
+  color: var(--text-2);
   line-height: 1.9;
   white-space: pre-wrap;
   margin-top: 16rpx;

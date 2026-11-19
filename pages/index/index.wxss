@@ -8,7 +8,7 @@
   margin: 24rpx 0 36rpx;
   padding: 36rpx 32rpx 34rpx;
   border-radius: 44rpx;
-  background: linear-gradient(150deg, #FFF3E7 0%, #FFE3D2 62%, #FFD8C3 100%);
+  background: linear-gradient(150deg, var(--brand-tint) 0%, var(--peach-soft) 62%, var(--peach-soft) 100%);
   overflow: hidden;
   box-shadow: 0 16rpx 40rpx rgba(226, 168, 132, 0.22);
 }
@@ -45,13 +45,13 @@
 .hero-hi {
   font-size: 40rpx;
   font-weight: 700;
-  color: #4A3627;
+  color: var(--shade);
   letter-spacing: 0.5rpx;
 }
 
 .hero-date {
   font-size: 24rpx;
-  color: #A5836C;
+  color: var(--text-warm);
   margin-top: 8rpx;
 }
 
@@ -61,7 +61,7 @@
   padding: 0 24rpx;
   border-radius: 28rpx;
   background: rgba(255, 255, 255, 0.7);
-  color: #C4694A;
+  color: var(--brand-deep);
   font-size: 24rpx;
   line-height: 56rpx;
 }
@@ -80,7 +80,7 @@
   width: 108rpx;
   height: 108rpx;
   border-radius: 50%;
-  background: #FFF6EE;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,16 +98,16 @@
 .baby-name {
   font-size: 36rpx;
   font-weight: 700;
-  color: #40301F;
+  color: var(--shade);
   display: flex;
   align-items: center;
 }
 
 .baby-gender {
-  font-size: 20rpx;
+  font-size: 22rpx;
   font-weight: 500;
-  color: #C4694A;
-  background: #FFE6D9;
+  color: var(--brand-deep);
+  background: var(--line);
   border-radius: 20rpx;
   padding: 2rpx 12rpx;
   margin-left: 14rpx;
@@ -116,13 +116,13 @@
 .baby-age {
   font-size: 30rpx;
   font-weight: 600;
-  color: #E0795A;
+  color: var(--brand-strong);
   margin-top: 6rpx;
 }
 
 .baby-meta {
   font-size: 22rpx;
-  color: #A5836C;
+  color: var(--text-warm);
   margin-top: 4rpx;
   white-space: nowrap;
   overflow: hidden;
@@ -131,7 +131,7 @@
 
 .baby-edit {
   font-size: 24rpx;
-  color: #A5836C;
+  color: var(--text-warm);
   padding: 10rpx 4rpx 10rpx 20rpx;
   flex-shrink: 0;
 }
@@ -151,13 +151,13 @@
 .baby-empty-title {
   font-size: 34rpx;
   font-weight: 700;
-  color: #4A3627;
+  color: var(--shade);
   margin-top: 8rpx;
 }
 
 .baby-empty-desc {
   font-size: 24rpx;
-  color: #A5836C;
+  color: var(--text-warm);
   margin: 10rpx 40rpx 24rpx;
   line-height: 1.6;
 }
@@ -168,8 +168,8 @@
   line-height: 76rpx;
   padding: 0 56rpx;
   border-radius: 38rpx;
-  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
+  color: var(--card);
   font-size: 28rpx;
   font-weight: 600;
   box-shadow: 0 10rpx 24rpx rgba(240, 135, 107, 0.3);
@@ -184,7 +184,7 @@
 
 .tip-card {
   width: 48.4%;
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 30rpx;
   padding: 26rpx 24rpx;
   margin-bottom: 22rpx;
@@ -208,9 +208,9 @@
 }
 
 .tip-heading {
-  font-size: 27rpx;
+  font-size: 26rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.45;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -220,7 +220,7 @@
 
 .tip-summary {
   font-size: 22rpx;
-  color: #9E8E80;
+  color: var(--text-4);
   line-height: 1.55;
   margin-top: 10rpx;
   display: -webkit-box;
@@ -253,7 +253,7 @@
 .weather-temp {
   font-size: 62rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1;
 }
 
@@ -263,31 +263,31 @@
 }
 
 .weather-city {
-  font-size: 27rpx;
+  font-size: 26rpx;
   font-weight: 600;
-  color: #4A3627;
+  color: var(--shade);
 }
 
 .weather-level {
   font-size: 22rpx;
-  color: #E0795A;
-  background: #FFF1E6;
+  color: var(--brand-strong);
+  background: var(--brand-tint);
   border-radius: 22rpx;
   padding: 6rpx 18rpx;
   flex-shrink: 0;
 }
 
 .weather-advice {
-  font-size: 29rpx;
+  font-size: 28rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.55;
 }
 
 .weather-alert {
-  font-size: 23rpx;
-  color: #B4743F;
-  background: #FFF6E6;
+  font-size: 22rpx;
+  color: var(--amber);
+  background: var(--warn-soft);
   border-radius: 16rpx;
   padding: 14rpx 18rpx;
   margin-top: 16rpx;
@@ -295,8 +295,8 @@
 }
 
 .weather-more {
-  font-size: 23rpx;
-  color: #B2886F;
+  font-size: 22rpx;
+  color: var(--text-warm);
   margin-top: 18rpx;
   text-align: right;
 }
@@ -308,7 +308,7 @@
 .weather-empty-title {
   font-size: 30rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   margin-bottom: 8rpx;
 }
 
@@ -318,18 +318,18 @@
 
 /* ---------- 推送卡 ---------- */
 .push-card {
-  background: linear-gradient(140deg, #FFFFFF 0%, #FFF6EE 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--bg) 100%);
 }
 
 .push-title {
   font-size: 32rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .push-desc {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   line-height: 1.65;
   margin-top: 10rpx;
 }
@@ -346,30 +346,30 @@
 .vax-card {
   display: flex;
   align-items: center;
-  background: linear-gradient(140deg, #FFFFFF 0%, #FFF6EE 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--bg) 100%);
 }
 
 .vax-tone-urgent {
-  background: linear-gradient(140deg, #FFFFFF 0%, #FFEDE6 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--danger-soft) 100%);
 }
 
 .vax-tone-watch {
-  background: linear-gradient(140deg, #FFFFFF 0%, #F4F0FC 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--sleep-soft) 100%);
 }
 
 .vax-tone-soon {
-  background: linear-gradient(140deg, #FFFFFF 0%, #F0F6EF 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--ok-soft) 100%);
 }
 
 .vax-tone-done {
-  background: linear-gradient(140deg, #FFFFFF 0%, #F7F4EF 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--sunken) 100%);
 }
 
 .vax-card-emoji {
   width: 76rpx;
   height: 76rpx;
   border-radius: 24rpx;
-  background: #FFF3E9;
+  background: var(--brand-tint);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -386,20 +386,20 @@
 .vax-card-title {
   font-size: 30rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.4;
 }
 
 .vax-card-desc {
-  font-size: 23rpx;
-  color: #8C7B6E;
+  font-size: 22rpx;
+  color: var(--text-3);
   line-height: 1.6;
   margin-top: 6rpx;
 }
 
 .vax-card-arrow {
   font-size: 36rpx;
-  color: #D8C7B8;
+  color: var(--line-strong);
   margin-left: 12rpx;
 }
 
@@ -410,7 +410,7 @@
 
 .flat-tip-item {
   font-size: 26rpx;
-  color: #6B5A4D;
+  color: var(--text-2);
   line-height: 1.8;
   margin-top: 12rpx;
 }
@@ -424,7 +424,7 @@
 
 .quick-log-item {
   flex: 1;
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 24rpx;
   padding: 24rpx 0 20rpx;
   text-align: center;
@@ -433,7 +433,7 @@
 
 .quick-log-item:active {
   transform: scale(0.97);
-  background: #FFF6EF;
+  background: var(--bg);
 }
 
 .quick-log-emoji {
@@ -443,7 +443,7 @@
 
 .quick-log-text {
   font-size: 24rpx;
-  color: #3A2E26;
+  color: var(--text);
   font-weight: 600;
   margin-top: 8rpx;
 }
@@ -463,19 +463,19 @@
 .recent-title {
   font-size: 28rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .recent-more {
   font-size: 24rpx;
-  color: #A8968A;
+  color: var(--text-4);
 }
 
 .recent-item {
   display: flex;
   align-items: center;
   padding: 18rpx 0;
-  border-top: 2rpx dashed #F2E6DA;
+  border-top: 2rpx dashed var(--line);
 }
 
 .recent-item:first-of-type {
@@ -494,7 +494,7 @@
 
 .recent-name {
   font-size: 26rpx;
-  color: #3A2E26;
+  color: var(--text);
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -503,7 +503,7 @@
 
 .recent-desc {
   font-size: 22rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 2rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -512,7 +512,7 @@
 
 .recent-when {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-left: 16rpx;
 }
 
@@ -528,7 +528,7 @@
   border-radius: 12rpx;
   margin-top: 20rpx;
   width: 80%;
-  background: linear-gradient(90deg, #F5EBE1 25%, #FBF4EC 50%, #F5EBE1 75%);
+  background: linear-gradient(90deg, var(--sunken-2) 25%, var(--sunken) 50%, var(--sunken-2) 75%);
   background-size: 400% 100%;
   animation: skeleton-shine 1.4s ease infinite;
 }
@@ -547,8 +547,8 @@
   display: flex;
   align-items: center;
   gap: 20rpx;
-  background: linear-gradient(120deg, #FFF1E6 0%, #FFFFFF 100%);
-  border: 2rpx solid #F8DCCB;
+  background: linear-gradient(120deg, var(--brand-tint) 0%, var(--card) 100%);
+  border: 2rpx solid var(--peach-soft);
   border-radius: 24rpx;
   padding: 22rpx 24rpx;
   margin: 8rpx 0 20rpx;
@@ -570,12 +570,12 @@
 .suggest-slot {
   font-size: 28rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .suggest-name {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 2rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -586,8 +586,8 @@
   flex: none;
   font-size: 24rpx;
   font-weight: 700;
-  color: #FFFFFF;
-  background: linear-gradient(135deg, #FFA07E, #F0876B);
+  color: var(--card);
+  background: linear-gradient(135deg, var(--brand-light), var(--brand));
   border-radius: 999rpx;
   padding: 12rpx 28rpx;
 }
@@ -600,8 +600,8 @@
 
 .care-alert {
   font-size: 24rpx;
-  color: #A8432F;
-  background: #FBEBE7;
+  color: var(--danger-text);
+  background: var(--danger-soft);
   border-radius: 16rpx;
   padding: 14rpx 18rpx;
   margin-bottom: 12rpx;
@@ -627,21 +627,21 @@
 .care-text {
   font-size: 28rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .care-text-empty {
   font-weight: 400;
-  color: #A8968A;
+  color: var(--text-4);
 }
 
 .care-text-live {
-  color: #D96B4F;
+  color: var(--brand-strong);
 }
 
 .care-sub {
   font-size: 22rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 2rpx;
 }
 
@@ -650,13 +650,13 @@
   gap: 14rpx;
   margin-top: 16rpx;
   padding-top: 20rpx;
-  border-top: 2rpx dashed #F2E6DA;
+  border-top: 2rpx dashed var(--line);
 }
 
 .care-act {
   flex: 1;
   text-align: center;
-  background: #FFF6EF;
+  background: var(--bg);
   border-radius: 22rpx;
   padding: 18rpx 0 14rpx;
 }
@@ -666,15 +666,15 @@
 }
 
 .care-act-on {
-  background: #F0876B;
+  background: var(--brand);
 }
 
 .care-act-on .care-act-text {
-  color: #FFFFFF;
+  color: var(--card);
 }
 
 .care-act-sleep {
-  background: #8E7BC0;
+  background: var(--sleep);
 }
 
 .care-act-emoji {
@@ -685,6 +685,89 @@
 .care-act-text {
   font-size: 24rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   margin-top: 6rpx;
+}
+
+/* ---------- 疫苗到期提醒 ---------- */
+.vax-remind {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  background: var(--info-soft);
+  border: 2rpx solid var(--sleep-soft);
+  border-radius: 24rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.vax-remind:active {
+  opacity: 0.85;
+}
+
+.vax-remind-over {
+  background: var(--warn-soft);
+  border-color: var(--amber-soft);
+}
+
+.vax-remind-emoji {
+  font-size: 40rpx;
+}
+
+.vax-remind-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.vax-remind-text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.vax-remind-sub {
+  font-size: 22rpx;
+  color: var(--text-3);
+  margin-top: 4rpx;
+}
+
+.vax-remind-go {
+  flex: none;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--info);
+}
+
+.vax-remind-over .vax-remind-go {
+  color: var(--warn);
+}
+
+/* ---------- 推送收起成一行 ---------- */
+.push-line {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--card);
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
+  margin-top: 8rpx;
+}
+
+.push-line:active {
+  opacity: 0.8;
+}
+
+.push-line-emoji {
+  font-size: 36rpx;
+}
+
+.push-line-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--text);
+}
+
+.push-line-go {
+  font-size: 32rpx;
+  color: var(--text-5);
 }

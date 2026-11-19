@@ -16,7 +16,7 @@
   width: 100%;
   max-height: 86vh;
   overflow-y: auto;
-  background: #FFF8F0;
+  background: var(--bg);
   border-radius: 40rpx 40rpx 0 0;
   padding: 36rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
 }
@@ -24,12 +24,12 @@
 .cp-title {
   font-size: 36rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .cp-sub {
   font-size: 24rpx;
-  color: #9A8A7C;
+  color: var(--text-4);
   line-height: 1.6;
   margin: 8rpx 0 24rpx;
 }
@@ -45,8 +45,8 @@
 
 .cp-big {
   flex: 1;
-  background: #FFFFFF;
-  border: 2rpx solid #F2E6DA;
+  background: var(--card);
+  border: 2rpx solid var(--line);
   border-radius: 28rpx;
   padding: 32rpx 0;
   text-align: center;
@@ -54,8 +54,8 @@
 }
 
 .cp-big:active {
-  background: #FFF1E6;
-  border-color: #F0876B;
+  background: var(--brand-tint);
+  border-color: var(--brand);
 }
 
 .cp-big-emoji {
@@ -66,19 +66,19 @@
 .cp-big-label {
   font-size: 34rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .cp-big-hint {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 4rpx;
 }
 
 .cp-divider {
   text-align: center;
   font-size: 22rpx;
-  color: #B8A797;
+  color: var(--text-5);
   margin: 36rpx 0 20rpx;
 }
 
@@ -90,17 +90,17 @@
 
 .cp-chip {
   font-size: 26rpx;
-  color: #6B5A4E;
-  background: #FFFFFF;
-  border: 2rpx solid #F2E6DA;
+  color: var(--text-2);
+  background: var(--card);
+  border: 2rpx solid var(--line);
   border-radius: 999rpx;
   padding: 10rpx 28rpx;
 }
 
 .cp-chip-on {
-  color: #FFFFFF;
-  background: #F0876B;
-  border-color: #F0876B;
+  color: var(--card);
+  background: var(--brand);
+  border-color: var(--brand);
 }
 
 .cp-grid {
@@ -111,25 +111,25 @@
 
 .cp-ml {
   flex: 1;
-  background: #FFFFFF;
-  border: 2rpx solid #F2E6DA;
+  background: var(--card);
+  border: 2rpx solid var(--line);
   border-radius: 20rpx;
   padding: 22rpx 0;
   text-align: center;
   font-size: 30rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .cp-ml:active {
-  background: #FFF1E6;
-  border-color: #F0876B;
+  background: var(--brand-tint);
+  border-color: var(--brand);
 }
 
 .cp-unit {
-  font-size: 20rpx;
+  font-size: 22rpx;
   font-weight: 400;
-  color: #A8968A;
+  color: var(--text-4);
   margin-left: 2rpx;
 }
 
@@ -142,8 +142,8 @@
 .cp-input {
   flex: 1;
   height: 84rpx;
-  background: #FFFFFF;
-  border: 2rpx solid #F2E6DA;
+  background: var(--card);
+  border: 2rpx solid var(--line);
   border-radius: 20rpx;
   padding: 0 24rpx;
   font-size: 28rpx;
@@ -155,8 +155,8 @@
   line-height: 84rpx;
   padding: 0 36rpx;
   border-radius: 20rpx;
-  background: #F0876B;
-  color: #FFFFFF;
+  background: var(--brand);
+  color: var(--card);
   font-size: 28rpx;
   font-weight: 600;
 }
@@ -181,13 +181,13 @@
   height: 88rpx;
   border-radius: 50%;
   margin: 0 auto;
-  border: 4rpx solid #FFFFFF;
+  border: 4rpx solid var(--card);
   box-shadow: 0 4rpx 14rpx rgba(58, 46, 38, 0.15);
 }
 
 .cp-color-label {
   font-size: 22rpx;
-  color: #6B5A4E;
+  color: var(--text-2);
   margin-top: 8rpx;
 }
 
@@ -195,12 +195,12 @@
 .cp-link {
   text-align: center;
   font-size: 24rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 36rpx;
 }
 
 .cp-link {
-  color: #D9724F;
+  color: var(--brand-strong);
 }
 
 /* ---------- 进行中计时条 ---------- */
@@ -208,16 +208,16 @@
   display: flex;
   align-items: center;
   gap: 16rpx;
-  background: linear-gradient(120deg, #FFE9DC 0%, #FFF4EC 100%);
-  border: 2rpx solid #F8CDB6;
+  background: linear-gradient(120deg, var(--brand-tint) 0%, var(--bg) 100%);
+  border: 2rpx solid var(--peach-soft);
   border-radius: 24rpx;
   padding: 22rpx 24rpx;
   margin-bottom: 16rpx;
 }
 
 .cl-bar-sleep {
-  background: linear-gradient(120deg, #ECE7F8 0%, #F6F3FC 100%);
-  border-color: #D9CFF0;
+  background: linear-gradient(120deg, var(--sleep-soft) 0%, var(--info-soft) 100%);
+  border-color: var(--sleep-line);
 }
 
 .cl-main {
@@ -228,12 +228,12 @@
 .cl-title {
   font-size: 28rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .cl-sub {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 4rpx;
 }
 
@@ -241,18 +241,18 @@
   flex: none;
   font-size: 26rpx;
   font-weight: 700;
-  color: #FFFFFF;
-  background: #F0876B;
+  color: var(--card);
+  background: var(--brand);
   border-radius: 999rpx;
   padding: 14rpx 30rpx;
 }
 
 .cl-bar-sleep .cl-btn {
-  background: #8E7BC0;
+  background: var(--sleep);
 }
 
 .cl-btn-line {
-  color: #D9724F;
-  background: #FFFFFF;
-  border: 2rpx solid #F3C4B6;
+  color: var(--brand-strong);
+  background: var(--card);
+  border: 2rpx solid var(--brand-soft);
 }

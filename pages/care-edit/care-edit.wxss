@@ -2,7 +2,7 @@
 
 .top-tip {
   font-size: 24rpx;
-  color: #A8968A;
+  color: var(--text-4);
   padding: 24rpx 8rpx 8rpx;
 }
 
@@ -17,12 +17,12 @@
 }
 
 .dt-cell {
-  background: #FFF6EF;
+  background: var(--bg);
   border-radius: 18rpx;
   padding: 20rpx 28rpx;
   font-size: 30rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   font-variant-numeric: tabular-nums;
 }
 
@@ -33,7 +33,7 @@
 
 .seg {
   display: flex;
-  background: #FFF6EF;
+  background: var(--bg);
   border-radius: 20rpx;
   padding: 6rpx;
   margin-bottom: 12rpx;
@@ -43,14 +43,14 @@
   flex: 1;
   text-align: center;
   font-size: 28rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   padding: 16rpx 0;
   border-radius: 16rpx;
 }
 
 .seg-on {
-  background: #FFFFFF;
-  color: #D96B4F;
+  background: var(--card);
+  color: var(--brand-strong);
   font-weight: 700;
   box-shadow: 0 4rpx 12rpx rgba(213, 176, 147, 0.2);
 }
@@ -64,15 +64,15 @@
 
 .chip-opt {
   font-size: 26rpx;
-  color: #6B5A4E;
-  background: #FFF6EF;
+  color: var(--text-2);
+  background: var(--bg);
   border-radius: 999rpx;
   padding: 10rpx 26rpx;
 }
 
 .chip-opt-on {
-  color: #FFFFFF;
-  background: #F0876B;
+  color: var(--card);
+  background: var(--brand);
 }
 
 .colors {
@@ -90,7 +90,7 @@
 }
 
 .color-on {
-  background: #FFF1E6;
+  background: var(--brand-tint);
 }
 
 .swatch {
@@ -98,17 +98,17 @@
   height: 72rpx;
   border-radius: 50%;
   margin: 0 auto;
-  border: 4rpx solid #FFFFFF;
+  border: 4rpx solid var(--card);
   box-shadow: 0 4rpx 12rpx rgba(58, 46, 38, 0.15);
 }
 
 .color-on .swatch {
-  box-shadow: 0 0 0 4rpx #F0876B;
+  box-shadow: 0 0 0 4rpx var(--brand);
 }
 
 .color-label {
   font-size: 22rpx;
-  color: #6B5A4E;
+  color: var(--text-2);
   margin-top: 6rpx;
 }
 
@@ -121,18 +121,18 @@
 }
 
 .color-tip-ok {
-  color: #2F7350;
-  background: #EAF5EE;
+  color: var(--ok);
+  background: var(--ok-soft);
 }
 
 .color-tip-watch {
-  color: #8A6418;
-  background: #FFF6E0;
+  color: var(--warn-text);
+  background: var(--warn-soft);
 }
 
 .color-tip-doctor {
-  color: #A8432F;
-  background: #FBEBE7;
+  color: var(--danger-text);
+  background: var(--danger-soft);
   font-weight: 600;
 }
 

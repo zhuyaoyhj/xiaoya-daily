@@ -16,28 +16,28 @@
   border-radius: 36rpx;
   padding: 36rpx 32rpx 32rpx;
   margin-bottom: 24rpx;
-  background: linear-gradient(140deg, #FFF0E4 0%, #FFE2D2 100%);
+  background: linear-gradient(140deg, var(--brand-tint) 0%, var(--peach-soft) 100%);
   box-shadow: 0 14rpx 36rpx rgba(213, 176, 147, 0.18);
 }
 
 .vax-hero.tone-urgent {
-  background: linear-gradient(140deg, #FFE9E4 0%, #FFD3C7 100%);
+  background: linear-gradient(140deg, var(--danger-soft) 0%, var(--peach-soft) 100%);
 }
 
 .vax-hero.tone-watch {
-  background: linear-gradient(140deg, #F1EDFB 0%, #E3DCF5 100%);
+  background: linear-gradient(140deg, var(--sleep-soft) 0%, var(--sleep-line) 100%);
 }
 
 .vax-hero.tone-due {
-  background: linear-gradient(140deg, #FFF0E4 0%, #FFDFC9 100%);
+  background: linear-gradient(140deg, var(--brand-tint) 0%, var(--peach-soft) 100%);
 }
 
 .vax-hero.tone-soon {
-  background: linear-gradient(140deg, #EFF6EE 0%, #DDEDDA 100%);
+  background: linear-gradient(140deg, var(--ok-soft) 0%, var(--ok-soft) 100%);
 }
 
 .vax-hero.tone-done {
-  background: linear-gradient(140deg, #F6F3EE 0%, #ECE6DC 100%);
+  background: linear-gradient(140deg, var(--sunken) 0%, var(--line) 100%);
 }
 
 .vax-hero-top {
@@ -65,18 +65,18 @@
 .vax-hero-name {
   font-size: 30rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .vax-hero-age {
   font-size: 22rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 4rpx;
 }
 
 .vax-hero-chip {
-  font-size: 20rpx;
-  color: #B4614A;
+  font-size: 22rpx;
+  color: var(--brand-deep);
   background: rgba(255, 255, 255, 0.8);
   border-radius: 20rpx;
   padding: 6rpx 18rpx;
@@ -85,14 +85,14 @@
 .vax-hero-title {
   font-size: 40rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
   letter-spacing: -0.5rpx;
   line-height: 1.35;
 }
 
 .vax-hero-desc {
   font-size: 26rpx;
-  color: #6B5A4D;
+  color: var(--text-2);
   margin-top: 12rpx;
   line-height: 1.6;
 }
@@ -104,22 +104,22 @@
 }
 
 .vax-meta-item {
-  font-size: 21rpx;
-  color: #9A8574;
+  font-size: 22rpx;
+  color: var(--text-3);
 }
 
 /* ---------- 通用小标题 ---------- */
 .vax-sub {
   font-size: 22rpx;
-  color: #9A8A7C;
+  color: var(--text-4);
   line-height: 1.6;
   margin: 6rpx 0 20rpx;
 }
 
 .vax-time {
-  font-size: 21rpx;
-  color: #B4614A;
-  background: #FFF1E6;
+  font-size: 22rpx;
+  color: var(--brand-deep);
+  background: var(--brand-tint);
   border-radius: 18rpx;
   padding: 6rpx 18rpx;
 }
@@ -129,7 +129,7 @@
   display: flex;
   align-items: flex-start;
   padding: 18rpx 0;
-  border-bottom: 2rpx solid #F7F1EA;
+  border-bottom: 2rpx solid var(--sunken);
 }
 
 .task-row:last-child {
@@ -141,7 +141,7 @@
   width: 96rpx;
   flex-shrink: 0;
   font-size: 22rpx;
-  color: #B2886F;
+  color: var(--text-warm);
   padding-top: 4rpx;
 }
 
@@ -150,42 +150,42 @@
 }
 
 .task-text {
-  font-size: 27rpx;
-  color: #3A2E26;
+  font-size: 26rpx;
+  color: var(--text);
   line-height: 1.6;
 }
 
 .task-tag {
   display: inline-block;
-  font-size: 18rpx;
+  font-size: 22rpx;
   border-radius: 12rpx;
   padding: 2rpx 12rpx;
   margin-top: 8rpx;
 }
 
 .tag-must {
-  background: #FFEDE6;
-  color: #D9603F;
+  background: var(--danger-soft);
+  color: var(--brand-strong);
 }
 
 .tag-warn {
-  background: #FFE7E3;
-  color: #C43C2A;
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .tag-watch {
-  background: #EFEAFB;
-  color: #6F5BA6;
+  background: var(--sleep-soft);
+  color: var(--sleep);
 }
 
 .tag-care {
-  background: #EFF5EE;
-  color: #4F7A4A;
+  background: var(--ok-soft);
+  color: var(--ok);
 }
 
 .tag-prep {
-  background: #F3F1EC;
-  color: #8C7B6E;
+  background: var(--sunken);
+  color: var(--text-3);
 }
 
 /* ---------- 反应 ---------- */
@@ -193,7 +193,7 @@
   display: flex;
   align-items: flex-start;
   padding: 16rpx 0;
-  border-bottom: 2rpx solid #F7F1EA;
+  border-bottom: 2rpx solid var(--sunken);
 }
 
 .react-row:last-child {
@@ -204,7 +204,7 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background: #F0A05B;
+  background: var(--apricot);
   margin: 14rpx 18rpx 0 4rpx;
   flex-shrink: 0;
 }
@@ -212,8 +212,8 @@
 .react-soon-when {
   width: 104rpx;
   flex-shrink: 0;
-  font-size: 20rpx;
-  color: #7A6AA8;
+  font-size: 22rpx;
+  color: var(--sleep);
   padding-top: 6rpx;
 }
 
@@ -224,21 +224,21 @@
 .react-name {
   font-size: 26rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.5;
 }
 
 .react-tip {
   font-size: 22rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 4rpx;
   line-height: 1.6;
 }
 
 .react-now {
-  font-size: 18rpx;
-  color: #C9694A;
-  background: #FFF1E6;
+  font-size: 22rpx;
+  color: var(--brand-deep);
+  background: var(--brand-tint);
   border-radius: 12rpx;
   padding: 2rpx 12rpx;
   margin-left: 12rpx;
@@ -246,19 +246,19 @@
 }
 
 .react-soon-head {
-  font-size: 21rpx;
-  color: #9A8A7C;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-bottom: 4rpx;
 }
 
 /* ---------- 就医警示 ---------- */
 .danger-card {
-  background: #FFFBFA;
-  border: 2rpx solid #FBE0D9;
+  background: var(--card);
+  border: 2rpx solid var(--danger-soft);
 }
 
 .danger-title {
-  color: #C4432B;
+  color: var(--danger);
 }
 
 .flag-row {
@@ -271,22 +271,22 @@
   width: 10rpx;
   height: 10rpx;
   border-radius: 50%;
-  background: #E0704F;
+  background: var(--brand-strong);
   margin: 14rpx 16rpx 0 2rpx;
   flex-shrink: 0;
 }
 
 .flag-text {
   flex: 1;
-  font-size: 25rpx;
-  color: #6B4238;
+  font-size: 24rpx;
+  color: var(--cocoa);
   line-height: 1.6;
 }
 
 .danger-note {
-  font-size: 21rpx;
-  color: #A8604C;
-  background: #FFF0EC;
+  font-size: 22rpx;
+  color: var(--cocoa);
+  background: var(--danger-soft);
   border-radius: 16rpx;
   padding: 16rpx 18rpx;
   margin-top: 16rpx;
@@ -295,40 +295,40 @@
 
 /* ---------- 观察期已过 ---------- */
 .calm-card {
-  background: #F7F5F0;
+  background: var(--sunken);
   box-shadow: none;
 }
 
 .calm-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #6B5A4D;
+  color: var(--text-2);
 }
 
 .calm-desc {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 8rpx;
   line-height: 1.6;
 }
 
 /* ---------- 规划表脚注 ---------- */
 .plan-foot {
-  font-size: 20rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   line-height: 1.6;
   margin-top: 16rpx;
 }
 
 /* ---------- 待安排疫苗 ---------- */
 .wait-card {
-  background: linear-gradient(140deg, #FFFFFF 0%, #FBF6FD 100%);
+  background: linear-gradient(140deg, var(--card) 0%, var(--info-soft) 100%);
 }
 
 .wait-count {
-  font-size: 21rpx;
-  color: #7A6AA8;
-  background: #F0EBFA;
+  font-size: 22rpx;
+  color: var(--sleep);
+  background: var(--sleep-soft);
   border-radius: 18rpx;
   padding: 6rpx 18rpx;
 }
@@ -337,7 +337,7 @@
   display: flex;
   align-items: center;
   padding: 16rpx 0;
-  border-bottom: 2rpx solid #F7F1EA;
+  border-bottom: 2rpx solid var(--sunken);
 }
 
 .wait-row:last-child {
@@ -349,7 +349,7 @@
   width: 84rpx;
   flex-shrink: 0;
   text-align: center;
-  background: #F5F0FB;
+  background: var(--sleep-soft);
   border-radius: 18rpx;
   padding: 8rpx 0;
   margin-right: 18rpx;
@@ -359,14 +359,14 @@
   display: block;
   font-size: 32rpx;
   font-weight: 700;
-  color: #7A6AA8;
+  color: var(--sleep);
   line-height: 1.2;
 }
 
 .wait-month {
   display: block;
-  font-size: 18rpx;
-  color: #9A8AA8;
+  font-size: 22rpx;
+  color: var(--sleep-muted);
   margin-top: 2rpx;
 }
 
@@ -376,21 +376,21 @@
 }
 
 .wait-name {
-  font-size: 27rpx;
+  font-size: 26rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.5;
 }
 
 .wait-sub {
-  font-size: 21rpx;
-  color: #9A8A7C;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 4rpx;
 }
 
 .wait-arrow {
   font-size: 32rpx;
-  color: #D8C7B8;
+  color: var(--line-strong);
   margin-left: 12rpx;
 }
 
@@ -399,7 +399,7 @@
   display: flex;
   align-items: center;
   padding: 20rpx 0;
-  border-bottom: 2rpx solid #F7F1EA;
+  border-bottom: 2rpx solid var(--sunken);
 }
 
 .rec-row:last-child {
@@ -413,22 +413,22 @@
 }
 
 .rec-name {
-  font-size: 27rpx;
+  font-size: 26rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.5;
 }
 
 .rec-sub {
-  font-size: 21rpx;
-  color: #9A8A7C;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 4rpx;
 }
 
 .rec-note {
-  font-size: 21rpx;
-  color: #B2886F;
-  background: #FBF7F2;
+  font-size: 22rpx;
+  color: var(--text-warm);
+  background: var(--sunken);
   border-radius: 12rpx;
   padding: 6rpx 14rpx;
   margin-top: 8rpx;
@@ -444,58 +444,58 @@
 }
 
 .rec-cat {
-  font-size: 18rpx;
-  color: #6E8F62;
-  background: #EFF5EE;
+  font-size: 22rpx;
+  color: var(--leaf);
+  background: var(--ok-soft);
   border-radius: 12rpx;
   padding: 2rpx 12rpx;
 }
 
 .rec-cat-paid {
-  color: #7A6AA8;
-  background: #F0EBFA;
+  color: var(--sleep);
+  background: var(--sleep-soft);
 }
 
 .rec-status {
-  font-size: 19rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 8rpx;
 }
 
 .rec-status-on {
-  color: #C9694A;
+  color: var(--brand-deep);
 }
 
 .rec-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 2rpx solid #F7F1EA;
+  border-top: 2rpx solid var(--sunken);
   margin-top: 18rpx;
   padding-top: 16rpx;
 }
 
 .rec-foot-text {
-  font-size: 20rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
 }
 
 .rec-toggle {
-  font-size: 21rpx;
-  color: #C9694A;
+  font-size: 22rpx;
+  color: var(--brand-deep);
 }
 
 /* ---------- 免疫规划表 ---------- */
 .plan-toggle {
   font-size: 22rpx;
-  color: #B2886F;
+  color: var(--text-warm);
 }
 
 .plan-list-row {
   display: flex;
   align-items: center;
   padding: 14rpx 0;
-  border-bottom: 2rpx solid #F9F5F0;
+  border-bottom: 2rpx solid var(--sunken);
 }
 
 .plan-list-row:last-child {
@@ -506,38 +506,38 @@
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background: #E4D7C9;
+  background: var(--line-strong);
   margin-right: 14rpx;
   flex-shrink: 0;
 }
 
 .plan-dot.done {
-  background: #8FBF84;
+  background: var(--leaf-light);
 }
 
 .plan-dot.soon {
-  background: #E8B96A;
+  background: var(--warn-strong);
 }
 
 .plan-list-name {
   flex: 1;
   font-size: 24rpx;
-  color: #4A3C32;
+  color: var(--text);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .plan-list-dose {
-  font-size: 20rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   width: 100rpx;
   flex-shrink: 0;
 }
 
 .plan-list-month {
-  font-size: 20rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   width: 150rpx;
   flex-shrink: 0;
   text-align: right;
@@ -547,44 +547,44 @@
   width: 130rpx;
   flex-shrink: 0;
   text-align: right;
-  font-size: 19rpx;
+  font-size: 22rpx;
 }
 
 .status-done {
-  color: #6E8F62;
+  color: var(--leaf);
 }
 
 .status-covered {
-  color: #7A6AA8;
+  color: var(--sleep);
 }
 
 .status-hidden {
-  color: #BCAFA3;
+  color: var(--text-5);
 }
 
 .status-due,
 .status-overdue {
-  color: #C9694A;
+  color: var(--brand-deep);
 }
 
 .status-soon {
-  color: #B98A3E;
+  color: var(--warn);
 }
 
 .status-later {
-  color: #BCAFA3;
+  color: var(--text-5);
 }
 
 .plan-list-covered .plan-list-name {
-  color: #8C7B6E;
+  color: var(--text-3);
 }
 
 /* ---------- 已移除的规划项 ---------- */
 .removed-head {
-  font-size: 21rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   padding: 20rpx 0 8rpx;
-  border-top: 2rpx dashed #F0E6DA;
+  border-top: 2rpx dashed var(--line);
   margin-top: 8rpx;
 }
 
@@ -598,7 +598,7 @@
 .removed-name {
   flex: 1;
   font-size: 22rpx;
-  color: #A99A8C;
+  color: var(--text-4);
   text-decoration: line-through;
   overflow: hidden;
   white-space: nowrap;
@@ -606,8 +606,8 @@
 }
 
 .removed-restore {
-  font-size: 21rpx;
-  color: #C9694A;
+  font-size: 22rpx;
+  color: var(--brand-deep);
   margin-left: 16rpx;
   flex-shrink: 0;
 }
@@ -629,5 +629,5 @@
   right: 0;
   bottom: 0;
   padding: 20rpx 28rpx calc(20rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(255, 248, 240, 0) 0%, #FFF8F0 32%);
+  background: linear-gradient(180deg, rgba(255, 248, 240, 0) 0%, var(--bg) 32%);
 }

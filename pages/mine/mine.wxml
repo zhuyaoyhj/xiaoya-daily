@@ -80,10 +80,11 @@
       <view class="data-stat"><view class="data-num">{{dataStats.vaccine}}</view><view class="data-key">接种</view></view>
     </view>
     <view class="data-actions">
-      <view class="btn btn-ghost btn-sm data-btn" bindtap="exportData">备份到剪贴板</view>
-      <view class="btn btn-line btn-sm data-btn" bindtap="importData">从备份恢复</view>
+      <view class="btn btn-ghost btn-sm data-btn" bindtap="exportData">导出备份文件</view>
+      <view class="btn btn-line btn-sm data-btn" bindtap="importData">从文件恢复</view>
     </view>
-    <view class="data-tip">备份也能用来同步：在家人手机上恢复，就能看到同一份记录。</view>
+    <view class="data-tip">导出后发给「文件传输助手」保存；恢复时从聊天记录里选这个文件。在家人手机上恢复，就能看到同一份记录。</view>
+    <view class="data-more" bindtap="moreBackup">用复制文字的方式备份 ›</view>
   </view>
 
   <disclaimer />

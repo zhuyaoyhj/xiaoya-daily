@@ -103,8 +103,13 @@ function pad(n) {
 const now = new Date();
 const TODAY = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
 
+// 所有日期都相对今天构造：今天用的是真实时间，写死日期迟早会让月龄、到期状态跟着变
+const fixtures = require('./fixtures.js');
+const BIRTH8 = fixtures.birthdayForAge(8, 11); // 原来写死 2026-03-08，在 11 月时正好 8 个月 11 天
+const ago = fixtures.daysFromToday;
+
 /* ---------- 准备数据 ---------- */
-store.saveBabies([{ id: 'b1', name: '小芽', birthday: '2026-03-08', gender: 'girl' }]);
+store.saveBabies([{ id: 'b1', name: '小芽', birthday: BIRTH8, gender: 'girl' }]);
 store.updateSettings({ activeBabyId: 'b1' });
 
 /* ================= 1. 疫苗页：观察期内 ================= */
@@ -157,7 +162,7 @@ ok(vp.data.brief.title.indexOf('针') > -1 || vp.data.brief.title.indexOf('该�
 
 /* ================= 3. 疫苗页：观察期已过 ================= */
 console.log('\n[3] 疫苗页 · 上次接种已过观察期');
-store.upsertVaccineRecord({ babyId: 'b1', vaccineId: 'hepb', dose: 3, date: '2026-09-01', time: '10:00' });
+store.upsertVaccineRecord({ babyId: 'b1', vaccineId: 'hepb', dose: 3, date: ago(-79), time: '10:00' });
 vp.load();
 eq(vp.data.care, null, '超过观察期不再显示护理清单');
 ok(!!vp.data.lastCare, '但保留 lastCare 用于「观察期已过」提示');
@@ -192,7 +197,7 @@ ok(ep.data.before.length > 0, '带出接种前提醒');
 ok(ep.data.commonReactions.length > 0, '带出常见反应');
 
 // 默认剂次要跟着已打记录走
-store.upsertVaccineRecord({ babyId: 'b1', vaccineId: 'pcv13', dose: 1, date: '2026-09-01' });
+store.upsertVaccineRecord({ babyId: 'b1', vaccineId: 'pcv13', dose: 1, date: ago(-79) });
 ep.pickVaccine({ currentTarget: { dataset: { id: 'pcv13' } } });
 eq(ep.data.dose, 2, '第 1 剂已打过时默认选中第 2 剂');
 eq(ep.data.doses[0].done, true, '已打过的剂次有标记');
@@ -278,7 +283,7 @@ eq(lastToast, '请先添加宝宝', '记录页无宝宝时提示并返回');
 
 /* ================= 8. 首页疫苗卡 ================= */
 console.log('\n[8] 首页疫苗卡');
-store.saveBabies([{ id: 'b2', name: '小树', birthday: '2026-03-08', gender: 'boy' }]);
+store.saveBabies([{ id: 'b2', name: '小树', birthday: BIRTH8, gender: 'boy' }]);
 store.updateSettings({ activeBabyId: 'b2' });
 store.upsertVaccineRecord({ babyId: 'b2', vaccineId: 'mmr', dose: 1, date: TODAY, time: '00:10' });
 
@@ -301,7 +306,7 @@ console.log('    ' + ip.data.vax.title + ' · ' + ip.data.vax.desc);
 console.log('\n[9] 规划表：标记已接种 / 移除 / 恢复');
 mem['xyd_vaccine_records'] = [];
 mem['xyd_plan_hidden'] = [];
-store.saveBabies([{ id: 'b3', name: '小满', birthday: '2026-03-08', gender: 'boy' }]);
+store.saveBabies([{ id: 'b3', name: '小满', birthday: BIRTH8, gender: 'boy' }]);
 store.updateSettings({ activeBabyId: 'b3' });
 
 vp = instance(mount('pages/vaccine/vaccine.js'));
@@ -343,7 +348,7 @@ vp.tapPlan({ currentTarget: { dataset: { key: dueItem.key } } });
 ok(lastNav.indexOf('/pages/vaccine-edit/vaccine-edit?vaccineId=' + dueItem.vaccineId) === 0, '选「标记为已接种」跳到记录页并预选疫苗');
 
 // 已接种的行 → 打开已有记录
-store.upsertVaccineRecord({ babyId: 'b3', vaccineId: 'hepb', dose: 1, date: '2026-03-10' });
+store.upsertVaccineRecord({ babyId: 'b3', vaccineId: 'hepb', dose: 1, date: ago(-254) });
 vp.load();
 const doneItem = vp.data.planAll.filter(function (p) {
   return p.key === 'hepb#1';
@@ -355,7 +360,7 @@ ok(lastNav.indexOf('?id=') > -1, '点已接种的行直接打开那条记录');
 
 // 被覆盖的行 → 弹说明，不改状态
 [1, 2, 3, 4].forEach(function (n) {
-  store.upsertVaccineRecord({ babyId: 'b3', vaccineId: 'penta', dose: n, date: '2026-09-01' });
+  store.upsertVaccineRecord({ babyId: 'b3', vaccineId: 'penta', dose: n, date: ago(-79) });
 });
 vp.load();
 const covItem = vp.data.planAll.filter(function (p) {
@@ -428,20 +433,21 @@ ok(lastModal.indexOf('已有 1 条接种记录') > -1, '删除时会提示会连
 console.log('\n[11] 记录折叠与待安排');
 mem['xyd_vaccine_records'] = [];
 mem['xyd_plan_hidden'] = [];
-store.saveBabies([{ id: 'b4', name: '小树', birthday: '2026-03-08' }]);
+store.saveBabies([{ id: 'b4', name: '小树', birthday: BIRTH8 }]);
 store.updateSettings({ activeBabyId: 'b4' });
 
 [
-  { v: 'hepb', d: '2026-04-01' },
-  { v: 'bcg', d: '2026-05-01' },
-  { v: 'polio', d: '2026-06-01' },
-  { v: 'dtap', d: '2026-07-01' },
-  { v: 'mmr', d: '2026-08-01' }
+  { v: 'hepb', d: ago(-232) },
+  { v: 'bcg', d: ago(-202) },
+  { v: 'polio', d: ago(-171) },
+  { v: 'dtap', d: ago(-141) },
+  { v: 'mmr', d: ago(-110) }
 ].forEach(function (x) {
   store.upsertVaccineRecord({ babyId: 'b4', vaccineId: x.v, dose: 1, date: x.d });
 });
-store.upsertVaccineRecord({ babyId: 'b4', vaccineId: 'je', dose: 1, date: '2026-12-01' });
-store.upsertVaccineRecord({ babyId: 'b4', vaccineId: 'var', dose: 2, date: '2026-11-20' });
+// 待安排：今天之后 5 天、12 天
+store.upsertVaccineRecord({ babyId: 'b4', vaccineId: 'je', dose: 1, date: ago(12) });
+store.upsertVaccineRecord({ babyId: 'b4', vaccineId: 'var', dose: 2, date: ago(5) });
 
 vp = instance(mount('pages/vaccine/vaccine.js'));
 vp.load();
@@ -450,7 +456,7 @@ eq(vp.data.recordTotal, 5, '5 次已接种记录（未来的不算）');
 eq(vp.data.records.length, 3, '默认只展示近 3 次');
 eq(vp.data.hiddenCount, 2, '剩下 2 次折叠起来');
 eq(vp.data.recordsExpanded, false, '默认收起');
-eq(vp.data.records[0].dateText.indexOf('8 月'), 0, '按时间倒序，最近的排第一');
+eq(vp.data.records[0].dateText.indexOf(Number(ago(-110).split('-')[1]) + ' 月'), 0, '按时间倒序，最近的（麻腮风）排第一');
 eq(vp.data.stats.total, 5, '统计只算已接种的');
 
 vp.toggleRecords();
@@ -460,11 +466,12 @@ vp.toggleRecords();
 eq(vp.data.records.length, 3, '再点一次收起');
 
 eq(vp.data.planned.length, 2, '2 条待安排');
-eq(vp.data.planned[0].name, '水痘疫苗', '待安排按日期从近到远，11 月 20 日的排第一');
-eq(vp.data.planned[1].name, '乙脑减毒活疫苗', '12 月 1 日的排后面');
+eq(vp.data.planned[0].name, '水痘疫苗', '待安排按日期从近到远，5 天后的排第一');
+eq(vp.data.planned[1].name, '乙脑减毒活疫苗', '12 天后的排后面');
 ok(vp.data.planned[0].whenText.indexOf('天后') > -1, '待安排带倒计时');
-eq(vp.data.planned[0].day, '20', '待安排显示日');
-eq(vp.data.planned[0].month, '11 月', '待安排显示月');
+const d5 = ago(5).split('-');
+eq(vp.data.planned[0].day, String(Number(d5[2])), '待安排显示日');
+eq(vp.data.planned[0].month, Number(d5[1]) + ' 月', '待安排显示月');
 
 // 待安排不能混进接种记录
 const plannedIds = vp.data.planned.map(function (p) {
@@ -508,9 +515,8 @@ mem['xyd_food_swap'] = {};
 mem['xyd_menu_swap'] = {};
 mem['xyd_custom_foods'] = [];
 
-// 造一个正好 7 月龄的宝宝：7 个月前的 1 号出生
-const bdMonth = new Date(now.getFullYear(), now.getMonth() - 7, 1);
-const BIRTH7 = bdMonth.getFullYear() + '-' + pad(bdMonth.getMonth() + 1) + '-01';
+// 造一个正好 7 月龄的宝宝
+const BIRTH7 = fixtures.birthdayForAge(7, 0);
 store.saveBabies([{ id: 'b5', name: '小米', birthday: BIRTH7, avatar: '🌾' }]);
 store.updateSettings({ activeBabyId: 'b5' });
 
@@ -561,11 +567,11 @@ eq(fp.data.brief.tone, 'warn', '摘要升级为冲突提醒');
 // 折叠与展开
 mem['xyd_food_records'] = [];
 [
-  { f: 'rice_cereal', d: '2026-05-01' },
-  { f: 'pumpkin', d: '2026-06-01' },
-  { f: 'carrot', d: '2026-07-01' },
-  { f: 'apple', d: '2026-08-01' },
-  { f: 'banana', d: '2026-09-01' }
+  { f: 'rice_cereal', d: ago(-202) },
+  { f: 'pumpkin', d: ago(-171) },
+  { f: 'carrot', d: ago(-141) },
+  { f: 'apple', d: ago(-110) },
+  { f: 'banana', d: ago(-79) }
 ].forEach(function (x) {
   store.upsertFoodRecord({ babyId: 'b5', foodId: x.f, date: x.d, reaction: 'none' });
 });
@@ -937,12 +943,27 @@ ok(
   pp.data.planNext[0].meals.length > 0 && pp.data.planNext[1].meals.length > 0,
   '两天都排上了餐次'
 );
+// 「今天至少一道有理由」不是必然的：餐单按周随机，红薯泥这类菜本来就没有理由可写。
+// 所以分开测：页面把引擎给的理由原样带出来；引擎对确定的菜给出确定的理由。
 ok(
-  pp.data.todayMenu.some(function (m) {
-    return !!m.reasonText;
+  pp.data.todayMenu.every(function (m) {
+    return m.reasonText === (m.reasons[0] || '');
   }),
-  '今天吃什么带「为什么排它」的理由'
+  '今天吃什么：理由取第一条，没有时为空'
 );
+const foodEngine = require(path.join(ROOT, 'utils/food.js'));
+const byIdAll = {};
+foodEngine.allFoods().forEach(function (f) {
+  byIdAll[f.id] = f;
+});
+const riceRecipe = { foods: ['rice_cereal'] };
+ok(foodEngine.reasonsOf(riceRecipe, { byId: byIdAll }).indexOf('补铁') > -1, '强化铁米粉的理由里有「补铁」');
+ok(
+  foodEngine.reasonsOf(riceRecipe, { byId: byIdAll, focusNext: ['rice_cereal'] }).indexOf('本月重点') > -1,
+  '本月重点食材标「本月重点」'
+);
+eq(foodEngine.reasonsOf({ foods: ['rice_cereal'] }, { byId: byIdAll, diet: 'strict' })[0], '接种期·只吃吃过的', '接种期理由排第一');
+eq(foodEngine.reasonsOf(null, {}), [], '没有食谱时没有理由');
 
 const wToday = pp.data.week.days.filter(function (d) {
   return d.date === TODAY;

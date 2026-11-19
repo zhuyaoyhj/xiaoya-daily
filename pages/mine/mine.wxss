@@ -4,14 +4,14 @@
   display: flex;
   align-items: center;
   gap: 24rpx;
-  background: linear-gradient(135deg, #FFF1E6 0%, #FFFFFF 100%);
+  background: linear-gradient(135deg, var(--brand-tint) 0%, var(--card) 100%);
 }
 
 .baby-avatar {
   width: 104rpx;
   height: 104rpx;
   border-radius: 50%;
-  background: #FFFFFF;
+  background: var(--card);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,18 +27,18 @@
 .baby-name {
   font-size: 34rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .baby-age {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 4rpx;
 }
 
 .row-go {
   font-size: 24rpx;
-  color: #F0876B;
+  color: var(--brand);
 }
 
 .list-card {
@@ -50,7 +50,7 @@
   display: flex;
   align-items: center;
   padding: 26rpx 0;
-  border-top: 2rpx solid #F7EEE5;
+  border-top: 2rpx solid var(--sunken-2);
 }
 
 .row:first-child {
@@ -73,13 +73,13 @@
 
 .row-title {
   font-size: 28rpx;
-  color: #3A2E26;
+  color: var(--text);
   font-weight: 600;
 }
 
 .row-sub {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 2rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -88,7 +88,7 @@
 
 .row-arrow {
   font-size: 32rpx;
-  color: #C9B8A9;
+  color: var(--text-5);
   margin-left: 12rpx;
 }
 
@@ -97,8 +97,8 @@
   display: flex;
   gap: 12rpx;
   font-size: 24rpx;
-  color: #8C5A3C;
-  background: #FFF4EA;
+  color: var(--cocoa);
+  background: var(--brand-tint);
   border-radius: 16rpx;
   padding: 18rpx 20rpx;
   line-height: 1.6;
@@ -122,12 +122,12 @@
 .data-num {
   font-size: 36rpx;
   font-weight: 700;
-  color: #D96B4F;
+  color: var(--brand-strong);
 }
 
 .data-key {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 2rpx;
 }
 
@@ -143,7 +143,15 @@
 
 .data-tip {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 16rpx;
   line-height: 1.6;
+}
+
+.data-more {
+  font-size: 22rpx;
+  color: var(--text-4);
+  text-align: center;
+  margin-top: 16rpx;
+  padding: 8rpx 0;
 }

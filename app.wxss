@@ -2,9 +2,63 @@
    配色：奶油底 + 蜜桃主色 + 鼠尾草绿辅助，走柔和亲和的母婴调性
    注意：WXSS 中禁止引用本地图片，所有氛围感一律用渐变实现 */
 
+/* ==== design tokens（自动维护，见 tools/check.js） ==== */
 page {
-  background-color: #FFF8F0;
-  color: #3A2E26;
+  /* 品牌 */
+  --brand: #F0876B;
+  --brand-strong: #D9724F;
+  --brand-deep: #C4643F;
+  --brand-light: #FFA07E;
+  --brand-soft: #F5C4A8;
+  --brand-tint: #FFF1E6;
+  --peach-soft: #FFD8C3;
+  --apricot: #F0B37E;
+  /* 文字 */
+  --text: #3A2E26;
+  --text-2: #6B5A4D;
+  --text-3: #8C7B6E;
+  --text-4: #A8968A;
+  --text-5: #C9B8A9;
+  --text-warm: #A5836C;
+  --shade: #40301F;
+  --cocoa: #8A5A48;
+  /* 表面 */
+  --bg: #FFF8F0;
+  --card: #FFFFFF;
+  --sunken: #FBF6F0;
+  --sunken-2: #F6ECE2;
+  --line: #F2E6DA;
+  --line-strong: #E3D2C3;
+  /* 状态 */
+  --danger: #C43C2A;
+  --danger-text: #A8432F;
+  --danger-soft: #FBEBE7;
+  --warn: #A97A22;
+  --warn-text: #8A6418;
+  --warn-strong: #E0B15C;
+  --warn-soft: #FDF4E3;
+  --ok: #4B7C5C;
+  --ok-soft: #EAF3EC;
+  --info: #5B7FB8;
+  --info-soft: #EEF4FB;
+  /* 分类色 */
+  --sleep: #7A6AA8;
+  --sleep-light: #A88FC4;
+  --sleep-muted: #9A8AA8;
+  --sleep-soft: #F0EBFA;
+  --sleep-line: #D9CEF0;
+  --amber: #B4743F;
+  --amber-soft: #F8E7C8;
+  --olive: #9A8355;
+  --leaf: #6E8F62;
+  --leaf-light: #8FBF84;
+  --sage: #5E7A6B;
+  --mint: #7FB79A;
+}
+/* ==== /design tokens ==== */
+page {
+  background-color: var(--bg);
+  color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
   font-size: 28rpx;
   line-height: 1.55;
@@ -40,7 +94,7 @@ button::after {
 
 /* ---------- 卡片 ---------- */
 .card {
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 32rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
@@ -49,7 +103,7 @@ button::after {
 
 .card-flat {
   box-shadow: none;
-  border: 2rpx solid #F4E7DA;
+  border: 2rpx solid var(--line);
 }
 
 /* ---------- 文字 ---------- */
@@ -71,21 +125,21 @@ button::after {
 
 .body {
   font-size: 28rpx;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .muted {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
 }
 
 .tiny {
   font-size: 22rpx;
-  color: #AA9A8C;
+  color: var(--text-4);
 }
 
 .brand-text {
-  color: #F0876B;
+  color: var(--brand);
 }
 
 /* ---------- 按钮 ---------- */
@@ -107,20 +161,20 @@ button::after {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
+  color: var(--card);
   box-shadow: 0 12rpx 28rpx rgba(240, 135, 107, 0.32);
 }
 
 .btn-ghost {
-  background: #FFF1E6;
-  color: #D9724F;
+  background: var(--brand-tint);
+  color: var(--brand-strong);
 }
 
 .btn-line {
-  background: #FFFFFF;
-  color: #3A2E26;
-  border: 2rpx solid #EFE2D4;
+  background: var(--card);
+  color: var(--text);
+  border: 2rpx solid var(--line);
 }
 
 .btn-block {
@@ -146,20 +200,20 @@ button::after {
   height: 56rpx;
   padding: 0 24rpx;
   border-radius: 28rpx;
-  background: #FFF1E6;
-  color: #C9694A;
+  background: var(--brand-tint);
+  color: var(--brand-deep);
   font-size: 24rpx;
   margin: 0 16rpx 16rpx 0;
 }
 
 .chip-plain {
-  background: #F7F2EC;
-  color: #8C7B6E;
+  background: var(--sunken);
+  color: var(--text-3);
 }
 
 .chip-active {
-  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
+  color: var(--card);
 }
 
 /* ---------- 分区标题 ---------- */
@@ -173,31 +227,31 @@ button::after {
 .section-title {
   font-size: 32rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .section-more {
   font-size: 24rpx;
-  color: #B2886F;
+  color: var(--text-warm);
 }
 
 /* ---------- 卡片标题 ---------- */
 .card-title {
   font-size: 32rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 /* ---------- 分隔线 ---------- */
 .divider {
   height: 2rpx;
-  background: #F5EBE1;
+  background: var(--sunken-2);
   margin: 24rpx 0;
 }
 
 .divider-dashed {
   height: 0;
-  border-top: 2rpx dashed #EFE2D4;
+  border-top: 2rpx dashed var(--line);
   margin: 24rpx 0;
 }
 
@@ -206,7 +260,7 @@ button::after {
   display: flex;
   align-items: center;
   min-height: 104rpx;
-  border-bottom: 2rpx solid #F5EBE1;
+  border-bottom: 2rpx solid var(--sunken-2);
 }
 
 .field:last-child {
@@ -216,26 +270,26 @@ button::after {
 .field-label {
   width: 180rpx;
   font-size: 28rpx;
-  color: #6B5A4D;
+  color: var(--text-2);
   flex-shrink: 0;
 }
 
 .field-input {
   flex: 1;
   font-size: 30rpx;
-  color: #3A2E26;
+  color: var(--text);
   text-align: right;
 }
 
 .field-value {
   flex: 1;
   font-size: 30rpx;
-  color: #3A2E26;
+  color: var(--text);
   text-align: right;
 }
 
 .placeholder {
-  color: #C4B5A8;
+  color: var(--text-5);
 }
 
 /* ---------- 列表行 ---------- */
@@ -250,8 +304,8 @@ button::after {
   content: "";
   width: 16rpx;
   height: 16rpx;
-  border-top: 3rpx solid #D8C7B8;
-  border-right: 3rpx solid #D8C7B8;
+  border-top: 3rpx solid var(--line-strong);
+  border-right: 3rpx solid var(--line-strong);
   transform: rotate(45deg);
   margin-left: 12rpx;
 }

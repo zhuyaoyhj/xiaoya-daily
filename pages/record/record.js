@@ -77,7 +77,7 @@ Page(Object.assign({}, careActions.methods, {
       this.setData({ hasBaby: false, today: today });
       return;
     }
-    const age = dateUtil.calcAge(baby.birthday);
+    const age = dateUtil.babyAge(baby);
     const months = age.valid ? age.months : 0;
     const date = this._date && this._date <= today ? this._date : today;
     this._baby = baby;

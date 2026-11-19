@@ -49,6 +49,55 @@ function calcAge(birthdayStr, nowDate) {
   return { totalDays, months, days, weeks: Math.floor(totalDays / 7), valid: true };
 }
 
+/* ---------- 早产矫正月龄 ---------- */
+// 预产期比生日晚 ≥21 天（即 <37 周出生）才算早产；矫正到实际 24 个月为止。
+// 发育类（月龄建议、辅食、照护参考、穿衣）用矫正月龄；疫苗按实际月龄（免疫规划不矫正）。
+const PRETERM_MIN_DAYS = 21;
+const PRETERM_MAX_DAYS = 119;
+const CORRECT_UNTIL_MONTHS = 24;
+
+/** 早产了多少天；不是早产或数据不合理返回 0 */
+function pretermDays(baby) {
+  if (!baby || !baby.dueDate || !baby.birthday) return 0;
+  const b = parseDate(baby.birthday);
+  const d = parseDate(baby.dueDate);
+  if (!b || !d) return 0;
+  const gap = Math.round((d.getTime() - b.getTime()) / 86400000);
+  if (gap < PRETERM_MIN_DAYS || gap > PRETERM_MAX_DAYS) return 0;
+  return gap;
+}
+
+/**
+ * 宝宝的「有效月龄」：字段与 calcAge 相同（months/days/totalDays/valid），
+ * 代表拿去查发育类建议的月龄；另带 actual（实际）/ corrected（矫正，可能为 null）
+ */
+function babyAge(baby, nowDate) {
+  const actual = calcAge(baby && baby.birthday, nowDate);
+  const gap = pretermDays(baby);
+  let corrected = null;
+  if (gap && actual.valid && actual.months < CORRECT_UNTIL_MONTHS) {
+    corrected = calcAge(baby.dueDate, nowDate);
+    // 还没到预产期：按矫正 0 天算
+    if (!corrected.valid) corrected = { totalDays: 0, months: 0, days: 0, weeks: 0, valid: true };
+  }
+  const eff = corrected || actual;
+  return Object.assign({}, eff, {
+    actual: actual,
+    corrected: corrected,
+    isCorrected: !!corrected,
+    pretermWeeks: gap ? Math.round(gap / 7) : 0
+  });
+}
+
+/** 「5 个月 3 天 · 矫正 3 个月」；未矫正时同 ageText */
+function babyAgeText(age) {
+  if (!age) return '';
+  if (!age.isCorrected) return ageText(age.actual || age);
+  const c = age.corrected;
+  const ct = c.months === 0 ? c.totalDays + ' 天' : c.months + ' 个月';
+  return ageText(age.actual) + ' · 矫正 ' + ct;
+}
+
 /** 月龄文案：0 个月显示天数，满月后显示「X 个月 Y 天」 */
 function ageText(age) {
   if (!age || !age.valid) return age && age.future ? '还没出生' : '';
@@ -126,6 +175,11 @@ module.exports = {
   todayStr,
   calcAge,
   ageText,
+  pretermDays,
+  babyAge,
+  babyAgeText,
+  PRETERM_MIN_DAYS,
+  PRETERM_MAX_DAYS,
   formatCN,
   weekdayCN,
   greeting,

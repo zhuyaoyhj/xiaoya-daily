@@ -26,7 +26,7 @@
 .act {
   flex: 1;
   text-align: center;
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 28rpx;
   padding: 28rpx 0 22rpx;
   box-shadow: 0 6rpx 20rpx rgba(213, 176, 147, 0.15);
@@ -37,15 +37,15 @@
 }
 
 .act-on {
-  background: #F0876B;
+  background: var(--brand);
 }
 
 .act-on .act-text {
-  color: #FFFFFF;
+  color: var(--card);
 }
 
 .act-sleep {
-  background: #8E7BC0;
+  background: var(--sleep);
 }
 
 .act-emoji {
@@ -56,17 +56,17 @@
 .act-text {
   font-size: 28rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
   margin-top: 8rpx;
 }
 
 .acts-past .act-line {
   font-size: 26rpx;
   font-weight: 600;
-  color: #D9724F;
+  color: var(--brand-strong);
   padding: 26rpx 0;
   box-shadow: none;
-  border: 2rpx dashed #F3C4B6;
+  border: 2rpx dashed var(--brand-soft);
 }
 
 /* ---------- 日期 ---------- */
@@ -81,8 +81,8 @@
   width: 72rpx;
   height: 72rpx;
   border-radius: 50%;
-  background: #FFFFFF;
-  color: #D9724F;
+  background: var(--card);
+  color: var(--brand-strong);
   font-size: 40rpx;
   line-height: 68rpx;
   text-align: center;
@@ -96,18 +96,18 @@
 .day-label {
   font-size: 32rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .day-arrow {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
 }
 
 .back-today {
   text-align: center;
   font-size: 24rpx;
-  color: #D9724F;
+  color: var(--brand-strong);
   margin-bottom: 8rpx;
 }
 
@@ -127,43 +127,43 @@
 }
 
 .sum-cell + .sum-cell {
-  border-left: 2rpx solid #F7EEE5;
+  border-left: 2rpx solid var(--sunken-2);
 }
 
 .sum-num {
   font-size: 38rpx;
   font-weight: 800;
-  color: #D96B4F;
+  color: var(--brand-strong);
   line-height: 1.3;
 }
 
 .sum-unit {
   font-size: 22rpx;
   font-weight: 400;
-  color: #A8968A;
+  color: var(--text-4);
   margin-left: 2rpx;
 }
 
 .sum-key {
   font-size: 24rpx;
-  color: #3A2E26;
+  color: var(--text);
   font-weight: 600;
   margin-top: 4rpx;
 }
 
 .sum-ref {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 4rpx;
 }
 
 .sum-extra {
   text-align: center;
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 20rpx;
   padding-top: 16rpx;
-  border-top: 2rpx dashed #F2E6DA;
+  border-top: 2rpx dashed var(--line);
 }
 
 .hint {
@@ -175,13 +175,13 @@
 }
 
 .hint-watch {
-  color: #8A6418;
-  background: #FFF6E0;
+  color: var(--warn-text);
+  background: var(--warn-soft);
 }
 
 .hint-doctor {
-  color: #A8432F;
-  background: #FBEBE7;
+  color: var(--danger-text);
+  background: var(--danger-soft);
   font-weight: 600;
 }
 
@@ -196,7 +196,7 @@
 .tl-title {
   font-size: 32rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .tl-filters {
@@ -206,15 +206,15 @@
 
 .tl-filter {
   font-size: 22rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   padding: 6rpx 18rpx;
   border-radius: 999rpx;
-  background: #FFFFFF;
+  background: var(--card);
 }
 
 .tl-filter-on {
-  color: #FFFFFF;
-  background: #F0876B;
+  color: var(--card);
+  background: var(--brand);
 }
 
 .tl-card {
@@ -225,7 +225,7 @@
   display: flex;
   align-items: flex-start;
   padding: 20rpx 0;
-  border-top: 2rpx solid #F7EEE5;
+  border-top: 2rpx solid var(--sunken-2);
 }
 
 .tl-row:first-child {
@@ -240,7 +240,7 @@
   width: 104rpx;
   flex: none;
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   font-variant-numeric: tabular-nums;
   padding-top: 2rpx;
 }
@@ -254,15 +254,15 @@
 }
 
 .tl-dot-feed {
-  background: #F0876B;
+  background: var(--brand);
 }
 
 .tl-dot-sleep {
-  background: #8E7BC0;
+  background: var(--sleep);
 }
 
 .tl-dot-diaper {
-  background: #D9A441;
+  background: var(--warn-strong);
 }
 
 .tl-main {
@@ -275,7 +275,7 @@
   align-items: center;
   gap: 12rpx;
   font-size: 28rpx;
-  color: #3A2E26;
+  color: var(--text);
   font-weight: 600;
 }
 
@@ -283,24 +283,24 @@
   width: 24rpx;
   height: 24rpx;
   border-radius: 50%;
-  border: 2rpx solid #FFFFFF;
-  box-shadow: 0 0 0 2rpx #EADCCC;
+  border: 2rpx solid var(--card);
+  box-shadow: 0 0 0 2rpx var(--line-strong);
 }
 
 .tl-detail {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-top: 4rpx;
 }
 
 .tl-detail-doctor {
-  color: #A8432F;
+  color: var(--danger-text);
   font-weight: 600;
 }
 
 .tl-go {
   font-size: 32rpx;
-  color: #C9B8A9;
+  color: var(--text-5);
   margin-left: 8rpx;
 }
 
@@ -318,7 +318,7 @@
   display: flex;
   align-items: center;
   padding: 24rpx 0;
-  border-top: 2rpx solid #F7EEE5;
+  border-top: 2rpx solid var(--sunken-2);
 }
 
 .more-row:first-child {
@@ -342,12 +342,12 @@
 .more-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .more-sub {
   font-size: 22rpx;
-  color: #A8968A;
+  color: var(--text-4);
   margin-top: 2rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -356,5 +356,5 @@
 
 .more-go {
   font-size: 32rpx;
-  color: #C9B8A9;
+  color: var(--text-5);
 }

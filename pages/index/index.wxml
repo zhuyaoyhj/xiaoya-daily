@@ -69,6 +69,16 @@
       </view>
     </view>
 
+    <!-- 疫苗到期提醒：7 天内到期 / 已过建议日期，点一下直接记接种 -->
+    <view class="vax-remind {{vaxRemind.overdue ? 'vax-remind-over' : ''}}" wx:if="{{vaxRemind}}" bindtap="goVaxRemind">
+      <text class="vax-remind-emoji">💉</text>
+      <view class="vax-remind-main">
+        <view class="vax-remind-text">{{vaxRemind.text}}</view>
+        <view class="vax-remind-sub">{{vaxRemind.more > 0 ? '另有 ' + vaxRemind.more + ' 针也快到了 · ' : ''}}打完点这里记一下</view>
+      </view>
+      <view class="vax-remind-go">记接种 ›</view>
+    </view>
+
     <!-- 一键记一餐：按当前餐次推荐，点一下就进预填好的记录页（6 月龄起） -->
     <view class="suggest-bar" wx:if="{{suggest && !suggest.logged}}" bindtap="quickMeal">
       <text class="suggest-emoji">{{suggest.emoji}}</text>
@@ -79,30 +89,23 @@
       <view class="suggest-cta">记一下</view>
     </view>
 
-    <!-- 其他记录：辅食、接种、穿衣（喂奶/睡/尿布在上面的照护卡里） -->
+    <!-- 其他入口：按月龄换内容（喂奶/睡/尿布在照护卡、记一餐在上面的推荐条，不重复） -->
     <view class="quick-log">
-      <view class="quick-log-item" bindtap="goMealLog">
-        <view class="quick-log-emoji">🥣</view>
-        <view class="quick-log-text">记一餐</view>
-      </view>
-      <view class="quick-log-item" bindtap="goFoodEdit">
-        <view class="quick-log-emoji">🥕</view>
-        <view class="quick-log-text">试新食材</view>
-      </view>
-      <view class="quick-log-item" bindtap="goVaccineEdit">
-        <view class="quick-log-emoji">💉</view>
-        <view class="quick-log-text">记接种</view>
-      </view>
-      <view class="quick-log-item" bindtap="goWeather">
-        <view class="quick-log-emoji">🧥</view>
-        <view class="quick-log-text">穿衣</view>
+      <view
+        class="quick-log-item"
+        wx:for="{{quickItems}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onQuick"
+      >
+        <view class="quick-log-emoji">{{item.emoji}}</view>
+        <view class="quick-log-text">{{item.text}}</view>
       </view>
     </view>
 
     <view class="card recent-card" wx:if="{{recent.length > 0}}">
       <view class="recent-head">
         <text class="recent-title">最近记的</text>
-        <text class="recent-more" bindtap="goRecord">全部 ›</text>
       </view>
       <view
         class="recent-item"
@@ -194,7 +197,8 @@
       </view>
     </view>
 
-    <!-- 疫苗护理 -->
+    <!-- 疫苗护理（顶部已有到期提醒时不重复展示） -->
+    <block wx:if="{{!vaxRemind}}">
     <view class="section-head">
       <view class="section-title">疫苗护理</view>
       <view class="section-more" bindtap="goVaccine">记录与提醒 ›</view>
@@ -208,9 +212,15 @@
       </view>
       <view class="vax-card-arrow">›</view>
     </view>
+    </block>
 
-    <!-- 推送给带娃人 -->
-    <view class="card push-card">
+    <!-- 推送给带娃人：订阅模板配好后才展开成完整卡片；之前只留一行「发给家人」 -->
+    <view class="push-line" wx:if="{{!tmplConfigured}}" bindtap="goShare">
+      <text class="push-line-emoji">👨‍👩‍👧</text>
+      <text class="push-line-text">把今天的建议做成卡片，发给家人</text>
+      <text class="push-line-go">›</text>
+    </view>
+    <view class="card push-card" wx:else>
       <view class="push-title">推送给一起带娃的人</view>
       <view class="push-desc">生成一张今日卡片，转发到家庭群或指定的人。吃、动、学、睡和穿衣，一屏讲清楚。</view>
       <view class="push-targets" wx:if="{{targetNames}}">

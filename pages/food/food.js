@@ -87,7 +87,7 @@ Page({
     }
 
     const today = dateUtil.todayStr();
-    const age = dateUtil.calcAge(baby.birthday);
+    const age = dateUtil.babyAge(baby);
     const months = age.valid ? age.months : 0;
 
     const records = store.getFoodRecords(baby.id);
@@ -251,7 +251,7 @@ Page({
         id: baby.id,
         name: baby.name || '宝宝',
         avatar: baby.avatar || '👶',
-        ageText: dateUtil.ageText(age)
+        ageText: dateUtil.babyAgeText(age)
       },
       months: months,
       monthText: foodUtil.monthLabel(months),

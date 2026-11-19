@@ -8,9 +8,9 @@
   width: 28rpx;
   height: 28rpx;
   border-radius: 50%;
-  border: 2rpx solid #C9B7A6;
-  color: #C9B7A6;
-  font-size: 18rpx;
+  border: 2rpx solid var(--text-5);
+  color: var(--text-5);
+  font-size: 18rpx; /* 圆形徽标里的字形，不是正文，豁免最小字号 */
   line-height: 28rpx;
   text-align: center;
   margin-right: 12rpx;
@@ -21,7 +21,7 @@
 
 .disclaimer-text {
   flex: 1;
-  font-size: 21rpx;
+  font-size: 22rpx;
   line-height: 1.7;
-  color: #B3A294;
+  color: var(--text-4);
 }

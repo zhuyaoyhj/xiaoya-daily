@@ -64,7 +64,7 @@ const wxmlFiles = files.filter(function (f) {
   return f.endsWith('.wxml');
 });
 
-console.log('\n[1/7] JS 语法检查（' + jsFiles.length + ' 个文件）');
+console.log('\n[1/8] JS 语法检查（' + jsFiles.length + ' 个文件）');
 jsFiles.forEach(function (f) {
   try {
     execFileSync(process.execPath, ['--check', f], { stdio: 'pipe' });
@@ -75,7 +75,7 @@ jsFiles.forEach(function (f) {
 if (!errors) ok('全部通过');
 
 /* ---------- 2. JSON 语法 ---------- */
-console.log('\n[2/7] JSON 解析检查（' + jsonFiles.length + ' 个文件）');
+console.log('\n[2/8] JSON 解析检查（' + jsonFiles.length + ' 个文件）');
 jsonFiles.forEach(function (f) {
   try {
     JSON.parse(fs.readFileSync(f, 'utf8'));
@@ -86,7 +86,7 @@ jsonFiles.forEach(function (f) {
 if (!errors) ok('全部通过');
 
 /* ---------- 3. app.json 页面四件套 ---------- */
-console.log('\n[3/7] 页面四件套完整性');
+console.log('\n[3/8] 页面四件套完整性');
 const appJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'app.json'), 'utf8'));
 (appJson.pages || []).forEach(function (p) {
   ['js', 'json', 'wxml', 'wxss'].forEach(function (ext) {
@@ -97,7 +97,7 @@ const appJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'app.json'), 'utf8'))
 ok('共 ' + (appJson.pages || []).length + ' 个页面');
 
 /* ---------- 4. require 路径 + 越界判定 ---------- */
-console.log('\n[4/7] require 路径与越界');
+console.log('\n[4/8] require 路径与越界');
 jsFiles.forEach(function (f) {
   const src = fs.readFileSync(f, 'utf8');
   const re = /require\(\s*['"]([^'"]+)['"]\s*\)/g;
@@ -122,7 +122,7 @@ jsFiles.forEach(function (f) {
 if (!errors) ok('全部通过');
 
 /* ---------- 5. wxml 事件绑定 → js 方法 ---------- */
-console.log('\n[5/7] wxml 事件绑定');
+console.log('\n[5/8] wxml 事件绑定');
 wxmlFiles.forEach(function (f) {
   const wxml = fs.readFileSync(f, 'utf8');
   const jsPath = f.replace(/\.wxml$/, '.js');
@@ -183,7 +183,7 @@ wxmlFiles.forEach(function (f) {
 if (!errors) ok('全部通过');
 
 /* ---------- 6. usingComponents ---------- */
-console.log('\n[6/7] 自定义组件声明');
+console.log('\n[6/8] 自定义组件声明');
 jsonFiles.forEach(function (f) {
   if (f.indexOf(path.join(ROOT, 'pages')) !== 0 && f.indexOf(path.join(ROOT, 'components')) !== 0) return;
   let cfg;
@@ -206,7 +206,7 @@ jsonFiles.forEach(function (f) {
 if (!errors) ok('全部通过');
 
 /* ---------- 7. 免责声明 + 合规禁词 + 主包体积 ---------- */
-console.log('\n[7/7] 合规与包体');
+console.log('\n[7/8] 合规与包体');
 (appJson.pages || []).forEach(function (p) {
   const f = path.join(ROOT, p + '.wxml');
   if (!fs.existsSync(f)) return;
@@ -229,6 +229,46 @@ walk(ROOT, []).forEach(function (f) {
 const kb = (total / 1024).toFixed(1);
 if (total > 2 * 1024 * 1024) fail('主包体积 ' + kb + 'KB 超过 2MB 上限');
 else ok('主包体积约 ' + kb + ' KB（上限 2048 KB）');
+
+/* ---------- 8. 设计 token：颜色只在 app.wxss 定义一次，页面里一律 var(--xxx) ---------- */
+console.log('\n[8/8] 设计 token 与字号');
+(function () {
+  const appWxss = fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8');
+  const defined = {};
+  let m;
+  const defRe = /--([a-z0-9-]+)\s*:/g;
+  while ((m = defRe.exec(appWxss))) defined[m[1]] = true;
+  const wxssFiles = walk(ROOT, []).filter(function (f) {
+    return /\.wxss$/.test(f);
+  });
+  let hexHits = 0;
+  let smallHits = 0;
+  wxssFiles.forEach(function (f) {
+    const isApp = rel(f) === 'app.wxss';
+    const src = fs.readFileSync(f, 'utf8');
+    // app.wxss 里 token 定义块本身允许写色值
+    const body = isApp ? src.replace(/\/\* ==== design tokens[\s\S]*?\/\* ==== \/design tokens ==== \*\//, '') : src;
+    const hex = body.match(/#[0-9A-Fa-f]{3,8}\b/g);
+    if (hex) {
+      hexHits += hex.length;
+      fail(rel(f) + ' 写死了颜色 ' + hex.slice(0, 3).join(' ') + '，请改用 var(--token)');
+    }
+    const useRe = /var\(--([a-z0-9-]+)\)/g;
+    while ((m = useRe.exec(src))) {
+      if (!defined[m[1]]) fail(rel(f) + ' 用到了未定义的 token --' + m[1]);
+    }
+    // 正文最小 22rpx；圆形徽标里的字形可以写注释豁免
+    src.split('\n').forEach(function (line) {
+      const fm = line.match(/font-size:\s*(\d+)rpx/);
+      if (fm && Number(fm[1]) < 22 && line.indexOf('豁免最小字号') === -1) {
+        smallHits++;
+        fail(rel(f) + ' 字号 ' + fm[1] + 'rpx 小于 22rpx');
+      }
+    });
+  });
+  if (!hexHits) ok('页面样式没有写死的颜色（' + Object.keys(defined).length + ' 个 token）');
+  if (!smallHits) ok('正文字号全部 ≥ 22rpx');
+})();
 
 /* ---------- 汇总 ---------- */
 console.log('\n========================================');

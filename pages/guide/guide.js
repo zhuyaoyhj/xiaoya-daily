@@ -31,7 +31,7 @@ Page({
 
   onLoad(options) {
     const baby = store.getActiveBaby();
-    const age = baby ? dateUtil.calcAge(baby.birthday) : null;
+    const age = baby ? dateUtil.babyAge(baby) : null;
     const currentMonth = age && age.valid ? age.months : 0;
     let month = Number(options && options.month);
     if (options && options.month === undefined) month = currentMonth;
@@ -65,7 +65,7 @@ Page({
     }
 
     const today = dateUtil.todayStr();
-    const age = dateUtil.calcAge(baby.birthday);
+    const age = dateUtil.babyAge(baby);
     const months = age.valid ? age.months : 0;
     const records = store.getFoodRecords(baby.id);
     const hidden = store.getFoodHidden(baby.id);

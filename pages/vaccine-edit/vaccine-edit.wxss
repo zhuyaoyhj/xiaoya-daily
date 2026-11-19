@@ -6,7 +6,7 @@
 
 .top-tip {
   font-size: 24rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   padding: 12rpx 8rpx 20rpx;
 }
 
@@ -18,8 +18,8 @@
 }
 
 .pick-name {
-  font-size: 21rpx;
-  color: #B2886F;
+  font-size: 22rpx;
+  color: var(--text-warm);
 }
 
 /* ---------- 分类 ---------- */
@@ -34,11 +34,11 @@
   height: 76rpx;
   line-height: 76rpx;
   font-size: 26rpx;
-  color: #8C7B6E;
-  background: #FFFFFF;
+  color: var(--text-3);
+  background: var(--card);
   border-radius: 24rpx;
   margin-right: 16rpx;
-  border: 2rpx solid #F4E7DA;
+  border: 2rpx solid var(--line);
 }
 
 .cat-chip:last-child {
@@ -46,8 +46,8 @@
 }
 
 .cat-chip-on {
-  background: linear-gradient(135deg, #FFA07E 0%, #F0876B 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
+  color: var(--card);
   border-color: transparent;
   box-shadow: 0 10rpx 24rpx rgba(240, 135, 107, 0.28);
 }
@@ -64,7 +64,7 @@
   margin-bottom: 16rpx;
   padding: 24rpx 10rpx 20rpx;
   border-radius: 24rpx;
-  background: #FBF7F2;
+  background: var(--sunken);
   border: 2rpx solid transparent;
   text-align: center;
   box-sizing: border-box;
@@ -75,13 +75,13 @@
 }
 
 .vax-item-on {
-  background: #FFF1E6;
-  border-color: #F0A187;
+  background: var(--brand-tint);
+  border-color: var(--brand-light);
 }
 
 .vax-item-name {
   font-size: 26rpx;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.4;
   white-space: nowrap;
   overflow: hidden;
@@ -89,20 +89,20 @@
 }
 
 .vax-item-on .vax-item-name {
-  color: #C9694A;
+  color: var(--brand-deep);
   font-weight: 600;
 }
 
 .vax-item-dose {
-  font-size: 18rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin-top: 6rpx;
 }
 
 .vax-item-flag {
-  font-size: 16rpx;
-  color: #7A6AA8;
-  background: #F0EBFA;
+  font-size: 22rpx;
+  color: var(--sleep);
+  background: var(--sleep-soft);
   border-radius: 8rpx;
   padding: 0 8rpx;
   margin-top: 6rpx;
@@ -110,12 +110,12 @@
 }
 
 .vax-item-add {
-  border: 2rpx dashed #E4D3C4;
-  background: #FFFDFB;
+  border: 2rpx dashed var(--line-strong);
+  background: var(--card);
 }
 
 .vax-item-add .vax-item-name {
-  color: #A99A8C;
+  color: var(--text-4);
 }
 
 /* ---------- 自定义疫苗浮层 ---------- */
@@ -135,7 +135,7 @@
   width: 100%;
   max-height: 88vh;
   overflow-y: auto;
-  background: #FFF8F0;
+  background: var(--bg);
   border-radius: 40rpx 40rpx 0 0;
   padding: 20rpx 32rpx calc(40rpx + env(safe-area-inset-bottom));
 }
@@ -144,25 +144,25 @@
   width: 72rpx;
   height: 8rpx;
   border-radius: 4rpx;
-  background: #E4D3C4;
+  background: var(--line-strong);
   margin: 0 auto 24rpx;
 }
 
 .sheet-title {
   font-size: 34rpx;
   font-weight: 700;
-  color: #3A2E26;
+  color: var(--text);
 }
 
 .sheet-desc {
   font-size: 22rpx;
-  color: #9A8A7C;
+  color: var(--text-4);
   line-height: 1.6;
   margin: 8rpx 0 24rpx;
 }
 
 .sheet-field {
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 24rpx;
   padding: 20rpx 24rpx;
   margin-bottom: 16rpx;
@@ -170,21 +170,21 @@
 
 .sheet-label {
   font-size: 22rpx;
-  color: #8C7B6E;
+  color: var(--text-3);
   margin-bottom: 10rpx;
 }
 
 .sheet-input {
   font-size: 28rpx;
-  color: #3A2E26;
+  color: var(--text);
   height: 60rpx;
 }
 
 .sheet-note {
   width: 100%;
   height: 110rpx;
-  font-size: 25rpx;
-  color: #3A2E26;
+  font-size: 24rpx;
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -198,17 +198,17 @@
   line-height: 64rpx;
   text-align: center;
   font-size: 26rpx;
-  color: #8C7B6E;
-  background: #FBF7F2;
+  color: var(--text-3);
+  background: var(--sunken);
   border-radius: 18rpx;
   margin-right: 14rpx;
   border: 2rpx solid transparent;
 }
 
 .sheet-dose-on {
-  background: #FFF1E6;
-  border-color: #F0A187;
-  color: #C9694A;
+  background: var(--brand-tint);
+  border-color: var(--brand-light);
+  color: var(--brand-deep);
   font-weight: 600;
 }
 
@@ -218,14 +218,14 @@
 
 .sheet-sub {
   font-size: 22rpx;
-  color: #9A8A7C;
+  color: var(--text-4);
   padding: 8rpx 4rpx 12rpx;
 }
 
 .sheet-item {
   display: flex;
   align-items: center;
-  background: #FFFFFF;
+  background: var(--card);
   border-radius: 20rpx;
   padding: 18rpx 24rpx;
   margin-bottom: 12rpx;
@@ -233,23 +233,23 @@
 
 .sheet-item-name {
   flex: 1;
-  font-size: 25rpx;
-  color: #3A2E26;
+  font-size: 24rpx;
+  color: var(--text);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .sheet-item-dose {
-  font-size: 20rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   margin: 0 16rpx;
   flex-shrink: 0;
 }
 
 .sheet-item-del {
   font-size: 22rpx;
-  color: #C9694A;
+  color: var(--brand-deep);
   flex-shrink: 0;
 }
 
@@ -263,37 +263,37 @@
   min-width: 196rpx;
   padding: 16rpx 22rpx;
   border-radius: 22rpx;
-  background: #FBF7F2;
+  background: var(--sunken);
   border: 2rpx solid transparent;
   margin: 0 16rpx 16rpx 0;
   box-sizing: border-box;
 }
 
 .dose-chip-on {
-  background: #FFF1E6;
-  border-color: #F0A187;
+  background: var(--brand-tint);
+  border-color: var(--brand-light);
 }
 
 .dose-chip text {
   display: block;
-  font-size: 25rpx;
-  color: #3A2E26;
+  font-size: 24rpx;
+  color: var(--text);
 }
 
 .dose-chip-on text:first-child {
-  color: #C9694A;
+  color: var(--brand-deep);
   font-weight: 600;
 }
 
 .dose-label {
-  font-size: 19rpx !important;
-  color: #A99A8C !important;
+  font-size: 22rpx !important;
+  color: var(--text-4) !important;
   margin-top: 4rpx;
 }
 
 .dose-done {
-  font-size: 18rpx !important;
-  color: #6E8F62 !important;
+  font-size: 22rpx !important;
+  color: var(--leaf) !important;
   margin-top: 4rpx;
 }
 
@@ -307,34 +307,34 @@
 .info-key {
   width: 160rpx;
   flex-shrink: 0;
-  font-size: 25rpx;
-  color: #8C7B6E;
+  font-size: 24rpx;
+  color: var(--text-3);
 }
 
 .info-val {
   flex: 1;
-  font-size: 25rpx;
-  color: #3A2E26;
+  font-size: 24rpx;
+  color: var(--text);
   line-height: 1.6;
 }
 
 .mini-title {
   font-size: 24rpx;
   font-weight: 600;
-  color: #6B5A4D;
+  color: var(--text-2);
   margin-bottom: 10rpx;
 }
 
 .mini-item {
-  font-size: 23rpx;
-  color: #8C7B6E;
+  font-size: 22rpx;
+  color: var(--text-3);
   line-height: 1.7;
 }
 
 /* ---------- 表单 ---------- */
 .time-hint {
-  font-size: 20rpx;
-  color: #A99A8C;
+  font-size: 22rpx;
+  color: var(--text-4);
   line-height: 1.6;
   padding: 10rpx 0 6rpx;
 }
@@ -344,15 +344,15 @@
   min-height: 160rpx;
   margin-top: 16rpx;
   font-size: 26rpx;
-  color: #3A2E26;
+  color: var(--text);
   line-height: 1.6;
 }
 
 /* ---------- 删除 ---------- */
 .del-btn {
   margin-top: 8rpx;
-  color: #C9694A;
-  border-color: #F2D9CF;
+  color: var(--brand-deep);
+  border-color: var(--line-strong);
 }
 
 /* ---------- 底部固定 ---------- */
@@ -362,7 +362,7 @@
   right: 0;
   bottom: 0;
   padding: 20rpx 28rpx calc(20rpx + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(255, 248, 240, 0) 0%, #FFF8F0 32%);
+  background: linear-gradient(180deg, rgba(255, 248, 240, 0) 0%, var(--bg) 32%);
 }
 
 .btn-disabled {

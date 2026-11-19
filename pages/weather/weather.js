@@ -48,7 +48,7 @@ Page({
 
   init() {
     const baby = store.getActiveBaby();
-    const age = baby ? dateUtil.calcAge(baby.birthday) : null;
+    const age = baby ? dateUtil.babyAge(baby) : null;
     const place = store.getPlace();
 
     this.setData({

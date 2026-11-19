@@ -78,14 +78,10 @@ function eq(a, b, l) {
   ok(x === y, l + (x === y ? '' : '\n      期望 ' + y + '\n      实际 ' + x));
 }
 
-function birthdayMonthsAgo(n) {
-  const d = new Date();
-  d.setDate(1);
-  d.setMonth(d.getMonth() - n);
-  const p = function (v) {
-    return v < 10 ? '0' + v : '' + v;
-  };
-  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-01';
+const fixtures = require('./fixtures.js');
+// 相对今天构造生日（月末安全，口径同 calcAge）。不要写死生日：今天在走，月龄会跟着变
+function birthdayMonthsAgo(n, days) {
+  return fixtures.birthdayForAge(n, days || 0);
 }
 
 /* ================= 1. 结构 ================= */
