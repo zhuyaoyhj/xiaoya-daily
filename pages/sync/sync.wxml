@@ -1,0 +1,55 @@
+<view class="page-wrap">
+
+  <!-- 云同步暂不可用 -->
+  <view class="card sy-card" wx:if="{{!available && !joined}}">
+    <view class="sy-emoji">☁️</view>
+    <view class="sy-title">家庭同步暂不可用</view>
+    <view class="sy-desc">现在可以先用「我的 → 导出备份文件」，在家人手机上「从文件恢复」，两边的记录会合并到一起。</view>
+    <view class="btn btn-line btn-block" bindtap="goMine">返回</view>
+  </view>
+
+  <!-- 已加入 -->
+  <block wx:elif="{{joined}}">
+    <view class="card sy-card">
+      <view class="sy-label">家庭码</view>
+      <view class="sy-code" bindtap="copyCode">{{code}}</view>
+      <view class="sy-desc">家人在「我的 → 家庭同步」里输入这 6 位数字，就能和你看到同一份记录。点数字可复制。</view>
+      <button class="btn btn-ghost btn-block sy-share" open-type="share">发给家人</button>
+    </view>
+
+    <view class="card sy-card">
+      <view class="sy-row">
+        <view class="sy-row-main">
+          <view class="sy-row-title">同步状态</view>
+          <view class="sy-row-sub">{{text}}</view>
+          <view class="sy-err" wx:if="{{error}}">{{error}}</view>
+        </view>
+        <view class="btn btn-primary btn-sm" bindtap="syncNow">立即同步</view>
+      </view>
+      <view class="sy-tip">每次打开小程序会自动同步。每条记录都会标出是谁记的（在「我的 → 我是谁」里设置）。</view>
+    </view>
+
+    <view class="sy-leave" bindtap="leave">退出家庭同步</view>
+  </block>
+
+  <!-- 未加入 -->
+  <block wx:else>
+    <view class="card sy-card">
+      <view class="sy-title">一家人的记录合在一起</view>
+      <view class="sy-desc">妈妈记白天、奶奶记晚上，各自手机上都能看到完整的一天；换手机也不会丢。</view>
+      <view class="btn btn-primary btn-block" bindtap="create">创建家庭，生成家庭码</view>
+    </view>
+
+    <view class="card sy-card">
+      <view class="sy-title">已经有家庭码</view>
+      <view class="sy-input-row">
+        <input class="sy-input" type="number" maxlength="6" placeholder="输入 6 位家庭码" value="{{input}}" bindinput="onInput" />
+        <view class="btn btn-ghost btn-sm" bindtap="join">加入</view>
+      </view>
+      <view class="sy-tip">加入后，本机已有的记录会和家里的合并，谁的都不会丢。</view>
+    </view>
+  </block>
+
+  <disclaimer text="同步的记录保存在小芽日常的云端，只有用家庭码加入的家人能看到；退出后本机记录保留。" />
+  <privacy-popup />
+</view>

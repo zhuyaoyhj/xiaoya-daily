@@ -2,7 +2,7 @@
 """
 tools/gen-tab-icons.py —— 生成 tabBar 图标（线性风格，81×81 PNG，透明底）
 用法：python3 tools/gen-tab-icons.py   （需要 Pillow）
-产物：assets/tab/{today,record,vaccine,mine}[-on].png
+产物：assets/tab/{today,record,vaccine,mine}[-on|-dark].png（-dark 为深色模式未选中态）
 未选中 #A8998C，选中 #F0876B（与 app.json tabBar 文字色一致）
 先按 4 倍尺寸绘制再缩小，得到平滑边缘。设计师出稿后直接覆盖同名文件即可。
 """
@@ -18,6 +18,7 @@ W = SIZE * S
 STROKE = int(5.2 * S)
 
 OFF = (168, 153, 140, 255)  # #A8998C
+OFF_DARK = (143, 128, 115, 255)  # #8F8073 深色模式未选中（与 theme.json tabColor 一致）
 ON = (240, 135, 107, 255)  # #F0876B
 ON_FILL = (240, 135, 107, 56)  # 选中态的浅色填充
 
@@ -152,6 +153,9 @@ def main():
             fname = name + ('-on' if on else '') + '.png'
             im.save(os.path.join(OUT, fname), optimize=True)
             print('  ✓', fname)
+        im = fn(OFF_DARK, False).resize((SIZE, SIZE), Image.LANCZOS)
+        im.save(os.path.join(OUT, name + '-dark.png'), optimize=True)
+        print('  ✓', name + '-dark.png')
 
 
 if __name__ == '__main__':

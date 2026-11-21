@@ -26,7 +26,16 @@
         <view class="row-title">宝宝档案</view>
         <view class="row-sub">{{babyCount > 1 ? babyCount + ' 个宝宝，点进去切换' : '添加二宝、切换当前宝宝'}}</view>
       </view>
-      <text class="row-arrow">›</text>
+      <view class="row-arrow"></view>
+    </view>
+
+    <view class="row" bindtap="goGrowth">
+      <text class="row-emoji">📈</text>
+      <view class="row-main">
+        <view class="row-title">身高体重</view>
+        <view class="row-sub">{{growthText}}</view>
+      </view>
+      <view class="row-arrow"></view>
     </view>
 
     <view class="row" bindtap="goPlace">
@@ -35,7 +44,7 @@
         <view class="row-title">宝宝在哪</view>
         <view class="row-sub">{{placeText}}</view>
       </view>
-      <text class="row-arrow">›</text>
+      <view class="row-arrow"></view>
     </view>
 
     <view class="row" bindtap="goWeather">
@@ -44,16 +53,34 @@
         <view class="row-title">天气穿衣</view>
         <view class="row-sub">{{manualTempText || '穿几层、睡袋多厚、室温对照表'}}</view>
       </view>
-      <text class="row-arrow">›</text>
+      <view class="row-arrow"></view>
     </view>
 
     <view class="row" bindtap="goFamily">
       <text class="row-emoji">👨‍👩‍👧</text>
       <view class="row-main">
-        <view class="row-title">一起带娃的人</view>
+        <view class="row-title">家人</view>
         <view class="row-sub">{{familyText}}</view>
       </view>
-      <text class="row-arrow">›</text>
+      <view class="row-arrow"></view>
+    </view>
+
+    <view class="row" bindtap="pickMe">
+      <text class="row-emoji">🙋</text>
+      <view class="row-main">
+        <view class="row-title">我是谁</view>
+        <view class="row-sub">{{meText}}</view>
+      </view>
+      <view class="row-arrow"></view>
+    </view>
+
+    <view class="row" bindtap="goSync">
+      <text class="row-emoji">🔄</text>
+      <view class="row-main">
+        <view class="row-title">家庭同步</view>
+        <view class="row-sub">{{syncText}}</view>
+      </view>
+      <view class="row-arrow"></view>
     </view>
 
     <view class="row" bindtap="goShare">
@@ -62,30 +89,33 @@
         <view class="row-title">今日卡片</view>
         <view class="row-sub">一张图发给家人</view>
       </view>
-      <text class="row-arrow">›</text>
+      <view class="row-arrow"></view>
     </view>
   </view>
 
   <!-- 数据与备份 -->
   <view class="card data-card">
     <view class="card-title">数据与备份</view>
-    <view class="data-warn">
+    <view class="data-warn" wx:if="{{!syncOn}}">
       <text class="data-warn-icon">📱</text>
       <text>所有记录只存在这台手机上，不会上传。换手机、删除小程序前，记得先备份。</text>
     </view>
+    <view class="data-backup {{backupStale ? 'data-backup-stale' : ''}}">{{backupText}}{{backupStale ? ' · 建议现在备份一次' : ''}}</view>
     <view class="data-stats">
       <view class="data-stat"><view class="data-num">{{dataStats.babies}}</view><view class="data-key">宝宝</view></view>
       <view class="data-stat"><view class="data-num">{{dataStats.care}}</view><view class="data-key">喂睡尿</view></view>
       <view class="data-stat"><view class="data-num">{{dataStats.meals + dataStats.food}}</view><view class="data-key">辅食</view></view>
       <view class="data-stat"><view class="data-num">{{dataStats.vaccine}}</view><view class="data-key">接种</view></view>
+      <view class="data-stat"><view class="data-num">{{dataStats.growth}}</view><view class="data-key">身高体重</view></view>
     </view>
     <view class="data-actions">
       <view class="btn btn-ghost btn-sm data-btn" bindtap="exportData">导出备份文件</view>
       <view class="btn btn-line btn-sm data-btn" bindtap="importData">从文件恢复</view>
     </view>
-    <view class="data-tip">导出后发给「文件传输助手」保存；恢复时从聊天记录里选这个文件。在家人手机上恢复，就能看到同一份记录。</view>
+    <view class="data-tip">导出后发给「文件传输助手」保存；恢复时从聊天记录里选这个文件。恢复默认是「合并」：两台手机各自记的都会保留。</view>
     <view class="data-more" bindtap="moreBackup">用复制文字的方式备份 ›</view>
   </view>
 
   <disclaimer />
+  <privacy-popup />
 </view>

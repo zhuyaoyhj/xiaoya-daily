@@ -9,6 +9,7 @@
 
 const store = require('./store.js');
 const care = require('./care.js');
+const track = require('./track.js').track;
 
 const BOTTLE_ML = require('../data/care.js').BOTTLE_ML;
 
@@ -95,6 +96,7 @@ const methods = {
         wx.showToast({ title: '不到 1 分钟，没有记录', icon: 'none' });
       } else {
         store.upsertCare(rec);
+        track('care_log', { type: 'feed', via: 'timer' });
         wx.showToast({ title: '已记录 · ' + (rec.leftMin + rec.rightMin) + ' 分钟', icon: 'none' });
       }
       that.refreshCare();
@@ -145,6 +147,7 @@ const methods = {
     }
     const t = now();
     store.upsertCare({ babyId: babyId, type: 'feed', side: 'bottle', bottleType: this.data.careBottleType, ml: ml, start: t, end: t });
+    track('care_log', { type: 'feed', via: 'quick' });
     this.setData({ carePanel: '' });
     wx.showToast({ title: '已记录 ' + ml + 'ml', icon: 'none' });
     this.refreshCare();
@@ -171,6 +174,7 @@ const methods = {
         wx.showToast({ title: '不到 1 分钟，没有记录', icon: 'none' });
       } else {
         store.upsertCare({ babyId: babyId, type: 'sleep', start: active.start, end: endTs });
+        track('care_log', { type: 'sleep', via: 'timer' });
         wx.showToast({ title: '睡了 ' + care.durText(endTs - active.start), icon: 'none' });
       }
       that.refreshCare();
@@ -204,6 +208,7 @@ const methods = {
     const kind = e.currentTarget.dataset.key;
     if (kind === 'wet') {
       store.upsertCare({ babyId: babyId, type: 'diaper', kind: 'wet', start: now() });
+      track('care_log', { type: 'diaper', via: 'quick' });
       this.setData({ carePanel: '' });
       wx.showToast({ title: '已记录', icon: 'none' });
       this.refreshCare();
@@ -226,6 +231,7 @@ const methods = {
     const pending = this.data.carePendingDiaper;
     if (!babyId || !pending) return;
     const color = e.currentTarget.dataset.key || '';
+    track('care_log', { type: 'diaper', via: 'quick' });
     store.upsertCare({
       babyId: babyId,
       type: 'diaper',

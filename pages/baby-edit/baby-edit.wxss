@@ -14,7 +14,7 @@
   background: linear-gradient(140deg, var(--brand-tint) 0%, var(--peach-soft) 100%);
   font-size: 76rpx;
   line-height: 148rpx;
-  box-shadow: 0 10rpx 26rpx rgba(226, 168, 132, 0.22);
+  box-shadow: 0 10rpx 26rpx var(--shadow-strong);
 }
 
 .avatar-hint {
@@ -68,7 +68,7 @@
 
 .gender-on {
   background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
-  color: var(--card);
+  color: var(--on-brand);
   font-weight: 600;
 }
 
@@ -104,7 +104,7 @@
   border-radius: 30rpx;
   padding: 26rpx 28rpx;
   margin-bottom: 20rpx;
-  box-shadow: 0 10rpx 26rpx rgba(213, 176, 147, 0.12);
+  box-shadow: 0 10rpx 26rpx var(--shadow);
   border: 3rpx solid transparent;
 }
 
@@ -144,7 +144,7 @@
 
 .baby-item-check {
   font-size: 22rpx;
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--brand);
   border-radius: 20rpx;
   padding: 4rpx 14rpx;

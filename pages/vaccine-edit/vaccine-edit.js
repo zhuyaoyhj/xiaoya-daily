@@ -1,5 +1,6 @@
 // pages/vaccine-edit/vaccine-edit.js
 const store = require('../../utils/store.js');
+const track = require('../../utils/track.js').track;
 const vaccine = require('../../utils/vaccine.js');
 const dateUtil = require('../../utils/date.js');
 
@@ -34,6 +35,8 @@ Page({
 
   onLoad(opts) {
     const options = opts || {};
+    // 从首页到期提醒 / 疫苗页规划表进来的会带 vaccineId
+    this._via = options.from || (options.vaccineId ? 'plan' : 'manual');
     const baby = store.getActiveBaby();
     if (!baby) {
       wx.showToast({ title: '请先添加宝宝', icon: 'none' });
@@ -208,6 +211,7 @@ Page({
 
     const future = this.data.date > this.data.today;
 
+    if (!this.data.isEdit) track('vax_log', { via: this._via || 'manual' });
     store.upsertVaccineRecord({
       id: this.data.id || undefined,
       babyId: baby.id,

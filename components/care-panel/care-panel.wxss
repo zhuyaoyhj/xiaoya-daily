@@ -98,7 +98,7 @@
 }
 
 .cp-chip-on {
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--brand);
   border-color: var(--brand);
 }
@@ -156,7 +156,7 @@
   padding: 0 36rpx;
   border-radius: 20rpx;
   background: var(--brand);
-  color: var(--card);
+  color: var(--on-brand);
   font-size: 28rpx;
   font-weight: 600;
 }
@@ -241,7 +241,7 @@
   flex: none;
   font-size: 26rpx;
   font-weight: 700;
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--brand);
   border-radius: 999rpx;
   padding: 14rpx 30rpx;

@@ -52,7 +52,7 @@
   background: var(--card);
   color: var(--brand-strong);
   font-weight: 700;
-  box-shadow: 0 4rpx 12rpx rgba(213, 176, 147, 0.2);
+  box-shadow: 0 4rpx 12rpx var(--shadow-strong);
 }
 
 .chips {
@@ -71,7 +71,7 @@
 }
 
 .chip-opt-on {
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--brand);
 }
 

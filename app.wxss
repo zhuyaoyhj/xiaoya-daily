@@ -11,6 +11,11 @@ page {
   --brand-light: #FFA07E;
   --brand-soft: #F5C4A8;
   --brand-tint: #FFF1E6;
+  --on-brand: #FFFFFF; /* 彩色底上的文字：深色模式下仍是白色 */
+  --glass: rgba(255, 255, 255, 0.5); /* 渐变头图上的半透明小块 */
+  --glass-strong: rgba(255, 255, 255, 0.75);
+  --shadow: rgba(213, 176, 147, 0.14); /* 卡片暖色投影 */
+  --shadow-strong: rgba(213, 176, 147, 0.22);
   --peach-soft: #FFD8C3;
   --apricot: #F0B37E;
   /* 文字 */
@@ -55,6 +60,60 @@ page {
   --sage: #5E7A6B;
   --mint: #7FB79A;
 }
+/* 深色模式：跟随系统（app.json darkmode: true）。只覆盖需要变的值 */
+@media (prefers-color-scheme: dark) {
+  page {
+    --brand: #E8866A;
+    --brand-strong: #F09A7E;
+    --brand-deep: #F5A98F;
+    --brand-light: #F0957A;
+    --brand-soft: #7A4A3A;
+    --brand-tint: #3A2A24;
+    --peach-soft: #5C3C30;
+    --apricot: #B98450;
+    --text: #F2E8DF;
+    --text-2: #D8C9BC;
+    --text-3: #B5A597;
+    --text-4: #8F8073;
+    --text-5: #6B5E53;
+    --text-warm: #C9A58C;
+    --shade: #F7EEE6;
+    --cocoa: #D8A895;
+    --bg: #1C1714;
+    --card: #27201C;
+    --sunken: #211B17;
+    --sunken-2: #2E2621;
+    --line: #3A302A;
+    --line-strong: #4A3E36;
+    --danger: #F07A66;
+    --danger-text: #F29A88;
+    --danger-soft: #3D2420;
+    --warn: #E0B15C;
+    --warn-text: #EBC57E;
+    --warn-strong: #E0B15C;
+    --warn-soft: #3A3020;
+    --ok: #7FB894;
+    --ok-soft: #22332A;
+    --info: #8FB0E0;
+    --info-soft: #1F2A38;
+    --sleep: #A898D8;
+    --sleep-light: #B9A6DC;
+    --sleep-muted: #A99ABA;
+    --sleep-soft: #2A2438;
+    --sleep-line: #4A4060;
+    --amber: #D9A070;
+    --amber-soft: #3A2E20;
+    --olive: #C2AD80;
+    --leaf: #9CC08E;
+    --leaf-light: #8FBF84;
+    --sage: #98B5A5;
+    --mint: #7FB79A;
+    --glass: rgba(0, 0, 0, 0.18);
+    --glass-strong: rgba(0, 0, 0, 0.28);
+    --shadow: rgba(0, 0, 0, 0.35);
+    --shadow-strong: rgba(0, 0, 0, 0.45);
+  }
+}
 /* ==== /design tokens ==== */
 page {
   background-color: var(--bg);
@@ -98,7 +157,7 @@ button::after {
   border-radius: 32rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 10rpx 32rpx rgba(213, 176, 147, 0.13);
+  box-shadow: 0 10rpx 32rpx var(--shadow);
 }
 
 .card-flat {
@@ -162,7 +221,7 @@ button::after {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
-  color: var(--card);
+  color: var(--on-brand);
   box-shadow: 0 12rpx 28rpx rgba(240, 135, 107, 0.32);
 }
 
@@ -213,7 +272,7 @@ button::after {
 
 .chip-active {
   background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
-  color: var(--card);
+  color: var(--on-brand);
 }
 
 /* ---------- 分区标题 ---------- */
@@ -300,8 +359,16 @@ button::after {
   min-height: 96rpx;
 }
 
+.row-arrow {
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+
+/* 必须是 block：伪元素默认 inline，宽高不生效，会只剩一道竖线 */
 .row-arrow::after {
   content: "";
+  display: block;
   width: 16rpx;
   height: 16rpx;
   border-top: 3rpx solid var(--line-strong);

@@ -1,4 +1,6 @@
 // app.js
+const privacy = require('./utils/privacy.js');
+
 App({
   globalData: {
     // 云开发环境 ID。留空则使用默认环境；未开通云开发时全部走本地降级逻辑。
@@ -9,6 +11,8 @@ App({
   },
 
   onLaunch() {
+    // 隐私授权：用到剪贴板 / 定位 / 选点 / 聊天文件前由页面里的 <privacy-popup> 接管
+    privacy.install();
     this.initCloud();
   },
 

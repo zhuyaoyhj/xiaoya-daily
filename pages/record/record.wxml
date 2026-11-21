@@ -80,14 +80,15 @@
           class="tl-filter {{filter === item.key ? 'tl-filter-on' : ''}}"
           wx:for="{{filters}}"
           wx:key="key"
+          wx:if="{{item.key === 'all' || counts[item.key]}}"
           data-key="{{item.key}}"
           bindtap="switchFilter"
-        >{{item.label}}</view>
+        >{{item.label}}{{counts[item.key] ? ' ' + counts[item.key] : ''}}</view>
       </view>
     </view>
 
     <view class="card tl-card" wx:if="{{rows.length > 0}}">
-      <view class="tl-row" wx:for="{{rows}}" wx:key="id" data-id="{{item.id}}" bindtap="openRow">
+      <view class="tl-row" wx:for="{{rows}}" wx:key="key" data-open="{{item.open}}" bindtap="openRow">
         <view class="tl-time">{{item.time}}</view>
         <view class="tl-dot tl-dot-{{item.type}}"></view>
         <view class="tl-main">
@@ -95,13 +96,41 @@
             <text>{{item.emoji}} {{item.title}}</text>
             <text class="tl-swatch" wx:if="{{item.colorHex}}" style="background:{{item.colorHex}}"></text>
           </view>
-          <view class="tl-detail tl-detail-{{item.level}}" wx:if="{{item.detail}}">{{item.detail}}</view>
+          <view class="tl-detail tl-detail-{{item.level}}" wx:if="{{item.detail || item.by}}">{{item.detail}}<text class="tl-by" wx:if="{{item.by}}">{{item.detail ? ' · ' : ''}}{{item.by}}记</text></view>
         </view>
         <view class="tl-go">›</view>
       </view>
     </view>
     <view class="card tl-empty" wx:else>
       <view class="muted">{{total > 0 ? '这一类今天还没有记录' : (isToday ? '今天还没有记录，点上面的按钮开始' : '这一天没有记录')}}</view>
+    </view>
+
+    <!-- 上周小结 -->
+    <view class="card wk-card {{weekly.fresh ? 'wk-card-fresh' : ''}}" wx:if="{{weekly && isToday}}" bindtap="openWeekly">
+      <view class="wk-head">
+        <view class="wk-title">📅 {{weekly.title}}</view>
+        <view class="wk-new" wx:if="{{weekly.fresh}}">新</view>
+      </view>
+      <view class="wk-line" wx:for="{{weekly.lines}}" wx:key="text">{{item.emoji}} {{item.text}}</view>
+      <view class="wk-go">做成卡片发给家人 ›</view>
+    </view>
+
+    <!-- 近 7 天 -->
+    <view class="card trend-card" wx:if="{{!trendEmpty && isToday}}">
+      <view class="trend-head">
+        <view class="trend-title">近 7 天</view>
+        <view class="trend-tabs">
+          <view
+            class="trend-tab {{metric === item.key ? 'trend-tab-on' : ''}}"
+            wx:for="{{metrics}}"
+            wx:key="key"
+            data-key="{{item.key}}"
+            bindtap="switchMetric"
+          >{{item.label}}</view>
+        </view>
+      </view>
+      <canvas type="2d" id="trend-chart" class="trend-chart"></canvas>
+      <view class="trend-foot">绿色带是这个月龄的参考范围 · 单位：{{metric === 'sleepMin' ? '小时' : metric === 'feeds' ? '次' : '片'}}</view>
     </view>
 
     <!-- 其他记录 -->
@@ -133,10 +162,19 @@
         </view>
         <text class="more-go">›</text>
       </view>
+      <view class="more-row" bindtap="goGrowth">
+        <text class="more-emoji">📈</text>
+        <view class="more-main">
+          <view class="more-title">身高体重</view>
+          <view class="more-sub">体检回来记一笔，对照生长曲线</view>
+        </view>
+        <text class="more-go">›</text>
+      </view>
     </view>
 
     <disclaimer text="参考区间为通用范围，个体差异很大；宝宝精神好、体重稳步增长比数字更重要。" />
   </block>
 
   <template is="care-panel" data="{{carePanel, careBottleMl, careBottleTypes, careBottleType, careBottleInput, careDiaperKinds, carePoopColors, carePoopTextures, carePendingDiaper}}" />
+  <privacy-popup />
 </view>

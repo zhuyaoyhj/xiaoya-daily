@@ -71,7 +71,7 @@ Page({
     const name = e.currentTarget.dataset.name;
     wx.showModal({
       title: '移除',
-      content: '把「' + name + '」从带娃人名单里移除？',
+      content: '把「' + name + '」从家人名单里移除？',
       confirmColor: '#E0795A',
       success: function (res) {
         if (!res.confirm) return;

@@ -6,6 +6,7 @@
 //   food-edit 记「某种食材第一次吃 + 有没有反应」，一个食材一条，用于排敏
 // 两个方向只允许从排敏台账提醒流水账（吃过但没记排敏），不允许流水账假装台账。
 const store = require('../../utils/store.js');
+const track = require('../../utils/track.js').track;
 const foodUtil = require('../../utils/food.js');
 const dateUtil = require('../../utils/date.js');
 
@@ -42,6 +43,7 @@ Page({
 
   onLoad(opts) {
     const options = opts || {};
+    this._via = options.recipeId ? 'suggest' : 'manual';
     const baby = store.getActiveBaby();
     if (!baby) {
       wx.showToast({ title: '请先添加宝宝', icon: 'none' });
@@ -156,6 +158,7 @@ Page({
   copyLast() {
     const last = this.data.lastMeal;
     if (!last) return;
+    this._via = 'copy';
     const log = store.getMealLog(last.id);
     if (!log) return;
     const foods = (log.foods || [])
@@ -329,6 +332,7 @@ Page({
       return;
     }
 
+    if (!this.data.id) track('meal_log', { via: this._via || 'manual' });
     store.upsertMealLog({
       id: this.data.id || undefined,
       babyId: baby.id,

@@ -194,4 +194,5 @@
     <button class="btn btn-primary btn-block" bindtap="goAdd">记录一次接种</button>
   </view>
 
+  <privacy-popup />
 </view>

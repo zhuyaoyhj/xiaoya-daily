@@ -103,6 +103,7 @@ function instance(cfg) {
 }
 
 const store = require(path.join(ROOT, 'utils/store.js'));
+const timeline = require(path.join(ROOT, 'utils/timeline.js'));
 const weatherApi = require(path.join(ROOT, 'utils/weather.js'));
 
 let pass = 0;
@@ -231,8 +232,8 @@ function tick() {
   let ip = instance(mount('pages/index/index.js'));
   ip.onShow();
   await tick();
-  eq(ip.data.recent.length, 3, '最近记录合并三类，取 3 条');
-  eq(ip.data.recent[2].kind, 'vax', '日期最早的接种排最后');
+  eq(ip.data.recent.length, 2, '首页最近记录只留 2 条（更多在「记录」tab）');
+  eq(timeline.recent('b1', 3)[2].kind, 'vax', '三类合并，日期最早的接种排最后');
   eq(ip.data.recent[0].when, '今天', '今天的记录显示「今天」');
   ok(/午餐/.test(ip.data.recent.map(function (r) { return r.title; }).join()), '进食记录带餐次');
   ok(/强化铁米粉/.test(JSON.stringify(ip.data.recent)), '记录里带出食材名');
@@ -249,14 +250,14 @@ function tick() {
   eq(lastNav, '/pages/food/food', '辅食本是普通页，navigateTo');
   ip.goRecord();
   eq(lastNav, 'tab:/pages/record/record', '全部记录是 tab，switchTab');
-  ip.openRecord({ currentTarget: { dataset: { kind: 'meal', rid: 'x1' } } });
-  eq(lastNav, '/pages/meal-log/meal-log?id=x1', '点记录进入编辑');
+  ip.openRecord({ currentTarget: { dataset: { open: '/pages/meal-log/meal-log?id=x1' } } });
+  eq(lastNav, '/pages/meal-log/meal-log?id=x1', '点记录进入编辑（地址由时间线给出）');
   ip.goManualTemp();
   eq(lastNav, '/pages/weather/weather?manual=1', '填温度：navigateTo 天气页并带 manual 参数');
   ip.goWeather();
   eq(lastNav, '/pages/weather/weather', '天气详情 navigateTo');
   ip.goFamily();
-  eq(lastNav, '/pages/family/family', '带娃人 navigateTo');
+  eq(lastNav, '/pages/family/family', '家人页 navigateTo');
 
   stopCount = 0;
   ip.onPullDownRefresh();
@@ -267,7 +268,7 @@ function tick() {
   /* ================= 5. 备份导出 / 导入 ================= */
   console.log('\n[5] 备份');
   const stats = store.localStats();
-  eq(stats, { babies: 1, vaccine: 1, food: 1, meals: 1, care: 0 }, '本机统计正确');
+  eq(stats, { babies: 1, vaccine: 1, food: 1, meals: 1, growth: 0, care: 0 }, '本机统计正确');
 
   const text = store.exportBackup();
   ok(text.indexOf('XYD1:') === 0, '备份带格式前缀');
@@ -307,7 +308,7 @@ function tick() {
     delete mem[k];
   });
   mp.importData();
-  ok(/覆盖本机/.test(lastModal), '导入前先确认并展示内容');
+  ok(/已合并/.test(lastModal) && /新加了/.test(lastModal), '本机是空的：直接合并并告诉用户加了几条');
   eq(store.getBabies().length, 1, '确认后完成恢复');
   clipboard = 'hello';
   mp.importData();
@@ -315,7 +316,7 @@ function tick() {
 
   const fp = instance(mount('pages/family/family.js'));
   fp.onShow();
-  ok(typeof fp.exportData === 'undefined', '备份已从带娃人页移走，只保留在「我的」');
+  ok(typeof fp.exportData === 'undefined', '备份已从家人页移走，只保留在「我的」');
 
   /* 未配置模板时不再出现开发者术语 */
   fp.enableSubscribe();

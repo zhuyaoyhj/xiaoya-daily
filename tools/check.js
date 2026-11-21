@@ -88,13 +88,14 @@ if (!errors) ok('全部通过');
 /* ---------- 3. app.json 页面四件套 ---------- */
 console.log('\n[3/8] 页面四件套完整性');
 const appJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'app.json'), 'utf8'));
-(appJson.pages || []).forEach(function (p) {
+const ALL_PAGES = require('./fixtures.js').allPages(appJson);
+ALL_PAGES.forEach(function (p) {
   ['js', 'json', 'wxml', 'wxss'].forEach(function (ext) {
     const f = path.join(ROOT, p + '.' + ext);
     if (!fs.existsSync(f)) fail('缺少文件 ' + p + '.' + ext);
   });
 });
-ok('共 ' + (appJson.pages || []).length + ' 个页面');
+ok('共 ' + ALL_PAGES.length + ' 个页面（主包 ' + (appJson.pages || []).length + '，分包 ' + (ALL_PAGES.length - (appJson.pages || []).length) + '）');
 
 /* ---------- 4. require 路径 + 越界判定 ---------- */
 console.log('\n[4/8] require 路径与越界');
@@ -116,6 +117,11 @@ jsFiles.forEach(function (f) {
     }
     if (!isInsideRoot(hit)) {
       fail(rel(f) + ' → require 越出工程根：' + spec + '（解析到 ' + hit + '）');
+    }
+    // 存储子模块只能经门面 utils/store.js 访问（加载顺序和 ctx 注册都在门面里）
+    const from = rel(f);
+    if (/^utils\/store\//.test(rel(hit)) && from !== 'utils/store.js' && !/^utils\/store\//.test(from)) {
+      fail(from + ' → 直接 require 了 ' + rel(hit) + '，请改为 require utils/store.js');
     }
   }
 });
@@ -207,7 +213,7 @@ if (!errors) ok('全部通过');
 
 /* ---------- 7. 免责声明 + 合规禁词 + 主包体积 ---------- */
 console.log('\n[7/8] 合规与包体');
-(appJson.pages || []).forEach(function (p) {
+ALL_PAGES.forEach(function (p) {
   const f = path.join(ROOT, p + '.wxml');
   if (!fs.existsSync(f)) return;
   const wxml = fs.readFileSync(f, 'utf8');
@@ -215,20 +221,97 @@ console.log('\n[7/8] 合规与包体');
 });
 
 const BANNED = ['算命', '占卜', '吉凶', '祸福', '转运', '改命', '塔罗', '星盘', '生辰八字', '预测财运'];
+// 健康类：只能说「参考 / 建议就医」，不能下诊断、承诺疗效（类目审核的红线）
+const OLD_TERMS = ['带娃人', '一起带娃的人', '这台手机是谁在记'];
+const MEDICAL_BANNED = ['确诊', '诊断为', '治愈', '根治', '疗效', '患有', '一定是', '肯定是', '保证没事', '不用去医院'];
 files.forEach(function (f) {
   const src = fs.readFileSync(f, 'utf8');
   BANNED.forEach(function (w) {
     if (src.indexOf(w) > -1) fail(rel(f) + ' 命中禁词「' + w + '」');
   });
+  if (/^(data|utils|pages|components)\//.test(rel(f))) {
+    // 只查用户能看到的字符串，注释里讨论这些词没关系
+    const strings = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    MEDICAL_BANNED.forEach(function (w) {
+      if (strings.indexOf(w) > -1) fail(rel(f) + ' 健康文案用了诊断/承诺式说法「' + w + '」，请改成参考式');
+    });
+    // 称呼统一：一起带娃的人一律叫「家人」，这台手机的记录人叫「我是谁」
+    OLD_TERMS.forEach(function (w) {
+      if (strings.indexOf(w) > -1) fail(rel(f) + ' 用了旧称呼「' + w + '」，统一叫「家人」/「我是谁」');
+    });
+  }
 });
 
-let total = 0;
-walk(ROOT, []).forEach(function (f) {
-  total += fs.statSync(f).size;
+/* 分包：主包里的代码不能 require 分包里的文件（分包可能还没下载），分包之间也不能互相 require */
+const SUBS = (appJson.subPackages || []).map(function (sp) {
+  return sp.root.replace(/\/$/, '') + '/';
 });
-const kb = (total / 1024).toFixed(1);
-if (total > 2 * 1024 * 1024) fail('主包体积 ' + kb + 'KB 超过 2MB 上限');
+function subOf(relPath) {
+  for (let i = 0; i < SUBS.length; i++) if (relPath.indexOf(SUBS[i]) === 0) return SUBS[i];
+  return '';
+}
+const IMG_RE = /\.(png|jpe?g|gif|webp|svg)$/;
+// 体积统计按 project.config.json 的 packOptions.ignore 排除（和真正上传的内容一致）
+const PACK_IGNORE = ((JSON.parse(fs.readFileSync(path.join(ROOT, 'project.config.json'), 'utf8')).packOptions || {}).ignore || []);
+function packIgnored(relPath, isDir) {
+  return PACK_IGNORE.some(function (r) {
+    if (r.type === 'folder') return isDir && (relPath === r.value || relPath.indexOf(r.value + '/') === 0);
+    if (r.type === 'file') return relPath === r.value;
+    if (r.type === 'suffix') return !isDir && relPath.slice(-r.value.length) === r.value;
+    return false;
+  });
+}
+let mainBytes = 0;
+const subBytes = {};
+(function sizeWalk(dir) {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(function (ent) {
+    const full = path.join(dir, ent.name);
+    const r = rel(full);
+    if (ent.isDirectory()) {
+      if (SKIP_DIRS.indexOf(ent.name) > -1 || packIgnored(r, true)) return;
+      sizeWalk(full);
+      return;
+    }
+    if (packIgnored(r, false)) return;
+    if (!/\.(js|json|wxml|wxss)$/.test(ent.name) && !IMG_RE.test(ent.name)) return;
+    const sub = subOf(r);
+    const b = fs.statSync(full).size;
+    if (sub) subBytes[sub] = (subBytes[sub] || 0) + b;
+    else mainBytes += b;
+  });
+})(ROOT);
+let crossBad = 0;
+jsFiles.forEach(function (f) {
+  const from = rel(f);
+  const fromSub = subOf(from);
+  const src = fs.readFileSync(f, 'utf8');
+  const re = /require\(\s*['"](\.[^'"]+)['"]\s*\)/g;
+  let m;
+  while ((m = re.exec(src))) {
+    const target = rel(path.resolve(path.dirname(f), /\.js$/.test(m[1]) ? m[1] : m[1] + '.js'));
+    const toSub = subOf(target);
+    if (toSub && toSub !== fromSub) {
+      crossBad++;
+      fail(from + ' → require 了分包里的 ' + target + '（' + (fromSub ? '分包之间不能互相引用' : '主包不能引用分包，分包可能还没下载') + '）');
+    }
+  }
+});
+if (!crossBad && SUBS.length) ok('没有跨包 require（' + SUBS.length + ' 个分包）');
+const kb = (mainBytes / 1024).toFixed(1);
+if (mainBytes > 2 * 1024 * 1024) fail('主包体积 ' + kb + 'KB 超过 2MB 上限');
 else ok('主包体积约 ' + kb + ' KB（上限 2048 KB）');
+const subTotal = Object.keys(subBytes).reduce(function (s, k) {
+  return s + subBytes[k];
+}, 0);
+Object.keys(subBytes).forEach(function (k) {
+  if (subBytes[k] > 2 * 1024 * 1024) fail('分包 ' + k + ' 超过 2MB');
+});
+if (SUBS.length) {
+  const biggest = Object.keys(subBytes).sort(function (a, b) {
+    return subBytes[b] - subBytes[a];
+  })[0];
+  ok('分包合计约 ' + (subTotal / 1024).toFixed(1) + ' KB，最大 ' + biggest + ' ' + (subBytes[biggest] / 1024).toFixed(1) + ' KB；整包 ' + ((mainBytes + subTotal) / 1024).toFixed(1) + ' KB（上限 20MB）');
+}
 
 /* ---------- 8. 设计 token：颜色只在 app.wxss 定义一次，页面里一律 var(--xxx) ---------- */
 console.log('\n[8/8] 设计 token 与字号');
@@ -267,6 +350,47 @@ console.log('\n[8/8] 设计 token 与字号');
     });
   });
   if (!hexHits) ok('页面样式没有写死的颜色（' + Object.keys(defined).length + ' 个 token）');
+
+  // canvas 用的 utils/theme.js 必须和 app.wxss 同步
+  const gen = require('child_process').spawnSync(process.execPath, [path.join(__dirname, 'gen-theme.js'), '--check']);
+  if (gen.status !== 0) fail('utils/theme.js 和 app.wxss 的 token 不一致，跑一下 node tools/gen-theme.js');
+  else ok('utils/theme.js 与 token 同步');
+
+  // 深色模式：每个浅色 token 都要有深色值（--on-brand 这类刻意不变的除外）
+  const SAME_IN_DARK = ['on-brand'];
+  const darkBlock = appWxss.match(/@media \(prefers-color-scheme: dark\)[\s\S]*?\n\}/);
+  if (darkBlock) {
+    const missing = Object.keys(defined).filter(function (n) {
+      return SAME_IN_DARK.indexOf(n) === -1 && darkBlock[0].indexOf('--' + n + ':') === -1;
+    });
+    if (missing.length) fail('深色模式缺少这些 token：' + missing.join(', '));
+    else ok('深色模式覆盖了全部 token');
+  }
+
+  // theme.json 里引用的图标文件都要存在
+  const themePath = path.join(ROOT, 'theme.json');
+  if (fs.existsSync(themePath)) {
+    const theme = JSON.parse(fs.readFileSync(themePath, 'utf8'));
+    let bad = 0;
+    ['light', 'dark'].forEach(function (mode) {
+      Object.keys(theme[mode] || {}).forEach(function (k) {
+        const v = theme[mode][k];
+        if (/\.png$/.test(v) && !fs.existsSync(path.join(ROOT, v))) {
+          bad++;
+          fail('theme.json ' + mode + '.' + k + ' 指向的图标不存在：' + v);
+        }
+      });
+    });
+    const used = JSON.stringify(appJson).match(/@[A-Za-z]+/g) || [];
+    used.forEach(function (ref) {
+      const key = ref.slice(1);
+      if (!(theme.light && key in theme.light) || !(theme.dark && key in theme.dark)) {
+        bad++;
+        fail('app.json 用到的主题变量 ' + ref + ' 在 theme.json 的 light/dark 里没有都定义');
+      }
+    });
+    if (!bad) ok('theme.json 变量与图标齐全');
+  }
   if (!smallHits) ok('正文字号全部 ≥ 22rpx');
 })();
 

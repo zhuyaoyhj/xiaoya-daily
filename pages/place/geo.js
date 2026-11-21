@@ -1,12 +1,12 @@
-// utils/geo.js —— 小区（POI）检索与地图选点
+// pages/place/geo.js —— 小区（POI）检索与地图选点
 // 三条获取小区的路径，按可用性依次降级：
 //   1. 云函数 place（腾讯位置服务 POI 检索，需要配置 key）→ 精确到小区
 //   2. wx.choosePoi（微信内置 POI 搜索器）→ 精确到小区
 //   3. wx.chooseLocation（微信内置地图选点）→ 精确到坐标
 //   4. 手动填写小区名 + 区中心坐标（永远可用）
 
-const cloud = require('./cloud.js');
-const placeUtil = require('./place.js');
+const cloud = require('../../utils/cloud.js');
+const placeUtil = require('../../utils/place.js');
 
 /** 区县名匹配：'北京市朝阳区望京街道…' → '朝阳区' */
 function parseDistrict(address) {

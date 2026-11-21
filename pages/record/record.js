@@ -4,13 +4,18 @@ const dateUtil = require('../../utils/date.js');
 const care = require('../../utils/care.js');
 const careActions = require('../../utils/care-actions.js');
 const foodUtil = require('../../utils/food.js');
+const timeline = require('../../utils/timeline.js');
+const stats = require('../../utils/stats.js');
+const chart = require('../../utils/chart.js');
+const theme = require('../../utils/theme.js');
+const sync = require('../../utils/sync.js');
+const track = require('../../utils/track.js').track;
 
-/** 时间线筛选 */
-const FILTERS = [
-  { key: 'all', label: '全部' },
-  { key: 'feed', label: '喂奶' },
-  { key: 'sleep', label: '睡眠' },
-  { key: 'diaper', label: '尿布' }
+/** 7 天趋势可切换的指标 */
+const METRICS = [
+  { key: 'feeds', label: '喂奶', unit: '次' },
+  { key: 'sleepMin', label: '睡眠', unit: '小时' },
+  { key: 'diapers', label: '尿布', unit: '片' }
 ];
 
 /** 5 个月起显示辅食入口：提前一个月让家长准备 */
@@ -26,10 +31,15 @@ Page(Object.assign({}, careActions.methods, {
     isToday: true,
     dateLabel: '',
     sum: null,
-    filters: FILTERS,
+    filters: timeline.FILTERS,
     filter: 'all',
+    counts: {},
     rows: [],
     total: 0,
+    metrics: METRICS,
+    metric: 'feeds',
+    trendEmpty: true,
+    weekly: null,
     showFood: false,
     foodText: ''
   }),
@@ -41,6 +51,16 @@ Page(Object.assign({}, careActions.methods, {
   onShow() {
     this.load();
     this.startTick();
+    // 加入了家庭同步就顺手拉一次，回来有新记录再刷新
+    const that = this;
+    sync.autoSync().then(function (r) {
+      if (r && (r.added || r.updated || r.removed)) that.load();
+    });
+  },
+
+  onReady() {
+    this._ready = true;
+    this.drawTrend();
   },
 
   onHide() {
@@ -90,6 +110,53 @@ Page(Object.assign({}, careActions.methods, {
     });
     this.loadFood(baby, months);
     this.refreshCare();
+    this.loadTrend();
+  },
+
+  /* ---------- 7 天趋势 + 上周小结 ---------- */
+
+  loadTrend() {
+    const baby = this._baby;
+    if (!baby) return;
+    const today = this.data.today;
+    const now = Date.now();
+    this._days = stats.lastDays(baby.id, today, this.data.months, 7, now);
+    const any = this._days.some(function (d) {
+      return d.feeds + d.sleepMin + d.diapers > 0;
+    });
+    const wk = stats.weekly(baby, today, this.data.months, now);
+    const seen = store.getSettings().weeklySeen;
+    this.setData({
+      trendEmpty: !any,
+      weekly: wk ? Object.assign({}, wk, { fresh: seen !== wk.key }) : null
+    });
+    this.drawTrend();
+  },
+
+  drawTrend() {
+    if (!this._ready || !this._days || this.data.trendEmpty) return;
+    const metric = this.data.metric;
+    const data = stats.bars(this._days, metric, this.data.today);
+    const band = stats.refBand(metric, this.data.months);
+    const t = theme.colors();
+    chart.withCanvas(this, '#trend-chart', function (ctx, size) {
+      chart.drawBars(ctx, size, data, { bar: t['peach-soft'], barOn: t.brand, text: t['text-3'], grid: t.line, ref: t['ok-soft'] }, band);
+    });
+  },
+
+  switchMetric(e) {
+    this.setData({ metric: e.currentTarget.dataset.key });
+    this.drawTrend();
+  },
+
+  /** 上周小结：点开后标记已看，生成卡片发家庭群 */
+  openWeekly() {
+    const wk = this.data.weekly;
+    if (!wk) return;
+    store.updateSettings({ weeklySeen: wk.key });
+    this.setData({ 'weekly.fresh': false });
+    track('weekly_open', {});
+    wx.navigateTo({ url: '/pages/share/share?weekly=' + wk.key });
   },
 
   /** care-actions 回调 + 日期切换后都走这里 */
@@ -101,20 +168,15 @@ Page(Object.assign({}, careActions.methods, {
     const from = care.dayStart(date);
     const entries = store.getCareRange(baby.id, from, from + care.DAY);
     const sum = care.summarize(entries, date, this.data.months, now);
-    const filter = this.data.filter;
-
-    const rows = entries
-      .filter(function (e) {
-        return filter === 'all' || e.type === filter;
-      })
-      .map(function (e) {
-        return care.describe(e, date);
-      });
+    // 时间线：喂睡尿 + 辅食 + 接种 + 测量，一个口径
+    const all = timeline.day(baby.id, date);
+    const rows = timeline.filter(all, this.data.filter);
 
     this.setData({
       sum: sum,
       rows: rows,
-      total: entries.length,
+      counts: timeline.counts(all),
+      total: all.length,
       isToday: date === this.data.today,
       dateLabel: dayLabel(date, this.data.today),
       careActive: care.activeView(store.getCareActive(baby.id), now)
@@ -169,7 +231,8 @@ Page(Object.assign({}, careActions.methods, {
   },
 
   openRow(e) {
-    wx.navigateTo({ url: '/pages/care-edit/care-edit?id=' + e.currentTarget.dataset.id });
+    const url = e.currentTarget.dataset.open;
+    if (url) wx.navigateTo({ url: url });
   },
 
   /** 看过去某天时，补记默认落在那一天 */
@@ -188,6 +251,10 @@ Page(Object.assign({}, careActions.methods, {
 
   goVaccineEdit() {
     wx.navigateTo({ url: '/pages/vaccine-edit/vaccine-edit' });
+  },
+
+  goGrowth() {
+    wx.navigateTo({ url: '/pages/growth/growth' });
   },
 
   goAddBaby() {

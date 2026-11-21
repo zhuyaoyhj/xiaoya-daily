@@ -1,6 +1,7 @@
 // pages/food-edit/food-edit.js
 // 记一次新食材尝试：选食材 → 选日期 → 选反应 → 备注
 const store = require('../../utils/store.js');
+const track = require('../../utils/track.js').track;
 const foodUtil = require('../../utils/food.js');
 const dateUtil = require('../../utils/date.js');
 
@@ -254,6 +255,7 @@ Page({
     const baby = store.getActiveBaby();
     if (!baby) return;
 
+    if (!this.data.isEdit) track('food_try', {});
     store.upsertFoodRecord({
       id: this.data.id || undefined,
       babyId: baby.id,

@@ -84,7 +84,7 @@
 /* ---------- 天气主卡 ---------- */
 .main-card {
   background: linear-gradient(145deg, var(--brand-tint) 0%, var(--line) 55%, var(--peach-soft) 100%);
-  box-shadow: 0 16rpx 36rpx rgba(226, 168, 132, 0.2);
+  box-shadow: 0 16rpx 36rpx var(--shadow-strong);
 }
 
 .main-top {
@@ -146,7 +146,7 @@
   justify-content: space-between;
   margin-top: 34rpx;
   padding: 22rpx 12rpx;
-  background: rgba(255, 255, 255, 0.62);
+  background: var(--glass);
   border-radius: 24rpx;
 }
 
@@ -444,7 +444,7 @@
 
 .sleep-now {
   font-size: 22rpx;
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--sleep);
   border-radius: 14rpx;
   padding: 2rpx 12rpx;

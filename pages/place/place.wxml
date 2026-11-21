@@ -132,4 +132,5 @@
   <button class="btn btn-primary btn-block save-btn" bindtap="save">用这个地点</button>
 
   <disclaimer text="地点只保存在本机，用于取天气与穿衣建议，不会上传。" />
+  <privacy-popup />
 </view>

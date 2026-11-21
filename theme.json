@@ -1,0 +1,42 @@
+{
+  "light": {
+    "navBg": "#FFF8F0",
+    "navText": "black",
+    "bgColor": "#FFF8F0",
+    "bgColorTop": "#FFF1E6",
+    "bgColorBottom": "#FFF8F0",
+    "bgTextStyle": "dark",
+    "tabColor": "#A8998C",
+    "tabSelected": "#F0876B",
+    "tabBg": "#FFFFFF",
+    "tabBorder": "white",
+    "iconToday": "assets/tab/today.png",
+    "iconTodayOn": "assets/tab/today-on.png",
+    "iconRecord": "assets/tab/record.png",
+    "iconRecordOn": "assets/tab/record-on.png",
+    "iconVaccine": "assets/tab/vaccine.png",
+    "iconVaccineOn": "assets/tab/vaccine-on.png",
+    "iconMine": "assets/tab/mine.png",
+    "iconMineOn": "assets/tab/mine-on.png"
+  },
+  "dark": {
+    "navBg": "#1C1714",
+    "navText": "white",
+    "bgColor": "#1C1714",
+    "bgColorTop": "#1C1714",
+    "bgColorBottom": "#1C1714",
+    "bgTextStyle": "light",
+    "tabColor": "#8F8073",
+    "tabSelected": "#E8866A",
+    "tabBg": "#27201C",
+    "tabBorder": "black",
+    "iconToday": "assets/tab/today-dark.png",
+    "iconTodayOn": "assets/tab/today-on.png",
+    "iconRecord": "assets/tab/record-dark.png",
+    "iconRecordOn": "assets/tab/record-on.png",
+    "iconVaccine": "assets/tab/vaccine-dark.png",
+    "iconVaccineOn": "assets/tab/vaccine-on.png",
+    "iconMine": "assets/tab/mine-dark.png",
+    "iconMineOn": "assets/tab/mine-on.png"
+  }
+}

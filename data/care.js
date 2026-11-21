@@ -40,7 +40,7 @@ const DIAPER_KINDS = [
  */
 const POOP_COLORS = [
   { key: 'yellow', label: '金黄', hex: '#E7B53C', level: 'ok', tip: '母乳宝宝最常见的颜色' },
-  { key: 'mustard', label: '芥末黄', hex: '#C9A227', level: 'ok', tip: '正常' },
+  { key: 'mustard', label: '芥末黄', hex: '#C9A227', level: 'ok', tip: '常见颜色' },
   { key: 'green', label: '绿色', hex: '#6E9A3E', level: 'ok', tip: '多见于配方奶或吃到较多前奶，精神好就不用担心' },
   { key: 'brown', label: '棕色', hex: '#8A5A32', level: 'ok', tip: '加辅食后常见' },
   { key: 'black', label: '黑色', hex: '#2B2522', level: 'doctor', tip: '出生头几天的胎便是黑色属正常；之后仍是黑色、或吃了铁剂以外出现，建议就医' },

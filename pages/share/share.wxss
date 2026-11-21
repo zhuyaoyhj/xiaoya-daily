@@ -9,7 +9,7 @@
 .preview-img {
   width: 100%;
   border-radius: 28rpx;
-  box-shadow: 0 18rpx 44rpx rgba(213, 176, 147, 0.22);
+  box-shadow: 0 18rpx 44rpx var(--shadow-strong);
 }
 
 .preview-skeleton {

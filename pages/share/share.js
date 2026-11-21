@@ -5,7 +5,9 @@ const clothing = require('../../utils/clothing.js');
 const store = require('../../utils/store.js');
 const weatherApi = require('../../utils/weather.js');
 const placeUtil = require('../../utils/place.js');
-const card = require('../../utils/card.js');
+const card = require('./card.js'); // 只有这一页用，放在分包里
+const stats = require('../../utils/stats.js');
+const track = require('../../utils/track.js').track;
 
 function buildShareText(o) {
   const lines = [];
@@ -52,8 +54,55 @@ Page({
   onLoad(options) {
     const m = options && options.month ? Number(options.month) : null;
     this.optionMonth = m !== null && !isNaN(m) ? m : null;
+    this.weekly = !!(options && options.weekly);
     this.ready = false;
+    if (this.weekly) {
+      wx.setNavigationBarTitle({ title: '一周小结' });
+      this.prepareWeekly();
+      return;
+    }
     this.prepare();
+  },
+
+  /** 上周小结：沿用今日卡片的版式，换成每行一条统计，不画天气 */
+  prepareWeekly() {
+    const baby = store.getActiveBaby();
+    if (!baby) {
+      this.setData({ hasBaby: false, drawing: false });
+      return;
+    }
+    const age = dateUtil.babyAge(baby);
+    const wk = stats.weekly(baby, dateUtil.todayStr(), age.valid ? age.months : 0, Date.now());
+    if (!wk) {
+      this.setData({ hasBaby: true, drawing: false, weatherNote: '上周记录少于 3 天，攒够了再来看小结' });
+      return;
+    }
+    this.babyName = baby.name || '宝宝';
+    this.months = age.valid ? age.months : 0;
+    const targets = this.buildTargets();
+    const tips = wk.lines.map(function (l) {
+      return { emoji: l.emoji, title: '', heading: l.text, text: '' };
+    });
+    const cardData = {
+      kicker: '小芽日常 · 一周小结',
+      babyName: this.babyName,
+      ageText: dateUtil.babyAgeText(age) + ' · 记了 ' + wk.activeDays + ' 天',
+      dateText: wk.range,
+      tips: tips,
+      hideWeather: true,
+      targetLine: targets.line
+    };
+    const text =
+      '【小芽日常】' + wk.title + '\n' +
+      wk.lines
+        .map(function (l) {
+          return l.emoji + ' ' + l.text;
+        })
+        .join('\n') +
+      '\n（内容为育儿记录汇总，仅供家人参考）';
+    this.setData({ hasBaby: true, targets: targets.list, targetLine: targets.line, cardData: cardData, shareText: text }, () => {
+      this.renderCard();
+    });
   },
 
   onReady() {
@@ -271,6 +320,7 @@ Page({
     wx.saveImageToPhotosAlbum({
       filePath: path,
       success: function () {
+        track('share_card', { from: 'save' });
         wx.showToast({ title: '已保存到相册', icon: 'success' });
       },
       fail: function (err) {
@@ -295,6 +345,7 @@ Page({
     wx.setClipboardData({
       data: this.data.shareText,
       success: function () {
+        track('share_card', { from: 'copy' });
         wx.showToast({ title: '已复制文字版', icon: 'success' });
       }
     });
@@ -310,8 +361,11 @@ Page({
 
   onShareAppMessage() {
     const d = this.data.cardData || {};
+    track('share_card', { from: this.weekly ? 'weekly' : 'daily' });
     return {
-      title: (d.babyName || '宝宝') + ' 的今日照护 · ' + (d.ageText || ''),
+      title: this.weekly
+        ? (d.babyName || '宝宝') + '的一周 · ' + (d.dateText || '')
+        : (d.babyName || '宝宝') + ' 的今日照护 · ' + (d.ageText || ''),
       path: '/pages/index/index',
       imageUrl: this.data.cardPath || ''
     };

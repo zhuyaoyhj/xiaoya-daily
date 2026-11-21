@@ -349,7 +349,13 @@ async function main() {
   globalData.tmplIds = [];
 
   const wxml = fs.readFileSync(path.join(ROOT, 'pages/index/index.wxml'), 'utf8');
-  eq((wxml.match(/goRecord/g) || []).length, 3, '「全部记录」类入口只在照护卡里（提醒条 + 行 + 按钮）');
+  eq((wxml.match(/goRecord/g) || []).length, 4, '去「记录」的入口：照护卡里的提醒条和状态行，加记一笔卡里一个「全部记录」（有记录 / 没记录二选一）');
+  eq((wxml.match(/全部记录/g) || []).length, 2, '「全部记录」文字只在记一笔卡里（两种状态各一处，同时只显示一个）');
+  // 首页收敛：一级区块不超过 7 个（提醒位 / 照护 / 记一笔 / 今日重点 / 今天 / 发给家人 / 免责）
+  const body = wxml.slice(wxml.indexOf('<block wx:if="{{baby}}">'), wxml.indexOf('<block wx:else>'));
+  const sections = (body.match(/<!-- [①-⑨]/g) || []).length;
+  ok(sections <= 6, '首页（有宝宝时）收敛为 ' + sections + ' 个区块');
+  ok(/wx:elif="\{\{vaxRemind\}\}"/.test(body) && /wx:elif="\{\{backupRemind\}\}"/.test(body), '引导 / 疫苗 / 备份共用一个提醒位，同时只出一条');
   ok(wxml.indexOf('wx:if="{{!vaxRemind}}"') > -1, '有到期提醒时疫苗区不重复展示');
   ok(/push-line[\s\S]*wx:if="\{\{!tmplConfigured\}\}"/.test(wxml), '未配模板只显示一行入口');
 
@@ -450,7 +456,7 @@ async function main() {
   modalConfirm = true;
   mp.importData();
   await tick();
-  ok(/覆盖本机/.test(lastModal) && /1 条喂奶\/睡眠\/尿布/.test(lastModal), '恢复前展示内容：' + lastModal.slice(0, 40));
+  ok(/已合并/.test(lastModal) && /新加了 3 条/.test(lastModal), '新手机（本机为空）直接合并，并说清加了几条：' + lastModal.slice(0, 30));
   eq(store.getBabies().length, 1, '恢复了宝宝');
   eq(store.getVaccineRecords('k1').length, 1, '恢复了接种记录');
   eq(store.getCareRange('k1', 0, Date.now() + 1).length, 1, '恢复了照护记录');
@@ -497,7 +503,7 @@ async function main() {
   const text = clipboard;
   clear();
   mp.importData();
-  ok(/覆盖本机/.test(lastModal) && store.getBabies().length === 1, '不支持时恢复走剪贴板');
+  ok(/已合并/.test(lastModal) && store.getBabies().length === 1, '不支持时恢复走剪贴板');
   setFileApi(true);
 
   // 次级入口：复制文字
@@ -516,12 +522,16 @@ async function main() {
   /* ================= 7. 设计 token ================= */
   console.log('\n[7] 设计 token');
   const appWxss = fs.readFileSync(path.join(ROOT, 'app.wxss'), 'utf8');
+  // 只读浅色那一块（深色模式在 @media 里覆盖同名变量）；值可以是 #hex 也可以是 rgba
+  const tokenBlock = appWxss.match(/\/\* ==== design tokens[\s\S]*?\/\* ==== \/design tokens ==== \*\//)[0];
+  const lightBlock = tokenBlock.split('@media')[0];
   const defined = {};
-  appWxss.replace(/--([a-z0-9-]+)\s*:\s*(#[0-9A-Fa-f]{6})/g, function (_, n, v) {
-    defined[n] = v;
+  lightBlock.replace(/--([a-z0-9-]+)\s*:\s*([^;]+);/g, function (_, n, v) {
+    defined[n] = v.trim();
   });
   const names = Object.keys(defined);
   ok(names.length >= 30 && names.length <= 60, '语义色 ' + names.length + ' 个（原来 245 个零散色值）');
+  ok(/--brand:/.test(tokenBlock.split('@media')[1] || ''), '深色模式在 @media 里覆盖同名 token');
   ['brand', 'text', 'text-3', 'bg', 'card', 'line', 'danger', 'warn', 'ok', 'info', 'sleep'].forEach(function (n) {
     ok(!!defined[n], '核心 token --' + n + ' 已定义');
   });

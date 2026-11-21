@@ -1,6 +1,7 @@
 // pages/care-edit/care-edit.js —— 单条照护记录：补记 / 修改 / 删除
 // 入口：?id=xxx 修改；?type=feed|sleep|diaper[&date=YYYY-MM-DD] 补记
 const store = require('../../utils/store.js');
+const track = require('../../utils/track.js').track;
 const care = require('../../utils/care.js');
 const dateUtil = require('../../utils/date.js');
 const BOTTLE_ML = require('../../data/care.js').BOTTLE_ML;
@@ -225,6 +226,7 @@ Page({
       return;
     }
     store.upsertCare(r.rec);
+    if (!this.data.isEdit) track('care_log', { type: r.rec.type, via: 'backfill' });
     const tip = colorTip(r.rec.color);
     const back = function () {
       wx.navigateBack();

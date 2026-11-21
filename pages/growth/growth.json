@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "身高体重",
+  "usingComponents": {
+    "disclaimer": "/components/disclaimer/disclaimer"
+  }
+}

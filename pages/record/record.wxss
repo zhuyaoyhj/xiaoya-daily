@@ -29,7 +29,7 @@
   background: var(--card);
   border-radius: 28rpx;
   padding: 28rpx 0 22rpx;
-  box-shadow: 0 6rpx 20rpx rgba(213, 176, 147, 0.15);
+  box-shadow: 0 6rpx 20rpx var(--shadow);
 }
 
 .act:active {
@@ -41,7 +41,7 @@
 }
 
 .act-on .act-text {
-  color: var(--card);
+  color: var(--on-brand);
 }
 
 .act-sleep {
@@ -86,7 +86,7 @@
   font-size: 40rpx;
   line-height: 68rpx;
   text-align: center;
-  box-shadow: 0 4rpx 14rpx rgba(213, 176, 147, 0.15);
+  box-shadow: 0 4rpx 14rpx var(--shadow);
 }
 
 .day-nav-off {
@@ -213,7 +213,7 @@
 }
 
 .tl-filter-on {
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--brand);
 }
 
@@ -357,4 +357,101 @@
 .more-go {
   font-size: 32rpx;
   color: var(--text-5);
+}
+
+/* ---------- 记录人 ---------- */
+.tl-by {
+  color: var(--text-4);
+}
+
+/* ---------- 上周小结 ---------- */
+.wk-card {
+  padding: 28rpx 30rpx 20rpx;
+  border: 2rpx solid var(--line);
+}
+
+.wk-card-fresh {
+  border-color: var(--brand-soft);
+  background: var(--brand-tint);
+}
+
+.wk-head {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 10rpx;
+}
+
+.wk-title {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.wk-new {
+  font-size: 22rpx;
+  color: var(--on-brand);
+  background: var(--brand);
+  border-radius: 999rpx;
+  padding: 2rpx 14rpx;
+}
+
+.wk-line {
+  font-size: 26rpx;
+  color: var(--text-2);
+  padding: 6rpx 0;
+}
+
+.wk-go {
+  font-size: 24rpx;
+  color: var(--brand-strong);
+  margin-top: 10rpx;
+}
+
+/* ---------- 近 7 天 ---------- */
+.trend-card {
+  padding: 24rpx 24rpx 16rpx;
+}
+
+.trend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.trend-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.trend-tabs {
+  display: flex;
+  gap: 8rpx;
+}
+
+.trend-tab {
+  font-size: 22rpx;
+  color: var(--text-3);
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  background: var(--sunken);
+}
+
+.trend-tab-on {
+  color: var(--on-brand);
+  background: var(--brand);
+}
+
+.trend-chart {
+  width: 100%;
+  height: 300rpx;
+}
+
+.trend-foot {
+  font-size: 22rpx;
+  color: var(--text-4);
+  text-align: center;
 }

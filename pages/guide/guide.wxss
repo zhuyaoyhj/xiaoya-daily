@@ -8,14 +8,14 @@
   background: linear-gradient(140deg, var(--brand-tint) 0%, var(--line) 100%);
   border-radius: 36rpx;
   padding: 26rpx 20rpx;
-  box-shadow: 0 12rpx 30rpx rgba(226, 168, 132, 0.18);
+  box-shadow: 0 12rpx 30rpx var(--shadow-strong);
 }
 
 .month-nav {
   width: 72rpx;
   height: 72rpx;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--glass-strong);
   color: var(--brand-strong);
   font-size: 44rpx;
   line-height: 66rpx;
@@ -64,12 +64,12 @@
   background: var(--card);
   color: var(--text-2);
   font-size: 26rpx;
-  box-shadow: 0 6rpx 18rpx rgba(213, 176, 147, 0.12);
+  box-shadow: 0 6rpx 18rpx var(--shadow);
 }
 
 .tab-on {
   background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
-  color: var(--card);
+  color: var(--on-brand);
   font-weight: 600;
   box-shadow: 0 10rpx 22rpx rgba(240, 135, 107, 0.3);
 }
@@ -176,7 +176,7 @@
   border-radius: 28rpx;
   padding: 28rpx 30rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 10rpx 26rpx rgba(213, 176, 147, 0.16);
+  box-shadow: 0 10rpx 26rpx var(--shadow);
 }
 
 .entry-pre {
@@ -204,7 +204,7 @@
 
 .entry-badge {
   font-size: 22rpx;
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--brand);
   border-radius: 8rpx;
   padding: 4rpx 12rpx;
@@ -213,7 +213,7 @@
 .entry-chip {
   font-size: 22rpx;
   color: var(--text-3);
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--glass-strong);
   border-radius: 999rpx;
   padding: 4rpx 14rpx;
 }
@@ -243,7 +243,7 @@
   margin-top: 14rpx;
   font-size: 24rpx;
   color: var(--cocoa);
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--glass-strong);
   border-radius: 12rpx;
   padding: 10rpx 16rpx;
 }
@@ -278,11 +278,11 @@
   padding: 8rpx 20rpx;
   margin-right: 10rpx;
   border-radius: 999rpx;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-strong);
 }
 
 .seg-on {
-  color: var(--card);
+  color: var(--on-brand);
   background: var(--brand);
   font-weight: 600;
 }

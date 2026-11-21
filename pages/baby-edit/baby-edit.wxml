@@ -154,4 +154,5 @@
     宝宝信息只保存在这台手机上，不会上传。换手机前记得在「我的」页备份 ›
   </view>
   <disclaimer />
+  <privacy-popup />
 </view>

@@ -1,0 +1,97 @@
+.sy-card {
+  padding: 36rpx 32rpx;
+}
+
+.sy-emoji {
+  font-size: 64rpx;
+  text-align: center;
+}
+
+.sy-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.sy-desc {
+  font-size: 26rpx;
+  color: var(--text-3);
+  line-height: 1.7;
+  margin: 12rpx 0 28rpx;
+}
+
+.sy-label {
+  font-size: 24rpx;
+  color: var(--text-4);
+}
+
+.sy-code {
+  font-size: 72rpx;
+  font-weight: 700;
+  letter-spacing: 16rpx;
+  color: var(--brand-deep);
+  margin: 8rpx 0;
+}
+
+.sy-share {
+  margin-top: 8rpx;
+}
+
+.sy-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.sy-row-main {
+  flex: 1;
+}
+
+.sy-row-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sy-row-sub {
+  font-size: 24rpx;
+  color: var(--text-3);
+  margin-top: 4rpx;
+}
+
+.sy-err {
+  font-size: 24rpx;
+  color: var(--danger-text);
+  margin-top: 4rpx;
+}
+
+.sy-tip {
+  font-size: 22rpx;
+  color: var(--text-4);
+  line-height: 1.6;
+  margin-top: 20rpx;
+}
+
+.sy-input-row {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+  margin-top: 20rpx;
+}
+
+.sy-input {
+  flex: 1;
+  height: 84rpx;
+  background: var(--sunken);
+  border-radius: 20rpx;
+  padding: 0 24rpx;
+  font-size: 32rpx;
+  letter-spacing: 8rpx;
+}
+
+.sy-leave {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--text-4);
+  padding: 24rpx 0 8rpx;
+}

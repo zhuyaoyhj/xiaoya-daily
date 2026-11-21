@@ -9,6 +9,27 @@ const vaccine = require('../../utils/vaccine.js');
 const foodUtil = require('../../utils/food.js');
 const care = require('../../utils/care.js');
 const careActions = require('../../utils/care-actions.js');
+const timeline = require('../../utils/timeline.js');
+const sync = require('../../utils/sync.js');
+const track = require('../../utils/track.js').track;
+
+/**
+ * 首次引导：添加宝宝后在首页走两步 ——「记第一笔」→「设一下地点（可跳过）」
+ * 每步做到了自动消失；整体点「知道了」也就不再出现
+ */
+function onboardStep(baby) {
+  const s = store.getSettings();
+  if (s.onboarded) return null;
+  const hasCare = store.getCareIndex().length > 0 || store.getMealLogs(baby.id).length > 0;
+  if (!hasCare) {
+    return { step: 'first', text: '点下面的「喂奶 / 睡觉 / 换尿布」，记下第一笔', sub: '计时只存开始时间，锁屏、切走都不会丢' };
+  }
+  if (!placeUtil.hasCoords(store.getPlace()) && store.getManualTemp() === null) {
+    return { step: 'place', text: '设一下宝宝在哪，穿衣建议会跟着当地天气走', sub: '不想设也行，直接填今天几度', action: '去设置' };
+  }
+  store.updateSettings({ onboarded: true });
+  return null;
+}
 
 /** 订阅消息模板 ID 配好了没（app.js globalData.tmplIds） */
 function hasTemplates() {
@@ -100,69 +121,6 @@ function suggestMeal(baby, months) {
   };
 }
 
-/** 首页「最近记的」：把三类记录合成一条时间线，只取最近几条 */
-function recentRecords(babyId, limit) {
-  const items = [];
-
-  store.getMealLogs(babyId).forEach(function (l) {
-    const names = (l.foods || [])
-      .map(function (id) {
-        const f = foodUtil.foodById(id);
-        return f ? f.name : '';
-      })
-      .filter(Boolean);
-    items.push({
-      id: 'meal-' + l.id,
-      kind: 'meal',
-      rid: l.id,
-      emoji: '🥣',
-      title: foodUtil.slotLabelOf(l.slot) + (l.recipeName ? ' · ' + l.recipeName : ''),
-      desc: names.length ? names.slice(0, 3).join('、') : l.note || '记了一餐',
-      date: l.date,
-      ts: l.createdAt || 0
-    });
-  });
-
-  store.getFoodRecords(babyId).forEach(function (r) {
-    const f = foodUtil.foodById(r.foodId);
-    const re = foodUtil.reactionOf(r.reaction);
-    items.push({
-      id: 'food-' + r.id,
-      kind: 'food',
-      rid: r.id,
-      emoji: '🥕',
-      title: '新食材 · ' + (f ? f.name : '未知食材'),
-      desc: re && re.label ? re.label : '已记录',
-      date: r.date,
-      ts: r.createdAt || 0
-    });
-  });
-
-  store.getVaccineRecords(babyId).forEach(function (r) {
-    const v = vaccine.getVaccine(r.vaccineId);
-    items.push({
-      id: 'vax-' + r.id,
-      kind: 'vax',
-      rid: r.id,
-      emoji: '💉',
-      title: (v ? v.name : '疫苗') + (r.dose ? ' 第 ' + r.dose + ' 针' : ''),
-      desc: r.place || '接种记录',
-      date: r.date,
-      ts: r.createdAt || 0
-    });
-  });
-
-  items.sort(function (a, b) {
-    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
-    return b.ts - a.ts;
-  });
-
-  const today = dateUtil.todayStr();
-  return items.slice(0, limit).map(function (it) {
-    it.when = it.date === today ? '今天' : String(it.date || '').slice(5).replace('-', '/');
-    return it;
-  });
-}
 
 Page(Object.assign({}, careActions.methods, {
   data: Object.assign({}, careActions.data, {
@@ -184,6 +142,8 @@ Page(Object.assign({}, careActions.methods, {
     suggest: null,
     quickItems: [],
     vaxRemind: null,
+    backupRemind: null,
+    onboard: null,
     tmplConfigured: false,
     manualTemp: false
   }),
@@ -191,6 +151,41 @@ Page(Object.assign({}, careActions.methods, {
   onShow() {
     this.refresh();
     this.startCareTick();
+    const that = this;
+    sync.autoSync().then(function (r) {
+      if (r && (r.added || r.updated || r.removed)) that.refresh();
+    });
+  },
+
+  /* ---------- 提醒条 ---------- */
+
+  goBackupNow() {
+    track('remind_tap', { kind: 'backup' });
+    wx.switchTab({ url: '/pages/mine/mine' });
+  },
+
+  dismissBackup() {
+    store.dismissBackupReminder();
+    this.setData({ backupRemind: null });
+  },
+
+  onboardAction() {
+    const o = this.data.onboard;
+    if (!o) return;
+    track('onboard_step', { step: o.step });
+    if (o.step === 'place') wx.navigateTo({ url: '/pages/place/place' });
+  },
+
+  onboardSkip() {
+    const o = this.data.onboard;
+    if (o && o.step === 'place') {
+      store.updateSettings({ onboarded: true });
+      this.setData({ onboard: null });
+      this.goManualTemp();
+      return;
+    }
+    store.updateSettings({ onboarded: true });
+    this.setData({ onboard: null });
   },
 
   onHide() {
@@ -260,6 +255,8 @@ Page(Object.assign({}, careActions.methods, {
       patch.suggest = null;
       patch.quickItems = [];
       patch.vaxRemind = null;
+      patch.backupRemind = null;
+      patch.onboard = null;
       patch.weatherState = 'no-baby';
       this.setData(patch);
       return Promise.resolve();
@@ -295,7 +292,11 @@ Page(Object.assign({}, careActions.methods, {
       desc: vaxBrief.desc
     };
 
-    patch.recent = recentRecords(baby.id, 3);
+    // 最近记的：和「记录」页同一条时间线，喂睡尿 / 辅食 / 接种 / 测量都在
+    // 首页只留 2 条，更多去「记录」tab
+    patch.recent = timeline.recent(baby.id, 2);
+    patch.backupRemind = store.backupReminder();
+    patch.onboard = onboardStep(baby);
     patch.quickItems = quickItems(months);
     Object.assign(patch, careState(baby, months));
     // 7 天内到期 / 已过建议日期的那一针，单独顶到照护卡下面
@@ -413,10 +414,11 @@ Page(Object.assign({}, careActions.methods, {
 
   /** 到期提醒 → 直接进预选好疫苗和剂次的记接种 */
   goVaxRemind() {
+    track('remind_tap', { kind: 'vax' });
     const r = this.data.vaxRemind;
     if (!r) return this.goVaccine();
     wx.navigateTo({
-      url: '/pages/vaccine-edit/vaccine-edit?vaccineId=' + r.vaccineId + '&dose=' + r.dose
+      url: '/pages/vaccine-edit/vaccine-edit?vaccineId=' + r.vaccineId + '&dose=' + r.dose + '&from=remind'
     });
   },
 
@@ -438,10 +440,8 @@ Page(Object.assign({}, careActions.methods, {
   },
 
   openRecord(e) {
-    const d = e.currentTarget.dataset;
-    if (d.kind === 'meal') wx.navigateTo({ url: '/pages/meal-log/meal-log?id=' + d.rid });
-    else if (d.kind === 'food') wx.navigateTo({ url: '/pages/food-edit/food-edit?id=' + d.rid });
-    else if (d.kind === 'vax') wx.navigateTo({ url: '/pages/vaccine-edit/vaccine-edit?id=' + d.rid });
+    const url = e.currentTarget.dataset.open;
+    if (url) wx.navigateTo({ url: url });
   },
 
   goGuide(e) {
@@ -483,6 +483,12 @@ Page(Object.assign({}, careActions.methods, {
       return;
     }
     wx.navigateTo({ url: '/pages/share/share' });
+  },
+
+  /** 推送行：选过推送对象就去做卡片，还没选就先去选人 */
+  goPush() {
+    if (this.data.targetNames) this.goShare();
+    else this.goFamily();
   },
 
   goFamily() {

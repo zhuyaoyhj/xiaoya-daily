@@ -1,7 +1,7 @@
 // pages/place/place.js —— 地点设置：北京市 → 区 → 小区
 const store = require('../../utils/store.js');
 const placeUtil = require('../../utils/place.js');
-const geo = require('../../utils/geo.js');
+const geo = require('./geo.js'); // 只有这一页用，放在分包里
 const weatherApi = require('../../utils/weather.js');
 
 const SOURCE_TEXT = {

@@ -1,4 +1,4 @@
-// utils/card.js —— 用 Canvas 2D 绘制「今日卡片」，供转发与保存相册
+// pages/share/card.js —— 用 Canvas 2D 绘制「今日卡片」，供转发与保存相册
 
 const W = 640; // 设计宽度（与 640rpx 对齐）
 const SCALE = 2; // 导出倍数
@@ -90,9 +90,10 @@ function build(ctx, data) {
   const sleepText = (data.clothing && data.clothing.sleep) || '';
   const sleepLines = sleepText ? wrap(ctx, sleepText, INNER, '22px sans-serif').slice(0, 2) : [];
 
-  const weatherH = 134 + clothLines.length * 36 + (sleepLines.length ? 10 + sleepLines.length * 30 : 0);
+  // 周报等模式不画天气块
+  const weatherH = data.hideWeather ? 0 : 134 + clothLines.length * 36 + (sleepLines.length ? 10 + sleepLines.length * 30 : 0);
 
-  const footerY = headH - 10 + tipsH + 20 + weatherH + 40;
+  const footerY = headH - 10 + tipsH + (data.hideWeather ? 0 : 20) + weatherH + 40;
   const height = footerY + 44;
 
   return {
@@ -140,7 +141,7 @@ function paint(ctx, L, data) {
   // 标题行
   ctx.fillStyle = '#A9765A';
   ctx.font = '23px sans-serif';
-  ctx.fillText('小芽日常 · 今日卡片', 40, 42);
+  ctx.fillText(data.kicker || '小芽日常 · 今日卡片', 40, 42);
 
   ctx.textAlign = 'right';
   ctx.font = '22px sans-serif';
@@ -197,7 +198,7 @@ function paint(ctx, L, data) {
 
     ctx.fillStyle = INK;
     ctx.font = 'bold 26px sans-serif';
-    const heading = fitText(ctx, t.title + ' · ' + t.heading, L.INNER - 56, 26, 'bold');
+    const heading = fitText(ctx, t.title ? t.title + ' · ' + t.heading : t.heading, L.INNER - 56, 26, 'bold');
     ctx.font = heading.font;
     ctx.fillText(heading.text, L.PAD + 26 + 56, cy + 6);
 
@@ -211,6 +212,10 @@ function paint(ctx, L, data) {
   }
 
   /* ---------- 天气 + 穿衣 ---------- */
+  if (data.hideWeather) {
+    paintFooter(ctx, L);
+    return;
+  }
   const wy = y + L.tipsH + 20;
   ctx.save();
   ctx.shadowColor = 'rgba(213,176,147,0.26)';
@@ -250,7 +255,10 @@ function paint(ctx, L, data) {
     }
   }
 
-  /* ---------- 页脚 ---------- */
+  paintFooter(ctx, L);
+}
+
+function paintFooter(ctx, L) {
   ctx.textAlign = 'center';
   ctx.fillStyle = '#B3A294';
   ctx.font = '20px sans-serif';

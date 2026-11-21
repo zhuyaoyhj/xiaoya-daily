@@ -190,4 +190,5 @@
       </view>
     </block>
   </view>
+  <privacy-popup />
 </view>

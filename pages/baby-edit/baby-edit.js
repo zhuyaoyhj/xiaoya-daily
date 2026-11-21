@@ -1,6 +1,7 @@
 // pages/baby-edit/baby-edit.js
 const store = require('../../utils/store.js');
 const dateUtil = require('../../utils/date.js');
+const track = require('../../utils/track.js').track;
 
 const AVATARS = ['👶', '🐣', '🌱', '🍑', '🐻', '🐰', '🌟', '🍼', '🐼', '🦊'];
 
@@ -208,9 +209,23 @@ Page({
       updatedAt: Date.now()
     };
 
+    const firstBaby = !store.getBabies().length;
     store.upsertBaby(payload);
     if (this.data.isNew || !store.getSettings().activeBabyId) {
       store.setActiveBabyId(payload.id);
+    }
+    // 填了体重身高就记成第一次测量，生长曲线一开始就有点
+    if (this.data.isNew && (payload.weight || payload.height)) {
+      try {
+        store.upsertGrowth({ babyId: payload.id, date: dateUtil.todayStr(), weight: payload.weight, height: payload.height, note: '建档时填写' });
+      } catch (e) {
+        // 范围前面已校验，这里不会失败
+      }
+    }
+    if (this.data.isNew) {
+      track('baby_add', { preterm: !!payload.dueDate });
+      // 第一个宝宝：回首页走引导（首页会提示「记第一笔」→「设地点」）
+      if (firstBaby) store.updateSettings({ onboarded: false });
     }
 
     wx.showToast({ title: '已保存', icon: 'success' });

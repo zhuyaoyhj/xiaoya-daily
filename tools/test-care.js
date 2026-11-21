@@ -406,7 +406,7 @@ rp.switchFilter(ev({ key: 'all' }));
 
 rp.addPast(ev({ type: 'sleep' }));
 eq(lastNav, '/pages/care-edit/care-edit?type=sleep&date=' + YEST, '补记带上正在看的日期');
-rp.openRow(ev({ id: rp.data.rows[0].id }));
+rp.openRow(ev({ open: rp.data.rows[0].open }));
 ok(lastNav.indexOf('/pages/care-edit/care-edit?id=') === 0, '点时间线进入编辑');
 
 rp.nextDay();
@@ -535,9 +535,16 @@ ok(!store.getCareActive('b1').sleep, '计时一并清掉');
 
 clear();
 store.upsertCare({ babyId: 'zz', type: 'diaper', kind: 'wet', start: ts('2026-08-01', '10:00') });
-const parsed = store.importBackup(text);
+// 合并（默认）：本机那条 8 月的记录保留，备份里的 3 条加进来
+let parsed = store.importBackup(text);
+eq(parsed.mode, 'merge', '默认是合并');
 eq(parsed.stats.care, 3, '导入返回照护条数');
-eq(store.getCareIndex(), ['202609', '202610'], '导入后索引与备份一致（本机多出来的月份被清掉）');
+eq(store.getCareIndex(), ['202608', '202609', '202610'], '合并：本机原有月份保留，备份的月份加进来');
+eq(parsed.result.added, 3 + 2, '合并：新增 3 条照护 + 2 个宝宝');
+// 替换：本机多出来的月份被清掉
+parsed = store.importBackup(text, 'replace');
+eq(parsed.mode, 'replace', '指定替换');
+eq(store.getCareIndex(), ['202609', '202610'], '替换后索引与备份一致（本机多出来的月份被清掉）');
 eq(store.getCareShard('202608').length, 0, '旧分片已清空');
 eq(store.getCareRange('b1', ts('2026-09-01', '00:00'), ts('2026-11-01', '00:00')).length, 2, '导入后可按宝宝查询');
 
@@ -548,7 +555,7 @@ const tabPages = app.tabBar.list.map(function (t) {
   return t.pagePath;
 });
 ok(tabPages[1] === 'pages/record/record', '「记录」tab 指向记录页');
-ok(app.pages.indexOf('pages/care-edit/care-edit') > -1, '补记页已注册');
+ok(require('./fixtures.js').allPages(app).indexOf('pages/care-edit/care-edit') > -1, '补记页已注册');
 const careData = require(path.join(ROOT, 'data/care.js'));
 ['black', 'red', 'pale'].forEach(function (k) {
   const c = careData.POOP_COLORS.filter(function (x) {

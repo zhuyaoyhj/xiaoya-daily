@@ -1,7 +1,7 @@
 {
   "navigationBarTitleText": "小芽日常",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark",
+  "backgroundTextStyle": "@bgTextStyle",
   "usingComponents": {
     "disclaimer": "/components/disclaimer/disclaimer"
   }

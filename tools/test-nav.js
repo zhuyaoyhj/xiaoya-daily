@@ -49,11 +49,26 @@ eq(
 eq(tabs, ['pages/index/index', 'pages/record/record', 'pages/vaccine/vaccine', 'pages/mine/mine'], 'tab 页面');
 ok(tabs.indexOf('pages/food/food') === -1, '辅食退到记录页下一层，不占 tab');
 ok(tabs.indexOf('pages/weather/weather') === -1, '天气穿衣不再占 tab');
-ok(tabs.indexOf('pages/family/family') === -1, '带娃人不再占 tab');
+ok(tabs.indexOf('pages/family/family') === -1, '家人页不占 tab');
 eq(app.pages[0], 'pages/index/index', '首页仍是启动页');
 
+// 开了深色模式后图标路径写成 @变量，从 theme.json 的 light / dark 各解析一次
+const themeJson = fs.existsSync(path.join(ROOT, 'theme.json'))
+  ? JSON.parse(fs.readFileSync(path.join(ROOT, 'theme.json'), 'utf8'))
+  : null;
+function resolveIcon(p, mode) {
+  if (p && p.charAt(0) === '@' && themeJson) return themeJson[mode][p.slice(1)];
+  return p;
+}
 app.tabBar.list.forEach(function (t) {
-  [t.iconPath, t.selectedIconPath].forEach(function (p) {
+  const paths = [];
+  ['light', 'dark'].forEach(function (mode) {
+    [t.iconPath, t.selectedIconPath].forEach(function (p) {
+      const r = resolveIcon(p, mode);
+      if (paths.indexOf(r) === -1) paths.push(r);
+    });
+  });
+  paths.forEach(function (p) {
     const full = path.join(ROOT, p || '');
     const exists = !!p && fs.existsSync(full);
     ok(exists, t.text + ' 图标存在：' + p);
@@ -69,9 +84,7 @@ app.tabBar.list.forEach(function (t) {
 
 /* ================= 2. 跳转方式 ================= */
 console.log('\n[2] 跳转方式');
-const pageDirs = app.pages.map(function (p) {
-  return p;
-});
+const pageDirs = require('./fixtures.js').allPages(app);
 const edges = {}; // from -> [to]
 const wrong = [];
 /** 页面源码 + 通过 xxx.methods 混入的共享模块源码（混入里的跳转也算这个页面的） */
@@ -141,6 +154,51 @@ pageDirs.forEach(function (p) {
 ].forEach(function (p) {
   ok((edges['pages/index/index'] || []).indexOf(p) > -1 || (edges['pages/mine/mine'] || []).indexOf(p) > -1, p + ' 可从「今日」或「我的」直达');
 });
+
+/* ================= 3b. 分包 ================= */
+console.log('\n[3b] 分包');
+const subRoots = (app.subPackages || []).map(function (sp) {
+  return sp.root;
+});
+tabs.forEach(function (t) {
+  ok(app.pages.indexOf(t) > -1, 'tab 页 ' + t + ' 在主包（tab 页不能放分包）');
+});
+ok(app.pages.indexOf('pages/care-edit/care-edit') > -1, '喂睡尿补记在主包：照护卡点开就要用，不能等下载');
+['pages/food/food', 'pages/meal-log/meal-log', 'pages/food-edit/food-edit', 'pages/growth/growth', 'pages/sync/sync'].forEach(function (p) {
+  ok(subRoots.some(function (r) {
+    return p.indexOf(r + '/') === 0;
+  }), p + ' 在分包');
+});
+// 预下载：首页 / 记录页能一步进去的分包都要提前下好，点进去不用等
+const reachable = {};
+Object.keys(edges).forEach(function (from) {
+  if (tabs.indexOf(from) === -1) return;
+  edges[from].forEach(function (to) {
+    const sp = (app.subPackages || []).filter(function (s) {
+      return to.indexOf(s.root + '/') === 0;
+    })[0];
+    if (sp) (reachable[from] = reachable[from] || {})[sp.name] = true;
+  });
+});
+const pre = app.preloadRule || {};
+const missingPre = [];
+['pages/index/index', 'pages/record/record'].forEach(function (t) {
+  Object.keys(reachable[t] || {}).forEach(function (name) {
+    const rule = pre[t];
+    if (!rule || (rule.packages || []).indexOf(name) === -1) missingPre.push(t + ' → ' + name);
+  });
+});
+eq(missingPre, [], '首页 / 记录页一步能进的分包都配了预下载');
+const allSubNames = (app.subPackages || []).map(function (s) {
+  return s.name;
+});
+const badPre = [];
+Object.keys(pre).forEach(function (t) {
+  (pre[t].packages || []).forEach(function (n) {
+    if (allSubNames.indexOf(n) === -1) badPre.push(t + ' → ' + n);
+  });
+});
+eq(badPre, [], 'preloadRule 里的分包名都存在');
 
 /* ================= 4/5. 运行时 ================= */
 const mem = {};
@@ -237,7 +295,7 @@ function birthdayMonthsAgo(n, days) {
   eq(mp.data.baby.name, '小芽', '显示当前宝宝');
   ok(/10 ?个月/.test(mp.data.baby.ageText), '显示月龄');
   ok(/朝阳区/.test(mp.data.placeText), '显示地点');
-  ok(/1 人/.test(mp.data.familyText) && /接收/.test(mp.data.familyText), '显示带娃人与接收人数');
+  ok(/1 人/.test(mp.data.familyText) && /接收/.test(mp.data.familyText), '显示家人与接收人数');
   ok(/15℃/.test(mp.data.manualTempText), '天气入口显示今天的手动温度');
   mp.goBaby();
   eq(lastNav, '/pages/baby-edit/baby-edit?id=b1', '编辑当前宝宝');
@@ -248,7 +306,7 @@ function birthdayMonthsAgo(n, days) {
   mp.goWeather();
   eq(lastNav, '/pages/weather/weather', '天气穿衣');
   mp.goFamily();
-  eq(lastNav, '/pages/family/family', '带娃人');
+  eq(lastNav, '/pages/family/family', '家人');
   mp.goShare();
   eq(lastNav, '/pages/share/share', '今日卡片');
 

@@ -1,0 +1,83 @@
+<view class="page-wrap">
+  <view class="card gr-empty" wx:if="{{!hasBaby}}">
+    <view class="muted">先添加宝宝，再记录身高体重</view>
+  </view>
+
+  <block wx:else>
+    <view class="gr-tabs">
+      <view
+        class="gr-tab {{kind === item.key ? 'gr-tab-on' : ''}}"
+        wx:for="{{kinds}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="switchKind"
+      >{{item.label}}</view>
+    </view>
+
+    <view class="card gr-latest gr-latest-{{latest.band}}" wx:if="{{latest}}">
+      <view class="gr-latest-value">{{latest.value}}<text class="gr-latest-date"> · {{latest.date}}</text></view>
+      <view class="gr-latest-text">{{latest.text}}</view>
+    </view>
+
+    <view class="card gr-chart-card">
+      <canvas type="2d" id="growth-chart" class="gr-chart"></canvas>
+      <view class="gr-legend">
+        <view class="gr-legend-item"><view class="gr-legend-band"></view>P3–P97 范围</view>
+        <view class="gr-legend-item"><view class="gr-legend-mid"></view>中位数 P50</view>
+        <view class="gr-legend-item"><view class="gr-legend-dot"></view>{{babyName}}</view>
+      </view>
+      <view class="gr-chart-empty" wx:if="{{empty}}">还没有{{kind === 'height' ? '身高' : '体重'}}记录，体检回来记一笔吧</view>
+      <view class="gr-chart-empty" wx:if="{{outOfRange}}">曲线覆盖 0–3 岁，3 岁以后的测量不再画点</view>
+      <view class="gr-chart-empty" wx:if="{{corrected}}">早产宝宝：2 岁前按矫正月龄对照曲线</view>
+      <view class="gr-chart-empty gr-chart-link" wx:if="{{sexAssumed}}" bindtap="goBaby">没填性别，暂按男孩曲线对照 · 去填写 ›</view>
+    </view>
+
+    <view class="btn btn-primary btn-block" bindtap="openAdd">＋ 记一次测量</view>
+
+    <view class="section-head" wx:if="{{list.length}}">
+      <view class="section-title">测量记录</view>
+    </view>
+    <view class="card gr-list" wx:if="{{list.length}}">
+      <view class="gr-row" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="openEdit">
+        <view class="gr-row-main">
+          <view class="gr-row-value">{{item.value}}</view>
+          <view class="gr-row-sub">{{item.date}} · {{item.ageText}}{{item.by ? ' · ' + item.by + '记' : ''}}{{item.note ? ' · ' + item.note : ''}}</view>
+        </view>
+        <view class="gr-row-go">›</view>
+      </view>
+    </view>
+
+    <disclaimer text="曲线依据世界卫生组织（WHO）儿童生长标准，仅作参考。宝宝沿着自己的曲线稳步增长比某一次的位置更重要，具体请以儿保医生评估为准。" />
+  </block>
+
+  <!-- 录入浮层 -->
+  <view class="sheet-mask" wx:if="{{sheet}}" bindtap="closeSheet"></view>
+  <view class="sheet" wx:if="{{sheet}}" catchtap="noop">
+    <view class="sheet-title">{{editId ? '修改测量' : '记一次测量'}}</view>
+    <picker mode="date" value="{{form.date}}" start="{{minDate}}" end="{{today}}" bindchange="onDate">
+      <view class="field">
+        <view class="field-label">测量日期</view>
+        <view class="field-value">{{form.date}}</view>
+        <view class="row-arrow"></view>
+      </view>
+    </picker>
+    <view class="field">
+      <view class="field-label">体重 (kg)</view>
+      <input class="field-input" type="digit" placeholder="如 8.5" value="{{form.weight}}" bindinput="onWeight" />
+    </view>
+    <view class="field">
+      <view class="field-label">身高 (cm)</view>
+      <input class="field-input" type="digit" placeholder="如 70.5" value="{{form.height}}" bindinput="onHeight" />
+    </view>
+    <view class="field">
+      <view class="field-label">备注</view>
+      <input class="field-input" placeholder="选填，如 6 月龄体检" value="{{form.note}}" bindinput="onNote" />
+    </view>
+    <view class="gr-sheet-actions">
+      <view class="btn btn-line btn-sm" wx:if="{{editId}}" bindtap="remove">删除</view>
+      <view class="btn btn-primary gr-save" bindtap="save">保存</view>
+    </view>
+  </view>
+
+  <privacy-popup />
+</view>

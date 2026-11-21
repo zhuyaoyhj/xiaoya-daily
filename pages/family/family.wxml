@@ -1,7 +1,7 @@
 <view class="page-wrap">
 
   <view class="section-head">
-    <view class="section-title">一起带娃的人</view>
+    <view class="section-title">家人</view>
     <view class="section-more">勾选的就是推送对象</view>
   </view>
 
@@ -21,13 +21,13 @@
 
   <view class="card empty-card" wx:else>
     <view class="empty-emoji">👨‍👩‍👧</view>
-    <view class="h3">还没有添加带娃人</view>
-    <view class="muted empty-desc">把一起带娃的家人、阿姨加进来，每天的照护卡片就能直接发给他们。</view>
+    <view class="h3">还没有添加家人</view>
+    <view class="muted empty-desc">爸爸妈妈、老人、阿姨，一起带娃的都可以加进来。每天的照护卡片能直接发给他们，记录也会标出是谁记的。</view>
   </view>
 
   <!-- 添加 -->
   <view class="card">
-    <view class="card-title">添加带娃人</view>
+    <view class="card-title">添加家人</view>
     <view class="add-row">
       <input
         class="add-input"
@@ -83,5 +83,6 @@
   <view class="btn btn-ghost btn-block" bindtap="goShare">生成今日卡片</view>
   <view class="btn btn-line btn-block copy-btn" bindtap="copyNames">复制推送名单</view>
 
-  <disclaimer text="带娃人名单和所有记录只保存在本机；内容为照护参考。" />
+  <disclaimer text="家人名单和所有记录只保存在本机（开了家庭同步的除外）；内容为照护参考。" />
+  <privacy-popup />
 </view>

@@ -32,7 +32,7 @@
         data-id="{{item.id}}"
         bindtap="toggleTarget"
       >{{item.relation}} {{item.name}}</view>
-      <view class="chip chip-plain" wx:if="{{targets.length === 0}}" bindtap="goFamily">去添加带娃人</view>
+      <view class="chip chip-plain" wx:if="{{targets.length === 0}}" bindtap="goFamily">去添加家人</view>
     </view>
     <view class="target-line" wx:if="{{targetLine}}">卡片上会显示：{{targetLine}}</view>
   </view>
@@ -61,3 +61,5 @@
 </view>
 
 <canvas type="2d" id="card" class="hidden-canvas"></canvas>
+
+<privacy-popup />

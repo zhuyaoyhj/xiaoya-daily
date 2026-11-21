@@ -215,4 +215,5 @@
     <view class="btn btn-primary btn-block" bindtap="submitManual">按这个温度算</view>
   </view>
 
+  <privacy-popup />
 </view>

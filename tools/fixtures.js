@@ -68,7 +68,22 @@ function assertAge(calcAge, birthday, months, days) {
   return birthday;
 }
 
+/**
+ * app.json 里的全部页面：主包 pages + 各分包 root/pages。
+ * 测试和静态检查都要用它，只读 app.pages 会漏掉分包页面
+ */
+function allPages(appJson) {
+  const out = (appJson.pages || []).slice();
+  (appJson.subPackages || appJson.subpackages || []).forEach(function (sp) {
+    (sp.pages || []).forEach(function (p) {
+      out.push(sp.root.replace(/\/$/, '') + '/' + p);
+    });
+  });
+  return out;
+}
+
 module.exports = {
+  allPages: allPages,
   pad: pad,
   fmt: fmt,
   daysFromToday: daysFromToday,

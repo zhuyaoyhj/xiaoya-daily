@@ -10,7 +10,7 @@
   border-radius: 44rpx;
   background: linear-gradient(150deg, var(--brand-tint) 0%, var(--peach-soft) 62%, var(--peach-soft) 100%);
   overflow: hidden;
-  box-shadow: 0 16rpx 40rpx rgba(226, 168, 132, 0.22);
+  box-shadow: 0 16rpx 40rpx var(--shadow-strong);
 }
 
 .hero-blob {
@@ -21,7 +21,7 @@
 .hero-blob-a {
   width: 340rpx;
   height: 340rpx;
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--glass);
   top: -160rpx;
   right: -100rpx;
 }
@@ -29,7 +29,7 @@
 .hero-blob-b {
   width: 220rpx;
   height: 220rpx;
-  background: rgba(255, 255, 255, 0.38);
+  background: var(--glass);
   bottom: -130rpx;
   left: -70rpx;
 }
@@ -60,7 +60,7 @@
   height: 56rpx;
   padding: 0 24rpx;
   border-radius: 28rpx;
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--glass-strong);
   color: var(--brand-deep);
   font-size: 24rpx;
   line-height: 56rpx;
@@ -71,7 +71,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.78);
+  background: var(--glass-strong);
   border-radius: 32rpx;
   padding: 26rpx 24rpx;
 }
@@ -87,7 +87,7 @@
   font-size: 56rpx;
   margin-right: 22rpx;
   flex-shrink: 0;
-  box-shadow: inset 0 0 0 3rpx rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 0 0 3rpx var(--glass-strong);
 }
 
 .baby-main {
@@ -169,7 +169,7 @@
   padding: 0 56rpx;
   border-radius: 38rpx;
   background: linear-gradient(135deg, var(--brand-light) 0%, var(--brand) 100%);
-  color: var(--card);
+  color: var(--on-brand);
   font-size: 28rpx;
   font-weight: 600;
   box-shadow: 0 10rpx 24rpx rgba(240, 135, 107, 0.3);
@@ -188,7 +188,7 @@
   border-radius: 30rpx;
   padding: 26rpx 24rpx;
   margin-bottom: 22rpx;
-  box-shadow: 0 10rpx 26rpx rgba(213, 176, 147, 0.13);
+  box-shadow: 0 10rpx 26rpx var(--shadow);
 }
 
 .tip-badge {
@@ -228,181 +228,6 @@
   -webkit-line-clamp: 3;
   overflow: hidden;
 }
-
-/* ---------- 天气卡 ---------- */
-.weather-card {
-  padding: 30rpx 32rpx;
-}
-
-.weather-top {
-  display: flex;
-  align-items: center;
-}
-
-.weather-temp-box {
-  display: flex;
-  align-items: center;
-  margin-right: 20rpx;
-}
-
-.weather-icon {
-  font-size: 46rpx;
-  margin-right: 10rpx;
-}
-
-.weather-temp {
-  font-size: 62rpx;
-  font-weight: 700;
-  color: var(--text);
-  line-height: 1;
-}
-
-.weather-meta {
-  flex: 1;
-  min-width: 0;
-}
-
-.weather-city {
-  font-size: 26rpx;
-  font-weight: 600;
-  color: var(--shade);
-}
-
-.weather-level {
-  font-size: 22rpx;
-  color: var(--brand-strong);
-  background: var(--brand-tint);
-  border-radius: 22rpx;
-  padding: 6rpx 18rpx;
-  flex-shrink: 0;
-}
-
-.weather-advice {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.55;
-}
-
-.weather-alert {
-  font-size: 22rpx;
-  color: var(--amber);
-  background: var(--warn-soft);
-  border-radius: 16rpx;
-  padding: 14rpx 18rpx;
-  margin-top: 16rpx;
-  line-height: 1.55;
-}
-
-.weather-more {
-  font-size: 22rpx;
-  color: var(--text-warm);
-  margin-top: 18rpx;
-  text-align: right;
-}
-
-.weather-empty {
-  text-align: left;
-}
-
-.weather-empty-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 8rpx;
-}
-
-.weather-empty-btn {
-  margin-top: 20rpx;
-}
-
-/* ---------- 推送卡 ---------- */
-.push-card {
-  background: linear-gradient(140deg, var(--card) 0%, var(--bg) 100%);
-}
-
-.push-title {
-  font-size: 32rpx;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.push-desc {
-  font-size: 24rpx;
-  color: var(--text-3);
-  line-height: 1.65;
-  margin-top: 10rpx;
-}
-
-.push-targets {
-  margin-top: 18rpx;
-}
-
-.push-btn {
-  margin-top: 24rpx;
-}
-
-/* ---------- 疫苗卡 ---------- */
-.vax-card {
-  display: flex;
-  align-items: center;
-  background: linear-gradient(140deg, var(--card) 0%, var(--bg) 100%);
-}
-
-.vax-tone-urgent {
-  background: linear-gradient(140deg, var(--card) 0%, var(--danger-soft) 100%);
-}
-
-.vax-tone-watch {
-  background: linear-gradient(140deg, var(--card) 0%, var(--sleep-soft) 100%);
-}
-
-.vax-tone-soon {
-  background: linear-gradient(140deg, var(--card) 0%, var(--ok-soft) 100%);
-}
-
-.vax-tone-done {
-  background: linear-gradient(140deg, var(--card) 0%, var(--sunken) 100%);
-}
-
-.vax-card-emoji {
-  width: 76rpx;
-  height: 76rpx;
-  border-radius: 24rpx;
-  background: var(--brand-tint);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 38rpx;
-  margin-right: 22rpx;
-  flex-shrink: 0;
-}
-
-.vax-card-body {
-  flex: 1;
-  min-width: 0;
-}
-
-.vax-card-title {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.4;
-}
-
-.vax-card-desc {
-  font-size: 22rpx;
-  color: var(--text-3);
-  line-height: 1.6;
-  margin-top: 6rpx;
-}
-
-.vax-card-arrow {
-  font-size: 36rpx;
-  color: var(--line-strong);
-  margin-left: 12rpx;
-}
-
 /* ---------- 无宝宝时的说明卡 ---------- */
 .flat-tip {
   margin-top: 24rpx;
@@ -428,7 +253,7 @@
   border-radius: 24rpx;
   padding: 24rpx 0 20rpx;
   text-align: center;
-  box-shadow: 0 4rpx 20rpx rgba(213, 176, 147, 0.13);
+  box-shadow: 0 4rpx 20rpx var(--shadow);
 }
 
 .quick-log-item:active {
@@ -446,11 +271,6 @@
   color: var(--text);
   font-weight: 600;
   margin-top: 8rpx;
-}
-
-.recent-card {
-  padding-top: 24rpx;
-  padding-bottom: 12rpx;
 }
 
 .recent-head {
@@ -515,13 +335,7 @@
   color: var(--text-4);
   margin-left: 16rpx;
 }
-
 /* ---------- 天气空态 ---------- */
-.weather-empty-actions {
-  display: flex;
-  gap: 16rpx;
-  margin-top: 20rpx;
-}
 
 .skeleton-line {
   height: 24rpx;
@@ -586,7 +400,7 @@
   flex: none;
   font-size: 24rpx;
   font-weight: 700;
-  color: var(--card);
+  color: var(--on-brand);
   background: linear-gradient(135deg, var(--brand-light), var(--brand));
   border-radius: 999rpx;
   padding: 12rpx 28rpx;
@@ -670,7 +484,7 @@
 }
 
 .care-act-on .care-act-text {
-  color: var(--card);
+  color: var(--on-brand);
 }
 
 .care-act-sleep {
@@ -767,7 +581,224 @@
   color: var(--text);
 }
 
-.push-line-go {
-  font-size: 32rpx;
+/* ---------- 首次引导 ---------- */
+.onboard {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--brand-tint);
+  border: 2rpx dashed var(--brand-soft);
+  border-radius: 24rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.onboard-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.onboard-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.onboard-sub {
+  font-size: 22rpx;
+  color: var(--text-3);
+  margin-top: 4rpx;
+}
+
+.onboard-acts {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10rpx;
+}
+
+.onboard-btn {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--on-brand);
+  background: var(--brand);
+  border-radius: 999rpx;
+  padding: 8rpx 22rpx;
+}
+
+.onboard-skip {
+  font-size: 22rpx;
+  color: var(--text-4);
+}
+
+/* ---------- 备份提醒 ---------- */
+.backup-remind {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--warn-soft);
+  border-radius: 24rpx;
+  padding: 20rpx 20rpx 20rpx 24rpx;
+  margin: 8rpx 0 20rpx;
+}
+
+.backup-remind-emoji {
+  font-size: 36rpx;
+}
+
+.backup-remind-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.backup-remind-text {
+  font-size: 26rpx;
+  color: var(--warn-text);
+  font-weight: 600;
+}
+
+.backup-remind-go {
+  font-size: 22rpx;
+  color: var(--warn);
+  margin-top: 2rpx;
+}
+
+.backup-remind-x {
+  font-size: 36rpx;
   color: var(--text-5);
+  padding: 0 8rpx;
+}
+
+/* ---------- 没有宝宝时的样例预览 ---------- */
+.demo-label {
+  font-size: 22rpx;
+  color: var(--text-4);
+  text-align: center;
+  margin: 8rpx 0 12rpx;
+}
+
+.demo-card {
+  opacity: 0.92;
+  border: 2rpx dashed var(--line-strong);
+}
+
+.demo-line {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: var(--text);
+  padding: 10rpx 0;
+}
+
+.demo-line-emoji {
+  width: 52rpx;
+  font-size: 32rpx;
+}
+
+.demo-line-sub {
+  color: var(--text-4);
+  font-size: 22rpx;
+  margin-left: 12rpx;
+}
+
+/* ---------- 收敛后：记一笔卡 / 今天卡 ---------- */
+.log-card {
+  padding: 20rpx 24rpx 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.log-card .suggest-bar {
+  margin: 0 0 16rpx;
+}
+
+.log-card .quick-log {
+  margin: 0 0 8rpx;
+}
+
+.log-card .quick-log-item {
+  box-shadow: none;
+  background: var(--sunken);
+}
+
+.log-card .recent-head {
+  margin-top: 12rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx dashed var(--line);
+}
+
+.recent-more-solo {
+  text-align: center;
+  padding: 12rpx 0 4rpx;
+}
+
+.today-card {
+  padding: 4rpx 28rpx;
+  margin-top: 8rpx;
+}
+
+.today-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 24rpx 0;
+}
+
+.today-row + .today-row {
+  border-top: 2rpx solid var(--line);
+}
+
+.today-emoji {
+  font-size: 40rpx;
+  width: 56rpx;
+  text-align: center;
+  flex: none;
+}
+
+.today-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.today-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.today-sub {
+  font-size: 24rpx;
+  color: var(--text-3);
+  margin-top: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.today-btn {
+  flex: none;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--on-brand);
+  background: var(--brand);
+  border-radius: 999rpx;
+  padding: 8rpx 20rpx;
+}
+
+.today-btn-line {
+  color: var(--brand-strong);
+  background: transparent;
+  border: 2rpx solid var(--brand-soft);
+}
+
+.push-line .row-arrow {
+  margin-left: auto;
+}
+
+.today-title-warn {
+  color: var(--danger-text);
 }

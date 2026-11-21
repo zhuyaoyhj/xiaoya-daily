@@ -1,7 +1,7 @@
 {
   "navigationBarTitleText": "天气穿衣",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark",
+  "backgroundTextStyle": "@bgTextStyle",
   "usingComponents": {
     "disclaimer": "/components/disclaimer/disclaimer"
   }

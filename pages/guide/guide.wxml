@@ -123,4 +123,5 @@
   <view class="btn btn-primary btn-block share-btn" bindtap="goShare">把这份建议发给家人</view>
 
   <disclaimer />
+  <privacy-popup />
 </view>
